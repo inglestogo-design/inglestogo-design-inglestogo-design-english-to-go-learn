@@ -34,7 +34,7 @@ export const Alphabet = () => {
     }
   }, []);
 
-  const playAudio = (text: string, key: string) => {
+  const playAudio = (text: string, key: string, isLetter: boolean = false) => {
     setLoadingAudio(key);
     
     try {
@@ -42,7 +42,14 @@ export const Alphabet = () => {
         throw new Error('Speech synthesis not supported');
       }
 
-      const utterance = new SpeechSynthesisUtterance(text);
+      // For single letters, spell them out phonetically to avoid "Capital X"
+      let textToSpeak = text;
+      if (isLetter && text.length === 1) {
+        // Use lowercase to avoid "Capital" prefix
+        textToSpeak = text.toLowerCase();
+      }
+
+      const utterance = new SpeechSynthesisUtterance(textToSpeak);
       utterance.lang = 'en-US';
       utterance.rate = 0.8;
       utterance.pitch = 1.0;
@@ -326,7 +333,7 @@ export const Alphabet = () => {
                       <Button 
                         variant="ghost" 
                         size="icon"
-                        onClick={() => playAudio(item.letter, `letter-${item.letter}`)}
+                        onClick={() => playAudio(item.letter, `letter-${item.letter}`, true)}
                         disabled={loadingAudio === `letter-${item.letter}`}
                       >
                         <Volume2 className={`h-5 w-5 ${loadingAudio === `letter-${item.letter}` ? 'animate-pulse' : ''}`} />
