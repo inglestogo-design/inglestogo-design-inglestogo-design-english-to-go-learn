@@ -15,17 +15,50 @@ export const Radio = () => {
     {
       name: "BBC World Service",
       url: "https://stream.live.vc.bbcmedia.co.uk/bbc_world_service",
-      description: "Notícias e programas em inglês britânico / British English news and programs"
+      description: "Notícias e programas em inglês britânico / British English news and programs",
+      category: "news"
     },
     {
       name: "NPR News",
       url: "https://npr-ice.streamguys1.com/live.mp3",
-      description: "Notícias e histórias em inglês americano / American English news and stories"
+      description: "Notícias e histórias em inglês americano / American English news and stories",
+      category: "news"
     },
     {
       name: "Voice of America",
       url: "https://voa-ingest.akamaized.net/hls/live/2035206/151_127L/playlist.m3u8",
-      description: "Inglês claro para aprendizes / Clear English for learners"
+      description: "Inglês claro para aprendizes / Clear English for learners",
+      category: "news"
+    },
+    {
+      name: "Calm Radio - Easy Listening",
+      url: "https://streams.calmradio.com/api/39/128/stream",
+      description: "Música relaxante instrumental / Relaxing instrumental music",
+      category: "music"
+    },
+    {
+      name: "Jazz24",
+      url: "https://live.wostreaming.net/direct/ppm-jazz24aac-ibc1",
+      description: "Jazz suave 24h / Smooth jazz 24/7",
+      category: "music"
+    },
+    {
+      name: "Classical Music Radio",
+      url: "https://stream.zeno.fm/f3wvbbqmdg8uv",
+      description: "Música clássica / Classical music",
+      category: "music"
+    },
+    {
+      name: "Chillout Music",
+      url: "https://stream.zeno.fm/7cbvfzs20k8uv",
+      description: "Música ambiente para estudar / Ambient music for studying",
+      category: "music"
+    },
+    {
+      name: "English Songs Radio",
+      url: "https://stream.zeno.fm/3vxqyc5mdg8uv",
+      description: "Músicas populares em inglês / Popular English songs",
+      category: "music"
     }
   ];
 
@@ -84,6 +117,38 @@ export const Radio = () => {
           Pratique seu inglês ouvindo rádios ao vivo 24 horas / Practice your English listening to live radio 24/7
         </p>
       </div>
+
+      {/* Live Podcast Alert */}
+      <Card className="border-2 border-accent/50 bg-gradient-to-br from-accent/10 to-primary/10 shadow-lg">
+        <CardContent className="p-6">
+          <div className="flex items-center gap-4">
+            <div className="rounded-full bg-accent/20 p-4 animate-pulse">
+              <RadioIcon className="h-8 w-8 text-accent" />
+            </div>
+            <div className="flex-1">
+              <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
+                🎙️ Podcast Teacher - Ao Vivo / Live
+              </h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                Todo dia às 8h da manhã (Horário de Brasília) / Every day at 8am (Brasilia Time)
+              </p>
+              <p className="text-xs text-accent font-semibold mt-2">
+                📚 Rápido Nível A - Em Breve! / Coming Soon!
+              </p>
+            </div>
+            <Button 
+              size="lg"
+              className="bg-accent hover:bg-accent/90"
+              onClick={() => {
+                // Link do podcast ao vivo
+                window.open("https://youtube.com/@inglestogooficial", "_blank");
+              }}
+            >
+              Assistir Ao Vivo / Watch Live
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       <Card className="border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-secondary/5">
         <CardContent className="p-8">
@@ -146,32 +211,75 @@ export const Radio = () => {
             </div>
 
             {/* Station Selection */}
-            <div className="space-y-2">
+            <div className="space-y-3">
               <p className="text-sm font-semibold text-muted-foreground text-center">
                 Escolha uma Estação / Choose a Station:
               </p>
-              <div className="grid gap-2">
-                {radioStations.map((station, index) => (
-                  <button
-                    key={index}
-                    onClick={() => changeStation(index)}
-                    className={`p-3 rounded-lg border-2 transition-all text-left ${
-                      currentStation === index
-                        ? 'border-primary bg-primary/10 shadow-md'
-                        : 'border-border hover:border-primary/50 hover:bg-muted'
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <RadioIcon className={`h-5 w-5 ${
-                        currentStation === index ? 'text-primary' : 'text-muted-foreground'
-                      }`} />
-                      <div className="flex-1">
-                        <p className="font-semibold text-sm">{station.name}</p>
-                        <p className="text-xs text-muted-foreground">{station.description}</p>
-                      </div>
-                    </div>
-                  </button>
-                ))}
+              
+              {/* News Stations */}
+              <div className="space-y-2">
+                <p className="text-xs font-bold text-primary uppercase tracking-wide">
+                  📰 Notícias / News
+                </p>
+                <div className="grid gap-2">
+                  {radioStations.filter(s => s.category === "news").map((station, index) => {
+                    const actualIndex = radioStations.indexOf(station);
+                    return (
+                      <button
+                        key={actualIndex}
+                        onClick={() => changeStation(actualIndex)}
+                        className={`p-3 rounded-lg border-2 transition-all text-left ${
+                          currentStation === actualIndex
+                            ? 'border-primary bg-primary/10 shadow-md'
+                            : 'border-border hover:border-primary/50 hover:bg-muted'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <RadioIcon className={`h-5 w-5 ${
+                            currentStation === actualIndex ? 'text-primary' : 'text-muted-foreground'
+                          }`} />
+                          <div className="flex-1">
+                            <p className="font-semibold text-sm">{station.name}</p>
+                            <p className="text-xs text-muted-foreground">{station.description}</p>
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Music Stations */}
+              <div className="space-y-2">
+                <p className="text-xs font-bold text-secondary uppercase tracking-wide">
+                  🎵 Música / Music
+                </p>
+                <div className="grid gap-2">
+                  {radioStations.filter(s => s.category === "music").map((station, index) => {
+                    const actualIndex = radioStations.indexOf(station);
+                    return (
+                      <button
+                        key={actualIndex}
+                        onClick={() => changeStation(actualIndex)}
+                        className={`p-3 rounded-lg border-2 transition-all text-left ${
+                          currentStation === actualIndex
+                            ? 'border-secondary bg-secondary/10 shadow-md'
+                            : 'border-border hover:border-secondary/50 hover:bg-muted'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <RadioIcon className={`h-5 w-5 ${
+                            currentStation === actualIndex ? 'text-secondary' : 'text-muted-foreground'
+                          }`} />
+                          <div className="flex-1">
+                            <p className="font-semibold text-sm">{station.name}</p>
+                            <p className="text-xs text-muted-foreground">{station.description}</p>
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             </div>
 
