@@ -36,6 +36,8 @@ serve(async (req) => {
       console.error("ELEVENLABS_API_KEY is not configured");
       throw new Error("ELEVENLABS_API_KEY is not configured");
     }
+    
+    console.log(`API Key length: ${ELEVENLABS_API_KEY.length}, starts with: ${ELEVENLABS_API_KEY.substring(0, 10)}...`);
 
     // Get voice ID for theme, default to Adam if theme not found
     const voiceId = THEME_VOICES[theme] || THEME_VOICES.home;
