@@ -20,11 +20,111 @@ import { Progress } from "@/components/ui/progress";
 import { useState } from "react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
+// Home images
+import houseImg from "@/assets/vocabulary/home/house.png";
+import doorImg from "@/assets/vocabulary/home/door.png";
+import windowImg from "@/assets/vocabulary/home/window.png";
+import kitchenImg from "@/assets/vocabulary/home/kitchen.png";
+import bedroomImg from "@/assets/vocabulary/home/bedroom.png";
+import bathroomImg from "@/assets/vocabulary/home/bathroom.png";
+import livingRoomImg from "@/assets/vocabulary/home/living-room.png";
+import gardenImg from "@/assets/vocabulary/home/garden.png";
+
+// School images
+import schoolImg from "@/assets/vocabulary/school/school.png";
+import teacherImg from "@/assets/vocabulary/school/teacher.png";
+import studentImg from "@/assets/vocabulary/school/student.png";
+import bookImg from "@/assets/vocabulary/school/book.png";
+import penImg from "@/assets/vocabulary/school/pen.png";
+import pencilImg from "@/assets/vocabulary/school/pencil.png";
+import notebookImg from "@/assets/vocabulary/school/notebook.png";
+import classroomImg from "@/assets/vocabulary/school/classroom.png";
+
+// Food images
+import foodImg from "@/assets/vocabulary/food/food.png";
+import waterImg from "@/assets/vocabulary/food/water.png";
+import breadImg from "@/assets/vocabulary/food/bread.png";
+import milkImg from "@/assets/vocabulary/food/milk.png";
+import riceImg from "@/assets/vocabulary/food/rice.png";
+import chickenImg from "@/assets/vocabulary/food/chicken.png";
+import appleImg from "@/assets/vocabulary/food/apple.png";
+import bananaImg from "@/assets/vocabulary/food/banana.png";
+
+// Transportation images
+import carImg from "@/assets/vocabulary/transportation/car.png";
+import busImg from "@/assets/vocabulary/transportation/bus.png";
+import trainImg from "@/assets/vocabulary/transportation/train.png";
+import airplaneImg from "@/assets/vocabulary/transportation/airplane.png";
+import bicycleImg from "@/assets/vocabulary/transportation/bicycle.png";
+import motorcycleImg from "@/assets/vocabulary/transportation/motorcycle.png";
+import boatImg from "@/assets/vocabulary/transportation/boat.png";
+import subwayImg from "@/assets/vocabulary/transportation/subway.png";
+
+// Body images
+import headImg from "@/assets/vocabulary/body/head.png";
+import eyeImg from "@/assets/vocabulary/body/eye.png";
+import noseImg from "@/assets/vocabulary/body/nose.png";
+import mouthImg from "@/assets/vocabulary/body/mouth.png";
+import earImg from "@/assets/vocabulary/body/ear.png";
+import handImg from "@/assets/vocabulary/body/hand.png";
+import footImg from "@/assets/vocabulary/body/foot.png";
+import armImg from "@/assets/vocabulary/body/arm.png";
+
+// Colors images
+import redImg from "@/assets/vocabulary/colors/red.png";
+import blueImg from "@/assets/vocabulary/colors/blue.png";
+import greenImg from "@/assets/vocabulary/colors/green.png";
+import yellowImg from "@/assets/vocabulary/colors/yellow.png";
+import blackImg from "@/assets/vocabulary/colors/black.png";
+import whiteImg from "@/assets/vocabulary/colors/white.png";
+import orangeImg from "@/assets/vocabulary/colors/orange.png";
+import purpleImg from "@/assets/vocabulary/colors/purple.png";
+
+// Nature images
+import treeImg from "@/assets/vocabulary/nature/tree.png";
+import flowerImg from "@/assets/vocabulary/nature/flower.png";
+import sunImg from "@/assets/vocabulary/nature/sun.png";
+import moonImg from "@/assets/vocabulary/nature/moon.png";
+import starImg from "@/assets/vocabulary/nature/star.png";
+import mountainImg from "@/assets/vocabulary/nature/mountain.png";
+import riverImg from "@/assets/vocabulary/nature/river.png";
+import oceanImg from "@/assets/vocabulary/nature/ocean.png";
+
+// Clothes images
+import shirtImg from "@/assets/vocabulary/clothes/shirt.png";
+import pantsImg from "@/assets/vocabulary/clothes/pants.png";
+import dressImg from "@/assets/vocabulary/clothes/dress.png";
+import shoesImg from "@/assets/vocabulary/clothes/shoes.png";
+import socksImg from "@/assets/vocabulary/clothes/socks.png";
+import hatImg from "@/assets/vocabulary/clothes/hat.png";
+import jacketImg from "@/assets/vocabulary/clothes/jacket.png";
+import skirtImg from "@/assets/vocabulary/clothes/skirt.png";
+
+// Animals images
+import dogImg from "@/assets/vocabulary/animals/dog.png";
+import catImg from "@/assets/vocabulary/animals/cat.png";
+import birdImg from "@/assets/vocabulary/animals/bird.png";
+import fishImg from "@/assets/vocabulary/animals/fish.png";
+import horseImg from "@/assets/vocabulary/animals/horse.png";
+import cowImg from "@/assets/vocabulary/animals/cow.png";
+import lionImg from "@/assets/vocabulary/animals/lion.png";
+import elephantImg from "@/assets/vocabulary/animals/elephant.png";
+
+// Jobs images
+import doctorImg from "@/assets/vocabulary/jobs/doctor.png";
+import teacherJobImg from "@/assets/vocabulary/jobs/teacher.png";
+import engineerImg from "@/assets/vocabulary/jobs/engineer.png";
+import nurseImg from "@/assets/vocabulary/jobs/nurse.png";
+import policeImg from "@/assets/vocabulary/jobs/police.png";
+import chefImg from "@/assets/vocabulary/jobs/chef.png";
+import artistImg from "@/assets/vocabulary/jobs/artist.png";
+import lawyerImg from "@/assets/vocabulary/jobs/lawyer.png";
+
 interface VocabularyWord {
   word: string;
   pronunciation: string;
   translation: string;
-  icon: React.ComponentType<{ className?: string }>;
+  image: string;
 }
 
 interface VocabularyTheme {
@@ -59,14 +159,14 @@ export const Vocabulary = () => {
       bgColor: "bg-blue-50",
       borderColor: "border-blue-200",
       words: [
-        { word: "House", pronunciation: "ráus", translation: "casa", icon: Home },
-        { word: "Door", pronunciation: "dór", translation: "porta", icon: Home },
-        { word: "Window", pronunciation: "uíndou", translation: "janela", icon: Home },
-        { word: "Kitchen", pronunciation: "kítchen", translation: "cozinha", icon: UtensilsCrossed },
-        { word: "Bedroom", pronunciation: "bédruum", translation: "quarto", icon: Home },
-        { word: "Bathroom", pronunciation: "bázruum", translation: "banheiro", icon: Home },
-        { word: "Living room", pronunciation: "líving ruum", translation: "sala de estar", icon: Home },
-        { word: "Garden", pronunciation: "gárden", translation: "jardim", icon: Trees },
+        { word: "House", pronunciation: "ráus", translation: "casa", image: houseImg },
+        { word: "Door", pronunciation: "dór", translation: "porta", image: doorImg },
+        { word: "Window", pronunciation: "uíndou", translation: "janela", image: windowImg },
+        { word: "Kitchen", pronunciation: "kítchen", translation: "cozinha", image: kitchenImg },
+        { word: "Bedroom", pronunciation: "bédruum", translation: "quarto", image: bedroomImg },
+        { word: "Bathroom", pronunciation: "bázruum", translation: "banheiro", image: bathroomImg },
+        { word: "Living room", pronunciation: "líving ruum", translation: "sala de estar", image: livingRoomImg },
+        { word: "Garden", pronunciation: "gárden", translation: "jardim", image: gardenImg },
       ]
     },
     {
@@ -78,14 +178,14 @@ export const Vocabulary = () => {
       bgColor: "bg-purple-50",
       borderColor: "border-purple-200",
       words: [
-        { word: "School", pronunciation: "skuul", translation: "escola", icon: School },
-        { word: "Teacher", pronunciation: "títcher", translation: "professor(a)", icon: School },
-        { word: "Student", pronunciation: "stiúdent", translation: "estudante", icon: School },
-        { word: "Book", pronunciation: "búk", translation: "livro", icon: School },
-        { word: "Pen", pronunciation: "pén", translation: "caneta", icon: School },
-        { word: "Pencil", pronunciation: "pénsil", translation: "lápis", icon: School },
-        { word: "Notebook", pronunciation: "nôutbuk", translation: "caderno", icon: School },
-        { word: "Classroom", pronunciation: "klássruum", translation: "sala de aula", icon: School },
+        { word: "School", pronunciation: "skuul", translation: "escola", image: schoolImg },
+        { word: "Teacher", pronunciation: "títcher", translation: "professor(a)", image: teacherImg },
+        { word: "Student", pronunciation: "stiúdent", translation: "estudante", image: studentImg },
+        { word: "Book", pronunciation: "búk", translation: "livro", image: bookImg },
+        { word: "Pen", pronunciation: "pén", translation: "caneta", image: penImg },
+        { word: "Pencil", pronunciation: "pénsil", translation: "lápis", image: pencilImg },
+        { word: "Notebook", pronunciation: "nôutbuk", translation: "caderno", image: notebookImg },
+        { word: "Classroom", pronunciation: "klássruum", translation: "sala de aula", image: classroomImg },
       ]
     },
     {
@@ -97,14 +197,14 @@ export const Vocabulary = () => {
       bgColor: "bg-orange-50",
       borderColor: "border-orange-200",
       words: [
-        { word: "Food", pronunciation: "fúud", translation: "comida", icon: UtensilsCrossed },
-        { word: "Water", pronunciation: "uóter", translation: "água", icon: UtensilsCrossed },
-        { word: "Bread", pronunciation: "bréd", translation: "pão", icon: UtensilsCrossed },
-        { word: "Milk", pronunciation: "mílk", translation: "leite", icon: UtensilsCrossed },
-        { word: "Rice", pronunciation: "ráis", translation: "arroz", icon: UtensilsCrossed },
-        { word: "Chicken", pronunciation: "tchíken", translation: "frango", icon: UtensilsCrossed },
-        { word: "Apple", pronunciation: "épol", translation: "maçã", icon: UtensilsCrossed },
-        { word: "Banana", pronunciation: "benéna", translation: "banana", icon: UtensilsCrossed },
+        { word: "Food", pronunciation: "fúud", translation: "comida", image: foodImg },
+        { word: "Water", pronunciation: "uóter", translation: "água", image: waterImg },
+        { word: "Bread", pronunciation: "bréd", translation: "pão", image: breadImg },
+        { word: "Milk", pronunciation: "mílk", translation: "leite", image: milkImg },
+        { word: "Rice", pronunciation: "ráis", translation: "arroz", image: riceImg },
+        { word: "Chicken", pronunciation: "tchíken", translation: "frango", image: chickenImg },
+        { word: "Apple", pronunciation: "épol", translation: "maçã", image: appleImg },
+        { word: "Banana", pronunciation: "benéna", translation: "banana", image: bananaImg },
       ]
     },
     {
@@ -116,14 +216,14 @@ export const Vocabulary = () => {
       bgColor: "bg-red-50",
       borderColor: "border-red-200",
       words: [
-        { word: "Car", pronunciation: "kár", translation: "carro", icon: Car },
-        { word: "Bus", pronunciation: "bâs", translation: "ônibus", icon: Car },
-        { word: "Train", pronunciation: "trêin", translation: "trem", icon: Car },
-        { word: "Airplane", pronunciation: "érplêin", translation: "avião", icon: Car },
-        { word: "Bicycle", pronunciation: "báisicol", translation: "bicicleta", icon: Car },
-        { word: "Motorcycle", pronunciation: "môtorsáicol", translation: "motocicleta", icon: Car },
-        { word: "Boat", pronunciation: "bôut", translation: "barco", icon: Car },
-        { word: "Subway", pronunciation: "sâbuêi", translation: "metrô", icon: Car },
+        { word: "Car", pronunciation: "kár", translation: "carro", image: carImg },
+        { word: "Bus", pronunciation: "bâs", translation: "ônibus", image: busImg },
+        { word: "Train", pronunciation: "trêin", translation: "trem", image: trainImg },
+        { word: "Airplane", pronunciation: "érplêin", translation: "avião", image: airplaneImg },
+        { word: "Bicycle", pronunciation: "báisicol", translation: "bicicleta", image: bicycleImg },
+        { word: "Motorcycle", pronunciation: "môtorsáicol", translation: "motocicleta", image: motorcycleImg },
+        { word: "Boat", pronunciation: "bôut", translation: "barco", image: boatImg },
+        { word: "Subway", pronunciation: "sâbuêi", translation: "metrô", image: subwayImg },
       ]
     },
     {
@@ -135,14 +235,14 @@ export const Vocabulary = () => {
       bgColor: "bg-pink-50",
       borderColor: "border-pink-200",
       words: [
-        { word: "Head", pronunciation: "réd", translation: "cabeça", icon: HeartPulse },
-        { word: "Eye", pronunciation: "ái", translation: "olho", icon: HeartPulse },
-        { word: "Nose", pronunciation: "nôuz", translation: "nariz", icon: HeartPulse },
-        { word: "Mouth", pronunciation: "máuz", translation: "boca", icon: HeartPulse },
-        { word: "Ear", pronunciation: "íer", translation: "orelha", icon: HeartPulse },
-        { word: "Hand", pronunciation: "rénd", translation: "mão", icon: HeartPulse },
-        { word: "Foot", pronunciation: "fút", translation: "pé", icon: HeartPulse },
-        { word: "Arm", pronunciation: "árm", translation: "braço", icon: HeartPulse },
+        { word: "Head", pronunciation: "réd", translation: "cabeça", image: headImg },
+        { word: "Eye", pronunciation: "ái", translation: "olho", image: eyeImg },
+        { word: "Nose", pronunciation: "nôuz", translation: "nariz", image: noseImg },
+        { word: "Mouth", pronunciation: "máuz", translation: "boca", image: mouthImg },
+        { word: "Ear", pronunciation: "íer", translation: "orelha", image: earImg },
+        { word: "Hand", pronunciation: "rénd", translation: "mão", image: handImg },
+        { word: "Foot", pronunciation: "fút", translation: "pé", image: footImg },
+        { word: "Arm", pronunciation: "árm", translation: "braço", image: armImg },
       ]
     },
     {
@@ -154,14 +254,14 @@ export const Vocabulary = () => {
       bgColor: "bg-indigo-50",
       borderColor: "border-indigo-200",
       words: [
-        { word: "Red", pronunciation: "réd", translation: "vermelho", icon: Palette },
-        { word: "Blue", pronunciation: "blu", translation: "azul", icon: Palette },
-        { word: "Green", pronunciation: "gríin", translation: "verde", icon: Palette },
-        { word: "Yellow", pronunciation: "iélou", translation: "amarelo", icon: Palette },
-        { word: "Black", pronunciation: "blék", translation: "preto", icon: Palette },
-        { word: "White", pronunciation: "uáit", translation: "branco", icon: Palette },
-        { word: "Orange", pronunciation: "órendj", translation: "laranja", icon: Palette },
-        { word: "Purple", pronunciation: "pârpol", translation: "roxo", icon: Palette },
+        { word: "Red", pronunciation: "réd", translation: "vermelho", image: redImg },
+        { word: "Blue", pronunciation: "blu", translation: "azul", image: blueImg },
+        { word: "Green", pronunciation: "gríin", translation: "verde", image: greenImg },
+        { word: "Yellow", pronunciation: "iélou", translation: "amarelo", image: yellowImg },
+        { word: "Black", pronunciation: "blék", translation: "preto", image: blackImg },
+        { word: "White", pronunciation: "uáit", translation: "branco", image: whiteImg },
+        { word: "Orange", pronunciation: "órendj", translation: "laranja", image: orangeImg },
+        { word: "Purple", pronunciation: "pârpol", translation: "roxo", image: purpleImg },
       ]
     },
     {
@@ -173,14 +273,14 @@ export const Vocabulary = () => {
       bgColor: "bg-green-50",
       borderColor: "border-green-200",
       words: [
-        { word: "Tree", pronunciation: "tríi", translation: "árvore", icon: Trees },
-        { word: "Flower", pronunciation: "fláuer", translation: "flor", icon: Trees },
-        { word: "Sun", pronunciation: "sân", translation: "sol", icon: Trees },
-        { word: "Moon", pronunciation: "múun", translation: "lua", icon: Trees },
-        { word: "Star", pronunciation: "stár", translation: "estrela", icon: Trees },
-        { word: "Mountain", pronunciation: "máunten", translation: "montanha", icon: Trees },
-        { word: "River", pronunciation: "ríver", translation: "rio", icon: Trees },
-        { word: "Ocean", pronunciation: "ôuchen", translation: "oceano", icon: Trees },
+        { word: "Tree", pronunciation: "tríi", translation: "árvore", image: treeImg },
+        { word: "Flower", pronunciation: "fláuer", translation: "flor", image: flowerImg },
+        { word: "Sun", pronunciation: "sân", translation: "sol", image: sunImg },
+        { word: "Moon", pronunciation: "múun", translation: "lua", image: moonImg },
+        { word: "Star", pronunciation: "stár", translation: "estrela", image: starImg },
+        { word: "Mountain", pronunciation: "máunten", translation: "montanha", image: mountainImg },
+        { word: "River", pronunciation: "ríver", translation: "rio", image: riverImg },
+        { word: "Ocean", pronunciation: "ôuchen", translation: "oceano", image: oceanImg },
       ]
     },
     {
@@ -192,14 +292,14 @@ export const Vocabulary = () => {
       bgColor: "bg-teal-50",
       borderColor: "border-teal-200",
       words: [
-        { word: "Shirt", pronunciation: "chért", translation: "camisa", icon: ShirtIcon },
-        { word: "Pants", pronunciation: "pénts", translation: "calças", icon: ShirtIcon },
-        { word: "Dress", pronunciation: "drés", translation: "vestido", icon: ShirtIcon },
-        { word: "Shoes", pronunciation: "chúuz", translation: "sapatos", icon: ShirtIcon },
-        { word: "Socks", pronunciation: "sóks", translation: "meias", icon: ShirtIcon },
-        { word: "Hat", pronunciation: "rét", translation: "chapéu", icon: ShirtIcon },
-        { word: "Jacket", pronunciation: "djéket", translation: "jaqueta", icon: ShirtIcon },
-        { word: "Skirt", pronunciation: "skért", translation: "saia", icon: ShirtIcon },
+        { word: "Shirt", pronunciation: "chért", translation: "camisa", image: shirtImg },
+        { word: "Pants", pronunciation: "pénts", translation: "calças", image: pantsImg },
+        { word: "Dress", pronunciation: "drés", translation: "vestido", image: dressImg },
+        { word: "Shoes", pronunciation: "chúuz", translation: "sapatos", image: shoesImg },
+        { word: "Socks", pronunciation: "sóks", translation: "meias", image: socksImg },
+        { word: "Hat", pronunciation: "rét", translation: "chapéu", image: hatImg },
+        { word: "Jacket", pronunciation: "djéket", translation: "jaqueta", image: jacketImg },
+        { word: "Skirt", pronunciation: "skért", translation: "saia", image: skirtImg },
       ]
     },
     {
@@ -211,14 +311,14 @@ export const Vocabulary = () => {
       bgColor: "bg-amber-50",
       borderColor: "border-amber-200",
       words: [
-        { word: "Dog", pronunciation: "dóg", translation: "cachorro", icon: PawPrint },
-        { word: "Cat", pronunciation: "két", translation: "gato", icon: PawPrint },
-        { word: "Bird", pronunciation: "bêrd", translation: "pássaro", icon: PawPrint },
-        { word: "Fish", pronunciation: "fích", translation: "peixe", icon: PawPrint },
-        { word: "Horse", pronunciation: "rórss", translation: "cavalo", icon: PawPrint },
-        { word: "Cow", pronunciation: "káu", translation: "vaca", icon: PawPrint },
-        { word: "Lion", pronunciation: "láion", translation: "leão", icon: PawPrint },
-        { word: "Elephant", pronunciation: "élefent", translation: "elefante", icon: PawPrint },
+        { word: "Dog", pronunciation: "dóg", translation: "cachorro", image: dogImg },
+        { word: "Cat", pronunciation: "két", translation: "gato", image: catImg },
+        { word: "Bird", pronunciation: "bêrd", translation: "pássaro", image: birdImg },
+        { word: "Fish", pronunciation: "fích", translation: "peixe", image: fishImg },
+        { word: "Horse", pronunciation: "rórss", translation: "cavalo", image: horseImg },
+        { word: "Cow", pronunciation: "káu", translation: "vaca", image: cowImg },
+        { word: "Lion", pronunciation: "láion", translation: "leão", image: lionImg },
+        { word: "Elephant", pronunciation: "élefent", translation: "elefante", image: elephantImg },
       ]
     },
     {
@@ -230,14 +330,14 @@ export const Vocabulary = () => {
       bgColor: "bg-slate-50",
       borderColor: "border-slate-200",
       words: [
-        { word: "Doctor", pronunciation: "dóktor", translation: "médico(a)", icon: Briefcase },
-        { word: "Teacher", pronunciation: "títcher", translation: "professor(a)", icon: Briefcase },
-        { word: "Engineer", pronunciation: "endjiníer", translation: "engenheiro(a)", icon: Briefcase },
-        { word: "Nurse", pronunciation: "nârss", translation: "enfermeiro(a)", icon: Briefcase },
-        { word: "Police officer", pronunciation: "políss óficer", translation: "policial", icon: Briefcase },
-        { word: "Chef", pronunciation: "chéf", translation: "chef", icon: Briefcase },
-        { word: "Artist", pronunciation: "ártist", translation: "artista", icon: Briefcase },
-        { word: "Lawyer", pronunciation: "lóier", translation: "advogado(a)", icon: Briefcase },
+        { word: "Doctor", pronunciation: "dóktor", translation: "médico(a)", image: doctorImg },
+        { word: "Teacher", pronunciation: "títcher", translation: "professor(a)", image: teacherJobImg },
+        { word: "Engineer", pronunciation: "endjiníer", translation: "engenheiro(a)", image: engineerImg },
+        { word: "Nurse", pronunciation: "nârss", translation: "enfermeiro(a)", image: nurseImg },
+        { word: "Police officer", pronunciation: "políss óficer", translation: "policial", image: policeImg },
+        { word: "Chef", pronunciation: "chéf", translation: "chef", image: chefImg },
+        { word: "Artist", pronunciation: "ártist", translation: "artista", image: artistImg },
+        { word: "Lawyer", pronunciation: "lóier", translation: "advogado(a)", image: lawyerImg },
       ]
     },
   ];
@@ -304,35 +404,36 @@ export const Vocabulary = () => {
                 <CollapsibleContent>
                   <CardContent className="pt-0">
                     <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-                      {theme.words.map((word, index) => {
-                        const WordIcon = word.icon;
-                        return (
-                          <div
-                            key={index}
-                            className={`rounded-lg border-2 ${theme.borderColor} ${theme.bgColor} p-4 transition-smooth hover:shadow-md hover:scale-105 cursor-pointer`}
-                          >
-                            <div className="flex flex-col items-center text-center space-y-2">
-                              <div className={`flex h-10 w-10 items-center justify-center rounded-full ${theme.bgColor}`}>
-                                <WordIcon className={`h-5 w-5 ${theme.color}`} />
+                      {theme.words.map((word, index) => (
+                        <div
+                          key={index}
+                          className={`rounded-lg border-2 ${theme.borderColor} ${theme.bgColor} p-4 transition-smooth hover:shadow-md hover:scale-105 cursor-pointer`}
+                        >
+                          <div className="flex flex-col items-center text-center space-y-2">
+                            <div className="flex h-24 w-24 items-center justify-center rounded-lg overflow-hidden bg-white">
+                              <img 
+                                src={word.image} 
+                                alt={word.word}
+                                className="w-full h-full object-contain"
+                              />
+                            </div>
+                            <div className="space-y-1 w-full">
+                              <div className="flex items-center justify-center gap-2">
+                                <p className="font-bold text-lg">{word.word}</p>
+                                <Button variant="ghost" size="icon" className="h-6 w-6">
+                                  <Volume2 className="h-3 w-3" />
+                                </Button>
                               </div>
-                              <div className="space-y-1 w-full">
-                                <div className="flex items-center justify-center gap-2">
-                                  <p className="font-bold text-lg">{word.word}</p>
-                                  <Button variant="ghost" size="icon" className="h-6 w-6">
-                                    <Volume2 className="h-3 w-3" />
-                                  </Button>
-                                </div>
-                                <p className={`text-sm font-mono ${theme.color} font-semibold`}>
-                                  {word.pronunciation}
-                                </p>
-                                <p className="text-sm text-muted-foreground">
-                                  {word.translation}
-                                </p>
-                              </div>
+                              <p className={`text-sm font-mono ${theme.color} font-semibold`}>
+                                {word.pronunciation}
+                              </p>
+                              <p className="text-sm text-muted-foreground">
+                                {word.translation}
+                              </p>
                             </div>
                           </div>
-                        );
-                      })}
+                        </div>
+                      ))}
                     </div>
                   </CardContent>
                 </CollapsibleContent>
