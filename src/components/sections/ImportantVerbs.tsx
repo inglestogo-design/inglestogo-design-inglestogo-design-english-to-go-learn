@@ -385,7 +385,7 @@ export const ImportantVerbs = () => {
                             <img 
                               src={verb.image} 
                               alt={verb.infinitive}
-                              className="w-20 h-20 object-cover rounded-lg"
+                              className="w-24 h-24 object-cover rounded-xl shadow-lg hover:scale-110 hover:rotate-3 transition-all duration-300 cursor-pointer"
                             />
                              <div className="flex-1 space-y-2">
                               <div className="flex items-center gap-2">
@@ -445,7 +445,7 @@ export const ImportantVerbs = () => {
                             <img 
                               src={verb.image} 
                               alt={verb.infinitive}
-                              className="w-20 h-20 object-cover rounded-lg"
+                              className="w-24 h-24 object-cover rounded-xl shadow-lg hover:scale-110 hover:rotate-3 transition-all duration-300 cursor-pointer"
                             />
                             <div className="flex-1 space-y-2">
                               <div className="flex items-center gap-2">
@@ -505,7 +505,7 @@ export const ImportantVerbs = () => {
                             <img 
                               src={verb.image} 
                               alt={verb.infinitive}
-                              className="w-20 h-20 object-cover rounded-lg"
+                              className="w-24 h-24 object-cover rounded-xl shadow-lg hover:scale-110 hover:rotate-3 transition-all duration-300 cursor-pointer"
                             />
                             <div className="flex-1 space-y-2">
                               <div className="flex items-center gap-2">
