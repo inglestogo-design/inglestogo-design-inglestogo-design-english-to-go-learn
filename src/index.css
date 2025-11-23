@@ -151,6 +151,10 @@ All colors MUST be HSL.
     animation: fade-in 0.3s ease-out;
   }
 
+  .animate-shimmer {
+    animation: shimmer 3s ease-in-out infinite;
+  }
+
   @keyframes slide-up {
     from {
       opacity: 0;
@@ -168,6 +172,17 @@ All colors MUST be HSL.
     }
     to {
       opacity: 1;
+    }
+  }
+
+  @keyframes shimmer {
+    0%, 100% {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    50% {
+      transform: translateX(100%);
+      opacity: 0.3;
     }
   }
 }
