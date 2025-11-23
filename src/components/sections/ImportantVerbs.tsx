@@ -23,6 +23,14 @@ import wantImg from "@/assets/verbs/want.png";
 import lookImg from "@/assets/verbs/look.png";
 import useImg from "@/assets/verbs/use.png";
 import findImg from "@/assets/verbs/find.png";
+import giveImg from "@/assets/verbs/give.png";
+import tellImg from "@/assets/verbs/tell.png";
+import workImg from "@/assets/verbs/work.png";
+import callImg from "@/assets/verbs/call.png";
+import tryImg from "@/assets/verbs/try.png";
+import askImg from "@/assets/verbs/ask.png";
+import needImg from "@/assets/verbs/need.png";
+import feelImg from "@/assets/verbs/feel.png";
 
 interface Verb {
   infinitive: string;
@@ -252,6 +260,86 @@ export const ImportantVerbs = () => {
       past: "found",
       future: "will find",
       example: "I find it easy. / I found my keys. / I will find a solution."
+    },
+    {
+      infinitive: "Give",
+      pronunciation: "guív",
+      translation: "dar",
+      image: giveImg,
+      present: "give / gives",
+      past: "gave",
+      future: "will give",
+      example: "I give presents. / I gave her a book. / I will give you a call."
+    },
+    {
+      infinitive: "Tell",
+      pronunciation: "tél",
+      translation: "contar/dizer",
+      image: tellImg,
+      present: "tell / tells",
+      past: "told",
+      future: "will tell",
+      example: "I tell stories. / I told him the truth. / I will tell you later."
+    },
+    {
+      infinitive: "Work",
+      pronunciation: "uôrk",
+      translation: "trabalhar",
+      image: workImg,
+      present: "work / works",
+      past: "worked",
+      future: "will work",
+      example: "I work at home. / I worked yesterday. / I will work tomorrow."
+    },
+    {
+      infinitive: "Call",
+      pronunciation: "kól",
+      translation: "ligar/chamar",
+      image: callImg,
+      present: "call / calls",
+      past: "called",
+      future: "will call",
+      example: "I call my mom daily. / I called her yesterday. / I will call you back."
+    },
+    {
+      infinitive: "Try",
+      pronunciation: "tráai",
+      translation: "tentar",
+      image: tryImg,
+      present: "try / tries",
+      past: "tried",
+      future: "will try",
+      example: "I try my best. / I tried again. / I will try harder."
+    },
+    {
+      infinitive: "Ask",
+      pronunciation: "ásk",
+      translation: "perguntar",
+      image: askImg,
+      present: "ask / asks",
+      past: "asked",
+      future: "will ask",
+      example: "I ask questions. / I asked him for help. / I will ask later."
+    },
+    {
+      infinitive: "Need",
+      pronunciation: "níid",
+      translation: "precisar",
+      image: needImg,
+      present: "need / needs",
+      past: "needed",
+      future: "will need",
+      example: "I need water. / I needed help. / I will need more time."
+    },
+    {
+      infinitive: "Feel",
+      pronunciation: "fíil",
+      translation: "sentir",
+      image: feelImg,
+      present: "feel / feels",
+      past: "felt",
+      future: "will feel",
+      example: "I feel happy. / I felt sad yesterday. / I will feel better soon."
     }
   ];
 
