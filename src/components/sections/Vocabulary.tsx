@@ -158,14 +158,23 @@ export const Vocabulary = () => {
     setLoadingAudio(audioKey);
     
     try {
-      const { data, error } = await supabase.functions.invoke('generate-vocabulary-audio', {
-        body: { word, theme: themeId }
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-vocabulary-audio`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({ word, theme: themeId }),
+        }
+      );
 
-      if (error) throw error;
+      if (!response.ok) {
+        throw new Error('Failed to generate audio');
+      }
 
-      // Convert the response to an audio blob and play
-      const audioBlob = new Blob([data], { type: 'audio/mpeg' });
+      const audioBlob = await response.blob();
       const audioUrl = URL.createObjectURL(audioBlob);
       const audio = new Audio(audioUrl);
       
