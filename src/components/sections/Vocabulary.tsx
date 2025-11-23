@@ -176,33 +176,55 @@ export const Vocabulary = () => {
 
       const utterance = new SpeechSynthesisUtterance(word);
       
-      // Configure voice settings
+      // Configure voice settings for American English
       utterance.lang = 'en-US';
       utterance.rate = 0.8; // Slightly slower for learning
       utterance.pitch = 1.0;
       
-      // Try to use a native English voice
+      // Get available voices and prioritize US English
       const voices = speechSynthesis.getVoices();
-      const englishVoice = voices.find(voice => 
-        voice.lang.startsWith('en') && voice.name.includes('US')
-      ) || voices.find(voice => voice.lang.startsWith('en'));
       
-      if (englishVoice) {
-        utterance.voice = englishVoice;
+      // Try to find US English voice first
+      let selectedVoice = voices.find(voice => 
+        voice.lang === 'en-US' || voice.lang === 'en_US'
+      );
+      
+      // If no US voice, try any English voice with US indicators
+      if (!selectedVoice) {
+        selectedVoice = voices.find(voice => 
+          (voice.lang.startsWith('en') && voice.name.includes('US')) ||
+          voice.name.includes('American')
+        );
+      }
+      
+      // Last resort: any English voice
+      if (!selectedVoice) {
+        selectedVoice = voices.find(voice => voice.lang.startsWith('en'));
       }
 
-      // Alternate between male/female voices by theme (if available)
+      // Apply voice gender preference by theme
       const maleThemes = ['home', 'food', 'body', 'nature', 'animals'];
-      if (maleThemes.includes(themeId)) {
-        const maleVoice = voices.find(v => 
-          v.lang.startsWith('en') && (v.name.includes('Male') || v.name.includes('David') || v.name.includes('Alex'))
-        );
-        if (maleVoice) utterance.voice = maleVoice;
-      } else {
-        const femaleVoice = voices.find(v => 
-          v.lang.startsWith('en') && (v.name.includes('Female') || v.name.includes('Samantha') || v.name.includes('Victoria'))
-        );
-        if (femaleVoice) utterance.voice = femaleVoice;
+      const preferMale = maleThemes.includes(themeId);
+      
+      // Try to get gender-specific US voice
+      const genderVoice = voices.find(v => {
+        const isUSEnglish = v.lang === 'en-US' || v.lang === 'en_US' || 
+                           (v.lang.startsWith('en') && v.name.includes('US'));
+        if (!isUSEnglish) return false;
+        
+        if (preferMale) {
+          return v.name.includes('Male') || v.name.includes('David') || 
+                 v.name.includes('Alex') || v.name.includes('James');
+        } else {
+          return v.name.includes('Female') || v.name.includes('Samantha') || 
+                 v.name.includes('Victoria') || v.name.includes('Karen');
+        }
+      });
+      
+      if (genderVoice) {
+        utterance.voice = genderVoice;
+      } else if (selectedVoice) {
+        utterance.voice = selectedVoice;
       }
 
       utterance.onend = () => {
