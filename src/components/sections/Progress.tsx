@@ -26,8 +26,8 @@ export const ProgressSection = () => {
   return (
     <div className="space-y-6 animate-fade-in">
       <div>
-        <h2 className="text-3xl font-bold text-secondary">Seu Progresso</h2>
-        <p className="text-muted-foreground mt-1">Acompanhe sua evolução no aprendizado</p>
+        <h2 className="text-3xl font-bold text-secondary">Seu Progresso / Your Progress</h2>
+        <p className="text-muted-foreground mt-1">Acompanhe sua evolução no aprendizado / Track your learning evolution</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
@@ -35,12 +35,12 @@ export const ProgressSection = () => {
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
               <TrendingUp className="h-5 w-5 text-primary" />
-              Evolução Semanal
+              Evolução Semanal / Weekly Progress
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-primary">+15%</div>
-            <p className="text-sm text-muted-foreground">vs. semana passada</p>
+            <p className="text-sm text-muted-foreground">vs. semana passada / last week</p>
           </CardContent>
         </Card>
 
@@ -48,12 +48,12 @@ export const ProgressSection = () => {
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
               <Target className="h-5 w-5 text-secondary" />
-              Meta Mensal
+              Meta Mensal / Monthly Goal
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-secondary">78%</div>
-            <p className="text-sm text-muted-foreground">23/30 dias completos</p>
+            <p className="text-sm text-muted-foreground">23/30 dias completos / completed days</p>
           </CardContent>
         </Card>
 
@@ -61,19 +61,19 @@ export const ProgressSection = () => {
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
               <Calendar className="h-5 w-5 text-accent" />
-              Sequência Atual
+              Sequência Atual / Current Streak
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-accent">7 dias</div>
-            <p className="text-sm text-muted-foreground">Melhor: 12 dias</p>
+            <div className="text-3xl font-bold text-accent">7 dias / days</div>
+            <p className="text-sm text-muted-foreground">Melhor / Best: 12 dias / days</p>
           </CardContent>
         </Card>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Atividade Semanal</CardTitle>
+          <CardTitle>Atividade Semanal / Weekly Activity</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-end justify-between gap-2 h-48">
@@ -96,7 +96,7 @@ export const ProgressSection = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Award className="h-5 w-5 text-primary" />
-            Conquistas
+            Conquistas / Achievements
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -114,7 +114,7 @@ export const ProgressSection = () => {
                   <h4 className="font-semibold">{achievement.title}</h4>
                   {achievement.unlocked && (
                     <Badge variant="default" className="bg-primary">
-                      Desbloqueado
+                      Desbloqueado / Unlocked
                     </Badge>
                   )}
                 </div>
@@ -127,19 +127,19 @@ export const ProgressSection = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle>Habilidades</CardTitle>
+          <CardTitle>Habilidades / Skills</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {[
-            { skill: "Pronúncia", level: 75, color: "primary" },
-            { skill: "Vocabulário", level: 60, color: "secondary" },
-            { skill: "Gramática", level: 55, color: "accent" },
-            { skill: "Fluência", level: 45, color: "info" },
+            { skill: "Pronúncia / Pronunciation", level: 75, color: "primary" },
+            { skill: "Vocabulário / Vocabulary", level: 60, color: "secondary" },
+            { skill: "Gramática / Grammar", level: 55, color: "accent" },
+            { skill: "Fluência / Fluency", level: 45, color: "info" },
           ].map((item, index) => (
             <div key={index} className="space-y-2">
               <div className="flex items-center justify-between">
                 <span className="font-medium">{item.skill}</span>
-                <span className="text-sm text-muted-foreground">Nível {item.level}</span>
+                <span className="text-sm text-muted-foreground">Nível / Level {item.level}</span>
               </div>
               <Progress
                 value={item.level}
