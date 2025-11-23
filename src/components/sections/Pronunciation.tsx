@@ -46,15 +46,15 @@ export const Pronunciation = () => {
   return (
     <div className="space-y-6 animate-fade-in">
       <div>
-        <h2 className="text-3xl font-bold text-secondary">Prática de Pronúncia</h2>
+        <h2 className="text-3xl font-bold text-secondary"><strong>Prática de Pronúncia</strong> / Pronunciation Practice</h2>
         <p className="text-muted-foreground mt-1">Grave sua voz e receba feedback em tempo real</p>
       </div>
 
       <Card className="border-2 border-primary/20">
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            <span>Frase do Dia</span>
-            <Badge variant="secondary">Intermediário</Badge>
+            <span><strong>Frase do Dia</strong> / Daily Phrase</span>
+            <Badge variant="secondary"><strong>Intermediário</strong> / Intermediate</Badge>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -64,7 +64,7 @@ export const Pronunciation = () => {
             
             <Button variant="outline" size="lg" className="gap-2">
               <Volume2 className="h-5 w-5" />
-              Ouvir Pronúncia
+              <strong>Ouvir Pronúncia</strong> / Listen
             </Button>
           </div>
 
@@ -81,7 +81,7 @@ export const Pronunciation = () => {
 
           <div className="text-center">
             <p className="text-sm text-muted-foreground">
-              {isRecording ? "Gravando... Fale agora!" : "Clique para gravar sua pronúncia"}
+              {isRecording ? "<strong>Gravando...</strong> / Recording..." : "<strong>Clique para gravar</strong> / Click to record"}
             </p>
           </div>
 
@@ -100,7 +100,7 @@ export const Pronunciation = () => {
                   )}
                   <div className="space-y-2 flex-1">
                     <h4 className="font-semibold">
-                      {feedback === "correct" ? "Excelente!" : "Vamos tentar novamente"}
+                      {feedback === "correct" ? "<strong>Excelente!</strong> / Excellent!" : "<strong>Vamos tentar novamente</strong> / Let's try again"}
                     </h4>
                     {feedback === "correct" ? (
                       <p className="text-sm text-muted-foreground">
@@ -122,10 +122,10 @@ export const Pronunciation = () => {
                 <div className="mt-4 flex gap-2">
                   <Button variant="outline" size="sm" className="gap-2" onClick={handleTryAgain}>
                     <RotateCw className="h-4 w-4" />
-                    Tentar Novamente
+                    <strong>Tentar Novamente</strong> / Try Again
                   </Button>
                   <Button variant="outline" size="sm" onClick={handleNextPhrase}>
-                    Próxima Frase
+                    <strong>Próxima Frase</strong> / Next Phrase
                   </Button>
                 </div>
               </CardContent>
@@ -137,29 +137,29 @@ export const Pronunciation = () => {
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Precisão</CardTitle>
+            <CardTitle className="text-base"><strong>Precisão</strong> / Accuracy</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-primary">85%</div>
-            <p className="text-sm text-muted-foreground">Hoje</p>
+            <p className="text-sm text-muted-foreground"><strong>Hoje</strong> / Today</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Frases Praticadas</CardTitle>
+            <CardTitle className="text-base"><strong>Frases Praticadas</strong> / Practiced Phrases</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-secondary">23</div>
-            <p className="text-sm text-muted-foreground">Esta semana</p>
+            <p className="text-sm text-muted-foreground"><strong>Esta semana</strong> / This week</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Tempo de Prática</CardTitle>
+            <CardTitle className="text-base"><strong>Tempo de Prática</strong> / Practice Time</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-accent">45min</div>
-            <p className="text-sm text-muted-foreground">Hoje</p>
+            <p className="text-sm text-muted-foreground"><strong>Hoje</strong> / Today</p>
           </CardContent>
         </Card>
       </div>
