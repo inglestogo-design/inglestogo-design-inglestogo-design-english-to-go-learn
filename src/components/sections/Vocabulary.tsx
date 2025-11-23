@@ -19,6 +19,8 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { useState } from "react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 // Home images
 import houseImg from "@/assets/vocabulary/home/house.png";
@@ -140,6 +142,8 @@ interface VocabularyTheme {
 
 export const Vocabulary = () => {
   const [openSections, setOpenSections] = useState<string[]>(["home"]);
+  const [loadingAudio, setLoadingAudio] = useState<string | null>(null);
+  const { toast } = useToast();
 
   const toggleSection = (id: string) => {
     setOpenSections(prev => 
@@ -147,6 +151,39 @@ export const Vocabulary = () => {
         ? prev.filter(sectionId => sectionId !== id)
         : [...prev, id]
     );
+  };
+
+  const playAudio = async (word: string, themeId: string) => {
+    const audioKey = `${themeId}-${word}`;
+    setLoadingAudio(audioKey);
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-vocabulary-audio', {
+        body: { word, theme: themeId }
+      });
+
+      if (error) throw error;
+
+      // Convert the response to an audio blob and play
+      const audioBlob = new Blob([data], { type: 'audio/mpeg' });
+      const audioUrl = URL.createObjectURL(audioBlob);
+      const audio = new Audio(audioUrl);
+      
+      audio.onended = () => {
+        URL.revokeObjectURL(audioUrl);
+      };
+      
+      await audio.play();
+    } catch (error) {
+      console.error('Error playing audio:', error);
+      toast({
+        title: "Erro ao reproduzir áudio",
+        description: "Não foi possível gerar o áudio. Tente novamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingAudio(null);
+    }
   };
 
   const themes: VocabularyTheme[] = [
@@ -420,8 +457,17 @@ export const Vocabulary = () => {
                             <div className="space-y-1 w-full">
                               <div className="flex items-center justify-center gap-2">
                                 <p className="font-bold text-lg">{word.word}</p>
-                                <Button variant="ghost" size="icon" className="h-6 w-6">
-                                  <Volume2 className="h-3 w-3" />
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon" 
+                                  className="h-6 w-6"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    playAudio(word.word, theme.id);
+                                  }}
+                                  disabled={loadingAudio === `${theme.id}-${word.word}`}
+                                >
+                                  <Volume2 className={`h-3 w-3 ${loadingAudio === `${theme.id}-${word.word}` ? 'animate-pulse' : ''}`} />
                                 </Button>
                               </div>
                               <p className={`text-sm font-mono ${theme.color} font-semibold`}>
