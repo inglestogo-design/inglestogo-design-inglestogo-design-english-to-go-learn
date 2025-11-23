@@ -202,6 +202,7 @@ const quotes: DailyQuote[] = [
 
 export const QuoteOfTheDay = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [showMiniPopup, setShowMiniPopup] = useState(false);
   const [loadingAudio, setLoadingAudio] = useState(false);
   const [todayQuote, setTodayQuote] = useState<DailyQuote>(quotes[0]);
 
@@ -216,10 +217,16 @@ export const QuoteOfTheDay = () => {
     const todayStr = new Date().toDateString();
     
     if (lastShown !== todayStr) {
+      // Show mini popup after 2 seconds
       setTimeout(() => {
-        setIsOpen(true);
+        setShowMiniPopup(true);
         localStorage.setItem("lastQuoteShown", todayStr);
       }, 2000);
+
+      // Auto-hide mini popup after 10 seconds
+      setTimeout(() => {
+        setShowMiniPopup(false);
+      }, 12000);
     }
 
     // Initialize speech synthesis
@@ -270,11 +277,14 @@ export const QuoteOfTheDay = () => {
   return (
     <>
 
-      {/* Fixed Bottom Right Popup */}
-      {!isOpen && (
+      {/* Fixed Bottom Right Popup - Auto-hides after 10 seconds */}
+      {showMiniPopup && !isOpen && (
         <div 
           className="fixed bottom-6 right-6 z-50 animate-slide-up cursor-pointer"
-          onClick={() => setIsOpen(true)}
+          onClick={() => {
+            setIsOpen(true);
+            setShowMiniPopup(false);
+          }}
         >
           <Card className="w-80 shadow-2xl border-2 border-primary/30 bg-gradient-to-br from-card via-primary/5 to-secondary/5 hover:scale-105 transition-all duration-300">
             <CardContent className="p-4">
@@ -292,8 +302,7 @@ export const QuoteOfTheDay = () => {
                       size="sm"
                       onClick={(e) => {
                         e.stopPropagation();
-                        setIsOpen(false);
-                        localStorage.setItem("lastQuoteShown", "dismissed");
+                        setShowMiniPopup(false);
                       }}
                       className="h-6 w-6 p-0 hover:bg-destructive/10"
                     >
