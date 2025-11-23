@@ -387,17 +387,17 @@ export const ImportantVerbs = () => {
                               alt={verb.infinitive}
                               className="w-20 h-20 object-cover rounded-lg"
                             />
-                            <div className="flex-1 space-y-2">
+                             <div className="flex-1 space-y-2">
                               <div className="flex items-center gap-2">
                                 <h3 className="text-xl font-bold text-foreground">{verb.infinitive}</h3>
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  onClick={() => playAudio(verb.infinitive)}
-                                  disabled={loadingAudio === verb.infinitive}
+                                  onClick={() => playAudio(verb.present)}
+                                  disabled={loadingAudio === verb.present}
                                   className="h-8 w-8 p-0"
                                 >
-                                  <Volume2 className={`h-4 w-4 ${loadingAudio === verb.infinitive ? 'animate-pulse' : ''}`} />
+                                  <Volume2 className={`h-4 w-4 ${loadingAudio === verb.present ? 'animate-pulse' : ''}`} />
                                 </Button>
                               </div>
                               <p className="text-sm text-muted-foreground">/{verb.pronunciation}/</p>
@@ -453,11 +453,11 @@ export const ImportantVerbs = () => {
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  onClick={() => playAudio(verb.infinitive)}
-                                  disabled={loadingAudio === verb.infinitive}
+                                  onClick={() => playAudio(verb.past)}
+                                  disabled={loadingAudio === verb.past}
                                   className="h-8 w-8 p-0"
                                 >
-                                  <Volume2 className={`h-4 w-4 ${loadingAudio === verb.infinitive ? 'animate-pulse' : ''}`} />
+                                  <Volume2 className={`h-4 w-4 ${loadingAudio === verb.past ? 'animate-pulse' : ''}`} />
                                 </Button>
                               </div>
                               <p className="text-sm text-muted-foreground">/{verb.pronunciation}/</p>
@@ -513,11 +513,11 @@ export const ImportantVerbs = () => {
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  onClick={() => playAudio(verb.infinitive)}
-                                  disabled={loadingAudio === verb.infinitive}
+                                  onClick={() => playAudio(verb.future)}
+                                  disabled={loadingAudio === verb.future}
                                   className="h-8 w-8 p-0"
                                 >
-                                  <Volume2 className={`h-4 w-4 ${loadingAudio === verb.infinitive ? 'animate-pulse' : ''}`} />
+                                  <Volume2 className={`h-4 w-4 ${loadingAudio === verb.future ? 'animate-pulse' : ''}`} />
                                 </Button>
                               </div>
                               <p className="text-sm text-muted-foreground">/{verb.pronunciation}/</p>
