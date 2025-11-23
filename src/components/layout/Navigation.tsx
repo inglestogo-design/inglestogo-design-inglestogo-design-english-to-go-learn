@@ -8,13 +8,13 @@ interface NavigationProps {
 
 export const Navigation = ({ activeSection, onSectionChange }: NavigationProps) => {
   const navItems = [
-    { id: "dashboard", label: "Início", icon: Home },
-    { id: "pronunciation", label: "Pronúncia", icon: Mic },
-    { id: "vocabulary", label: "Vocabulário", icon: BookText },
-    { id: "verbs", label: "Verbos", icon: BookOpen },
-    { id: "alphabet", label: "Alfabeto", icon: BookA },
-    { id: "lessons", label: "Lições", icon: GraduationCap },
-    { id: "progress", label: "Progresso", icon: TrendingUp },
+    { id: "dashboard", label: "Início / Home", icon: Home },
+    { id: "pronunciation", label: "Pronúncia / Pronunciation", icon: Mic },
+    { id: "vocabulary", label: "Vocabulário / Vocabulary", icon: BookText },
+    { id: "verbs", label: "Verbos / Verbs", icon: BookOpen },
+    { id: "alphabet", label: "Alfabeto / Alphabet", icon: BookA },
+    { id: "lessons", label: "Lições / Lessons", icon: GraduationCap },
+    { id: "progress", label: "Progresso / Progress", icon: TrendingUp },
   ];
 
   return (
