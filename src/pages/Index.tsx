@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Header } from "@/components/layout/Header";
 import { Navigation } from "@/components/layout/Navigation";
+import { Footer } from "@/components/layout/Footer";
 import { Dashboard } from "@/components/sections/Dashboard";
 import { Pronunciation } from "@/components/sections/Pronunciation";
 import { Vocabulary } from "@/components/sections/Vocabulary";
@@ -34,12 +35,13 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       <Header />
       <Navigation activeSection={activeSection} onSectionChange={setActiveSection} />
-      <main className="container px-4 py-8">
+      <main className="container px-4 py-8 flex-1">
         {renderSection()}
       </main>
+      <Footer />
     </div>
   );
 };
