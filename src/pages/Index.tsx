@@ -9,6 +9,7 @@ import { ImportantVerbs } from "@/components/sections/ImportantVerbs";
 import { Alphabet } from "@/components/sections/Alphabet";
 import { Lessons } from "@/components/sections/Lessons";
 import { ProgressSection } from "@/components/sections/Progress";
+import { Numbers } from "@/components/sections/Numbers";
 
 const Index = () => {
   const [activeSection, setActiveSection] = useState("dashboard");
@@ -25,6 +26,8 @@ const Index = () => {
         return <ImportantVerbs />;
       case "alphabet":
         return <Alphabet />;
+      case "numbers":
+        return <Numbers />;
       case "lessons":
         return <Lessons />;
       case "progress":
