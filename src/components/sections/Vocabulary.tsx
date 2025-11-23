@@ -8,7 +8,7 @@ export const Vocabulary = () => {
   const dailyWords = [
     {
       word: "Achievement",
-      phonetic: "/əˈtʃiːvmənt/",
+      phonetic: "atchíviment",
       translation: "Conquista, realização",
       example: "Graduating was a great achievement.",
       examplePt: "Formar-se foi uma grande conquista.",
@@ -17,7 +17,7 @@ export const Vocabulary = () => {
     },
     {
       word: "Resilient",
-      phonetic: "/rɪˈzɪliənt/",
+      phonetic: "rizílient",
       translation: "Resiliente",
       example: "She remained resilient despite difficulties.",
       examplePt: "Ela permaneceu resiliente apesar das dificuldades.",
@@ -26,7 +26,7 @@ export const Vocabulary = () => {
     },
     {
       word: "Encourage",
-      phonetic: "/ɪnˈkʌrɪdʒ/",
+      phonetic: "enkâridj",
       translation: "Encorajar, incentivar",
       example: "Teachers encourage students to ask questions.",
       examplePt: "Professores encorajam alunos a fazer perguntas.",

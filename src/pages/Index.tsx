@@ -4,6 +4,7 @@ import { Navigation } from "@/components/layout/Navigation";
 import { Dashboard } from "@/components/sections/Dashboard";
 import { Pronunciation } from "@/components/sections/Pronunciation";
 import { Vocabulary } from "@/components/sections/Vocabulary";
+import { ImportantVerbs } from "@/components/sections/ImportantVerbs";
 import { Alphabet } from "@/components/sections/Alphabet";
 import { Lessons } from "@/components/sections/Lessons";
 import { ProgressSection } from "@/components/sections/Progress";
@@ -19,6 +20,8 @@ const Index = () => {
         return <Pronunciation />;
       case "vocabulary":
         return <Vocabulary />;
+      case "verbs":
+        return <ImportantVerbs />;
       case "alphabet":
         return <Alphabet />;
       case "lessons":

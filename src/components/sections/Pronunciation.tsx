@@ -9,7 +9,7 @@ export const Pronunciation = () => {
   const [feedback, setFeedback] = useState<"correct" | "incorrect" | null>(null);
 
   const currentPhrase = "Hello, how are you today?";
-  const phonetic = "/həˈloʊ, haʊ ɑːr juː təˈdeɪ/";
+  const phonetic = "relôu, ráu ar iu tudêi?";
 
   const handleRecord = () => {
     setIsRecording(!isRecording);

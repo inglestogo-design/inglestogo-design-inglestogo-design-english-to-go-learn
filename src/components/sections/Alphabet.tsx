@@ -6,24 +6,24 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const Alphabet = () => {
   const vowels = [
-    { letter: "A", sounds: ["/eɪ/", "/æ/", "/ɑː/"], examples: ["cake", "cat", "father"] },
-    { letter: "E", sounds: ["/iː/", "/e/", "/ə/"], examples: ["he", "bed", "happen"] },
-    { letter: "I", sounds: ["/aɪ/", "/ɪ/"], examples: ["ice", "sit"] },
-    { letter: "O", sounds: ["/oʊ/", "/ɒ/", "/uː/"], examples: ["go", "hot", "do"] },
-    { letter: "U", sounds: ["/juː/", "/ʌ/", "/ʊ/"], examples: ["use", "cup", "put"] },
+    { letter: "A", sounds: ["êi", "é", "á"], examples: ["cake (kêik)", "cat (két)", "father (fáder)"] },
+    { letter: "E", sounds: ["i", "é", "ê"], examples: ["he (rí)", "bed (béd)", "happen (répen)"] },
+    { letter: "I", sounds: ["ái", "i"], examples: ["ice (áis)", "sit (sít)"] },
+    { letter: "O", sounds: ["ôu", "ó", "u"], examples: ["go (gôu)", "hot (rót)", "do (du)"] },
+    { letter: "U", sounds: ["iú", "â", "u"], examples: ["use (iúz)", "cup (kâp)", "put (pút)"] },
   ];
 
   const digraphs = [
-    { digraph: "CH", sound: "/tʃ/", example: "church", type: "Consonantal" },
-    { digraph: "SH", sound: "/ʃ/", example: "ship", type: "Consonantal" },
-    { digraph: "TH", sound: "/θ/, /ð/", example: "think, this", type: "Consonantal" },
-    { digraph: "AI", sound: "/eɪ/", example: "rain", type: "Vocálico" },
-    { digraph: "AY", sound: "/eɪ/", example: "day", type: "Vocálico" },
-    { digraph: "EI", sound: "/aɪ/, /eɪ/", example: "either, eight", type: "Vocálico" },
-    { digraph: "IE", sound: "/iː/, /aɪ/", example: "piece, pie", type: "Vocálico" },
-    { digraph: "OO", sound: "/uː/, /ʊ/", example: "food, book", type: "Vocálico" },
-    { digraph: "OU", sound: "/aʊ/", example: "house", type: "Vocálico" },
-    { digraph: "OW", sound: "/aʊ/, /oʊ/", example: "cow, show", type: "Vocálico" },
+    { digraph: "CH", sound: "tch", example: "church (tchârtch)", type: "Consonantal" },
+    { digraph: "SH", sound: "ch", example: "ship (chip)", type: "Consonantal" },
+    { digraph: "TH", sound: "z/t", example: "think (zínk), this (dís)", type: "Consonantal" },
+    { digraph: "AI", sound: "êi", example: "rain (rêin)", type: "Vocálico" },
+    { digraph: "AY", sound: "êi", example: "day (dêi)", type: "Vocálico" },
+    { digraph: "EI", sound: "ái/êi", example: "either (íder), eight (êit)", type: "Vocálico" },
+    { digraph: "IE", sound: "i/ái", example: "piece (píis), pie (pái)", type: "Vocálico" },
+    { digraph: "OO", sound: "u/u", example: "food (fúud), book (búk)", type: "Vocálico" },
+    { digraph: "OU", sound: "áu", example: "house (ráus)", type: "Vocálico" },
+    { digraph: "OW", sound: "áu/ôu", example: "cow (káu), show (chôu)", type: "Vocálico" },
   ];
 
   return (
