@@ -8,12 +8,25 @@ import { useToast } from "@/hooks/use-toast";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ChevronDown, ChevronUp } from "lucide-react";
 
+// Import number illustrations
+import num1Img from "@/assets/numbers/1.png";
+import num2Img from "@/assets/numbers/2.png";
+import num3Img from "@/assets/numbers/3.png";
+import num4Img from "@/assets/numbers/4.png";
+import num5Img from "@/assets/numbers/5.png";
+import num6Img from "@/assets/numbers/6.png";
+import num7Img from "@/assets/numbers/7.png";
+import num8Img from "@/assets/numbers/8.png";
+import num9Img from "@/assets/numbers/9.png";
+import num10Img from "@/assets/numbers/10.png";
+
 interface NumberItem {
   number: number;
   cardinal: string;
   cardinalPronunciation: string;
   ordinal: string;
   ordinalPronunciation: string;
+  image?: string;
 }
 
 export const Numbers = () => {
@@ -75,16 +88,16 @@ export const Numbers = () => {
 
   const numbers: NumberItem[] = [
     // 1-10
-    { number: 1, cardinal: "one", cardinalPronunciation: "uân", ordinal: "first", ordinalPronunciation: "fârst" },
-    { number: 2, cardinal: "two", cardinalPronunciation: "tú", ordinal: "second", ordinalPronunciation: "sékond" },
-    { number: 3, cardinal: "three", cardinalPronunciation: "zríi", ordinal: "third", ordinalPronunciation: "zârd" },
-    { number: 4, cardinal: "four", cardinalPronunciation: "fór", ordinal: "fourth", ordinalPronunciation: "fôrz" },
-    { number: 5, cardinal: "five", cardinalPronunciation: "fáiv", ordinal: "fifth", ordinalPronunciation: "fífz" },
-    { number: 6, cardinal: "six", cardinalPronunciation: "síks", ordinal: "sixth", ordinalPronunciation: "síksz" },
-    { number: 7, cardinal: "seven", cardinalPronunciation: "séven", ordinal: "seventh", ordinalPronunciation: "sévenz" },
-    { number: 8, cardinal: "eight", cardinalPronunciation: "êit", ordinal: "eighth", ordinalPronunciation: "êitz" },
-    { number: 9, cardinal: "nine", cardinalPronunciation: "náin", ordinal: "ninth", ordinalPronunciation: "náinz" },
-    { number: 10, cardinal: "ten", cardinalPronunciation: "tén", ordinal: "tenth", ordinalPronunciation: "ténz" },
+    { number: 1, cardinal: "one", cardinalPronunciation: "uân", ordinal: "first", ordinalPronunciation: "fârst", image: num1Img },
+    { number: 2, cardinal: "two", cardinalPronunciation: "tú", ordinal: "second", ordinalPronunciation: "sékond", image: num2Img },
+    { number: 3, cardinal: "three", cardinalPronunciation: "zríi", ordinal: "third", ordinalPronunciation: "zârd", image: num3Img },
+    { number: 4, cardinal: "four", cardinalPronunciation: "fór", ordinal: "fourth", ordinalPronunciation: "fôrz", image: num4Img },
+    { number: 5, cardinal: "five", cardinalPronunciation: "fáiv", ordinal: "fifth", ordinalPronunciation: "fífz", image: num5Img },
+    { number: 6, cardinal: "six", cardinalPronunciation: "síks", ordinal: "sixth", ordinalPronunciation: "síksz", image: num6Img },
+    { number: 7, cardinal: "seven", cardinalPronunciation: "séven", ordinal: "seventh", ordinalPronunciation: "sévenz", image: num7Img },
+    { number: 8, cardinal: "eight", cardinalPronunciation: "êit", ordinal: "eighth", ordinalPronunciation: "êitz", image: num8Img },
+    { number: 9, cardinal: "nine", cardinalPronunciation: "náin", ordinal: "ninth", ordinalPronunciation: "náinz", image: num9Img },
+    { number: 10, cardinal: "ten", cardinalPronunciation: "tén", ordinal: "tenth", ordinalPronunciation: "ténz", image: num10Img },
     
     // 11-20
     { number: 11, cardinal: "eleven", cardinalPronunciation: "ilévon", ordinal: "eleventh", ordinalPronunciation: "ilévonz" },
@@ -244,16 +257,24 @@ export const Numbers = () => {
 
                   <CollapsibleContent>
                     <CardContent>
-                      <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-5">
+                       <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-5">
                         {groupNumbers.map((item) => (
                           <div
                             key={`cardinal-${item.number}`}
                             className="rounded-lg border-2 border-primary/20 bg-gradient-primary/5 p-4 transition-smooth hover:shadow-md hover:scale-105"
                           >
                             <div className="flex flex-col items-center text-center space-y-2">
-                              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-primary text-white font-bold text-xl">
-                                {item.number}
-                              </div>
+                              {item.image ? (
+                                <img 
+                                  src={item.image} 
+                                  alt={item.cardinal}
+                                  className="w-20 h-20 object-cover rounded-lg"
+                                />
+                              ) : (
+                                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-primary text-white font-bold text-xl">
+                                  {item.number}
+                                </div>
+                              )}
                               <div className="space-y-1 w-full">
                                 <div className="flex items-center justify-center gap-2">
                                   <p className="font-bold text-lg">{item.cardinal}</p>
@@ -309,16 +330,29 @@ export const Numbers = () => {
 
                   <CollapsibleContent>
                     <CardContent>
-                      <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-5">
+                       <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-5">
                         {groupNumbers.map((item) => (
                           <div
                             key={`ordinal-${item.number}`}
                             className="rounded-lg border-2 border-secondary/20 bg-gradient-secondary/5 p-4 transition-smooth hover:shadow-md hover:scale-105"
                           >
                             <div className="flex flex-col items-center text-center space-y-2">
-                              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-secondary text-white font-bold text-lg">
-                                {item.number}º
-                              </div>
+                              {item.image ? (
+                                <div className="relative">
+                                  <img 
+                                    src={item.image} 
+                                    alt={item.ordinal}
+                                    className="w-20 h-20 object-cover rounded-lg"
+                                  />
+                                  <Badge className="absolute -top-2 -right-2 bg-secondary text-white font-bold text-xs">
+                                    {item.number}º
+                                  </Badge>
+                                </div>
+                              ) : (
+                                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-secondary text-white font-bold text-lg">
+                                  {item.number}º
+                                </div>
+                              )}
                               <div className="space-y-1 w-full">
                                 <div className="flex items-center justify-center gap-2">
                                   <p className="font-bold text-lg">{item.ordinal}</p>
