@@ -269,32 +269,64 @@ export const QuoteOfTheDay = () => {
 
   return (
     <>
-      <Card 
-        className="cursor-pointer hover:shadow-lg transition-smooth border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-secondary/5"
-        onClick={() => setIsOpen(true)}
-      >
-        <CardContent className="p-6">
-          <div className="flex items-start gap-4">
-            <div className="rounded-full bg-primary/10 p-3">
-              <Quote className="h-6 w-6 text-primary" />
-            </div>
-            <div className="flex-1">
-              <h3 className="text-lg font-bold text-foreground mb-2 flex items-center gap-2">
-                <span className="text-2xl">{todayQuote.emoji}</span>
-                Frase do Dia / Quote of the Day
-              </h3>
-              <p className="text-sm text-muted-foreground italic">
-                <span className="text-primary font-bold text-lg">"</span>
-                {todayQuote.english}
-                <span className="text-primary font-bold text-lg">"</span>
-              </p>
-              <p className="text-xs text-primary mt-2">
-                Clique para ver pronúncia e tradução
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+
+      {/* Fixed Bottom Right Popup */}
+      {!isOpen && (
+        <div 
+          className="fixed bottom-6 right-6 z-50 animate-slide-up cursor-pointer"
+          onClick={() => setIsOpen(true)}
+        >
+          <Card className="w-80 shadow-2xl border-2 border-primary/30 bg-gradient-to-br from-card via-primary/5 to-secondary/5 hover:scale-105 transition-all duration-300">
+            <CardContent className="p-4">
+              <div className="flex items-start gap-3 mb-3">
+                <div className="rounded-full bg-primary/20 p-2 animate-pulse">
+                  <Quote className="h-4 w-4 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between mb-1">
+                    <h4 className="text-xs font-bold text-primary">
+                      Frase do Dia / Quote of the Day
+                    </h4>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsOpen(false);
+                        localStorage.setItem("lastQuoteShown", "dismissed");
+                      }}
+                      className="h-6 w-6 p-0 hover:bg-destructive/10"
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </div>
+                  <p className="text-[10px] text-muted-foreground">
+                    {new Date().toLocaleDateString('pt-BR', { 
+                      weekday: 'long', 
+                      year: 'numeric', 
+                      month: 'long', 
+                      day: 'numeric' 
+                    })}
+                  </p>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-3xl">{todayQuote.emoji}</span>
+                  <p className="text-xs italic text-foreground flex-1">
+                    <span className="text-primary font-bold">"</span>
+                    {todayQuote.english}
+                    <span className="text-primary font-bold">"</span>
+                  </p>
+                </div>
+                <p className="text-[9px] text-center text-primary/80">
+                  ✨ Clique para ver pronúncia e tradução
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="max-w-2xl">

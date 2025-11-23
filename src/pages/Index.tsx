@@ -10,6 +10,8 @@ import { Alphabet } from "@/components/sections/Alphabet";
 import { Lessons } from "@/components/sections/Lessons";
 import { ProgressSection } from "@/components/sections/Progress";
 import { Numbers } from "@/components/sections/Numbers";
+import { Radio } from "@/components/sections/Radio";
+import { QuoteOfTheDay } from "@/components/sections/QuoteOfTheDay";
 
 const Index = () => {
   const [activeSection, setActiveSection] = useState("dashboard");
@@ -32,6 +34,8 @@ const Index = () => {
         return <Lessons />;
       case "progress":
         return <ProgressSection />;
+      case "radio":
+        return <Radio />;
       default:
         return <Dashboard />;
     }
@@ -45,6 +49,7 @@ const Index = () => {
         {renderSection()}
       </main>
       <Footer />
+      <QuoteOfTheDay />
     </div>
   );
 };
