@@ -14,7 +14,6 @@ import { Radio } from "@/components/sections/Radio";
 import { QuoteOfTheDay } from "@/components/sections/QuoteOfTheDay";
 import { LevelingTest } from "@/components/leveling-test/LevelingTest";
 import { VirtualCoach } from "@/components/sections/VirtualCoach";
-import { VocabularyImageGenerator } from "@/components/admin/VocabularyImageGenerator";
 import { SurvivalEnglish } from "@/components/sections/SurvivalEnglish";
 
 const Index = () => {
@@ -47,8 +46,6 @@ const Index = () => {
         return <VirtualCoach />;
       case "survivalEnglish":
         return <SurvivalEnglish />;
-      case "imageGenerator":
-        return <VocabularyImageGenerator />;
       default:
         return <Dashboard />;
     }
