@@ -1,4 +1,4 @@
-import { User, LogOut, Crown } from "lucide-react";
+import { User, LogOut, Crown, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -11,6 +11,8 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { PremiumBadge } from "@/components/premium/PremiumBadge";
+import { VoiceSettingsDialog } from "@/components/settings/VoiceSettingsDialog";
+import { useState } from "react";
 import logo from "@/assets/logo-final.png";
 
 interface HeaderProps {
@@ -20,6 +22,7 @@ interface HeaderProps {
 export const Header = ({ fontClass = "font-baloo" }: HeaderProps) => {
   const { user, signOut, isPremium } = useAuth();
   const navigate = useNavigate();
+  const [voiceSettingsOpen, setVoiceSettingsOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b-2 border-primary/20 bg-gradient-to-r from-card via-card to-primary/5 backdrop-blur supports-[backdrop-filter]:bg-card/60 shadow-lg">
@@ -58,6 +61,10 @@ export const Header = ({ fontClass = "font-baloo" }: HeaderProps) => {
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => setVoiceSettingsOpen(true)}>
+                  <Settings className="mr-2 h-4 w-4" />
+                  Configurar Voz / Voice Settings
+                </DropdownMenuItem>
                 {!isPremium && (
                   <DropdownMenuItem onClick={() => navigate("/premium")}>
                     <Crown className="mr-2 h-4 w-4 text-yellow-500" />
@@ -81,6 +88,11 @@ export const Header = ({ fontClass = "font-baloo" }: HeaderProps) => {
           )}
         </div>
       </div>
+      
+      <VoiceSettingsDialog 
+        open={voiceSettingsOpen} 
+        onOpenChange={setVoiceSettingsOpen} 
+      />
     </header>
   );
 };

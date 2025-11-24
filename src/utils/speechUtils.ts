@@ -5,6 +5,7 @@ interface SpeechOptions {
   rate?: number;
   pitch?: number;
   volume?: number;
+  voiceName?: string;
 }
 
 let voiceIndex = 0; // Track which voice to use next
@@ -90,15 +91,30 @@ export const speakText = (
 
     const utterance = new SpeechSynthesisUtterance(text);
     
-    // Default to female voice if no gender specified
-    const gender = options.gender ?? 'female';
-    
-    if (gender === 'male') {
-      const voice = getMaleVoice();
-      if (voice) utterance.voice = voice;
-    } else {
-      const voice = getFemaleVoice();
-      if (voice) utterance.voice = voice;
+    // Priority 1: Use specific voice name if provided
+    if (options.voiceName) {
+      const voices = speechSynthesis.getVoices();
+      const specificVoice = voices.find(v => v.name === options.voiceName);
+      if (specificVoice) {
+        utterance.voice = specificVoice;
+      }
+    }
+    // Priority 2: Check localStorage for saved preference
+    else {
+      const savedVoiceName = localStorage.getItem('preferred_voice_name');
+      if (savedVoiceName) {
+        const voices = speechSynthesis.getVoices();
+        const preferredVoice = voices.find(v => v.name === savedVoiceName);
+        if (preferredVoice) {
+          utterance.voice = preferredVoice;
+        }
+      }
+      // Priority 3: Use gender-based selection (default female)
+      else {
+        const gender = options.gender ?? 'female';
+        const voice = gender === 'male' ? getMaleVoice() : getFemaleVoice();
+        if (voice) utterance.voice = voice;
+      }
     }
 
     // More natural speech parameters
