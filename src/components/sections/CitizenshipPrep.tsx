@@ -6,17 +6,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { citizenshipLessons } from "@/data/citizenshipLessonsData";
 import { MiniLesson } from "@/components/citizenship/MiniLesson";
 import { N400Glossary } from "@/components/citizenship/N400Glossary";
-import { InterviewSimulation } from "@/components/citizenship/InterviewSimulation";
-import { Lock, CheckCircle2, Flag, BookOpen, GraduationCap, MessageSquare } from "lucide-react";
+import { Lock, CheckCircle2, Flag, BookOpen, GraduationCap } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { LockedContent } from "@/components/premium/LockedContent";
-
-export const CitizenshipPrep = () => {
-  const { isPremium } = useAuth();
-  const [selectedLesson, setSelectedLesson] = useState<number | null>(null);
-  const [completedLessons, setCompletedLessons] = useState<number[]>([]);
-  const [currentLevel, setCurrentLevel] = useState(1);
-  const [showInterview, setShowInterview] = useState(false);
 
   const handleLessonComplete = () => {
     if (selectedLesson) {
@@ -68,14 +60,10 @@ export const CitizenshipPrep = () => {
 
       {/* Main Tabs */}
       <Tabs defaultValue="lessons" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 max-w-2xl mx-auto">
+        <TabsList className="grid w-full grid-cols-2 max-w-2xl mx-auto">
           <TabsTrigger value="lessons" className="flex items-center gap-2">
             <GraduationCap className="w-4 h-4" />
             Mini-Aulas / Lessons
-          </TabsTrigger>
-          <TabsTrigger value="interview" className="flex items-center gap-2">
-            <MessageSquare className="w-4 h-4" />
-            Simulação / Interview
           </TabsTrigger>
           <TabsTrigger value="glossary" className="flex items-center gap-2">
             <BookOpen className="w-4 h-4" />
