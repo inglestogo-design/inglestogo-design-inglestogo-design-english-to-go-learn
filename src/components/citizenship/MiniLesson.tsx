@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Volume2, CheckCircle2, XCircle, ArrowRight, Award } from "lucide-react";
 import { CitizenshipLesson } from "@/data/citizenshipLessonsData";
 import { toast } from "sonner";
@@ -78,41 +79,124 @@ export const MiniLesson = ({ lesson, onComplete, onBack }: MiniLessonProps) => {
     </div>
   );
 
-  const renderContent = () => (
-    <div className="space-y-6">
-      <h3 className="text-2xl font-bold text-center">Conteúdo Principal / Main Content</h3>
-      
-      <div className="space-y-4">
-        {lesson.content.map((item, index) => (
-          <Card key={index} className="p-6 hover:shadow-lg transition-shadow">
-            <div className="space-y-3">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1">
-                  <p className="text-lg font-medium">{item.portuguese}</p>
-                  <p className="text-primary">{item.english}</p>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => playAudio(item.english)}
-                >
-                  <Volume2 className="w-5 h-5" />
-                </Button>
+  const renderContent = () => {
+    // Level 1 lessons have tabs for Portuguese and English
+    if (lesson.level === 1) {
+      return (
+        <div className="space-y-6">
+          <h3 className="text-2xl font-bold text-center">Conteúdo Principal / Main Content</h3>
+          
+          <Tabs defaultValue="portuguese" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="portuguese">🇧🇷 Português</TabsTrigger>
+              <TabsTrigger value="english">🇺🇸 English</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="portuguese" className="space-y-4 mt-4">
+              <div className="bg-primary/5 p-4 rounded-lg mb-4">
+                <p className="text-sm text-muted-foreground">
+                  📚 Primeiro entenda o conteúdo em português para se familiarizar com o tema
+                </p>
               </div>
-              <p className="text-sm text-muted-foreground italic">
-                Pronúncia: {item.pronunciation}
-              </p>
-            </div>
-          </Card>
-        ))}
-      </div>
+              {lesson.content.map((item, index) => (
+                <Card key={index} className="p-6 hover:shadow-lg transition-shadow">
+                  <div className="space-y-3">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1">
+                        <p className="text-xl font-bold text-primary mb-2">{item.portuguese}</p>
+                        <p className="text-muted-foreground">{item.english}</p>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => playAudio(item.english)}
+                      >
+                        <Volume2 className="w-5 h-5" />
+                      </Button>
+                    </div>
+                    <p className="text-sm text-muted-foreground italic">
+                      Pronúncia: {item.pronunciation}
+                    </p>
+                  </div>
+                </Card>
+              ))}
+            </TabsContent>
+            
+            <TabsContent value="english" className="space-y-4 mt-4">
+              <div className="bg-secondary/20 p-4 rounded-lg mb-4">
+                <p className="text-sm text-muted-foreground">
+                  🎯 Agora pratique lendo em inglês para memorizar os termos
+                </p>
+              </div>
+              {lesson.content.map((item, index) => (
+                <Card key={index} className="p-6 hover:shadow-lg transition-shadow border-2 border-primary/20">
+                  <div className="space-y-3">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1">
+                        <p className="text-xl font-bold text-primary mb-2">{item.english}</p>
+                        <p className="text-sm text-muted-foreground italic">
+                          Pronúncia: {item.pronunciation}
+                        </p>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => playAudio(item.english)}
+                      >
+                        <Volume2 className="w-5 h-5" />
+                      </Button>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </TabsContent>
+          </Tabs>
 
-      <Button onClick={() => setStep("quiz")} className="w-full" size="lg">
-        Próximo: Quiz / Next: Quiz
-        <ArrowRight className="w-4 h-4 ml-2" />
-      </Button>
-    </div>
-  );
+          <Button onClick={() => setStep("quiz")} className="w-full" size="lg">
+            Próximo: Quiz / Next: Quiz
+            <ArrowRight className="w-4 h-4 ml-2" />
+          </Button>
+        </div>
+      );
+    }
+
+    // Level 2 and 3 lessons without tabs (original format)
+    return (
+      <div className="space-y-6">
+        <h3 className="text-2xl font-bold text-center">Conteúdo Principal / Main Content</h3>
+        
+        <div className="space-y-4">
+          {lesson.content.map((item, index) => (
+            <Card key={index} className="p-6 hover:shadow-lg transition-shadow">
+              <div className="space-y-3">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1">
+                    <p className="text-lg font-medium">{item.portuguese}</p>
+                    <p className="text-primary">{item.english}</p>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => playAudio(item.english)}
+                  >
+                    <Volume2 className="w-5 h-5" />
+                  </Button>
+                </div>
+                <p className="text-sm text-muted-foreground italic">
+                  Pronúncia: {item.pronunciation}
+                </p>
+              </div>
+            </Card>
+          ))}
+        </div>
+
+        <Button onClick={() => setStep("quiz")} className="w-full" size="lg">
+          Próximo: Quiz / Next: Quiz
+          <ArrowRight className="w-4 h-4 ml-2" />
+        </Button>
+      </div>
+    );
+  };
 
   const renderQuiz = () => (
     <div className="space-y-6">
