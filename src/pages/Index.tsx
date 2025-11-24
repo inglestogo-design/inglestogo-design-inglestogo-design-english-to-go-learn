@@ -62,8 +62,11 @@ const Index = () => {
 
   // Show onboarding quiz if not completed
   if (user && !onboardingCompleted && !showStudyPlan) {
+    console.log('🎯 Showing OnboardingQuiz - user:', user.id, 'onboardingCompleted:', onboardingCompleted, 'showStudyPlan:', showStudyPlan);
     return <OnboardingQuiz onComplete={handleQuizComplete} />;
   }
+  
+  console.log('🏠 Showing main app - user:', user?.id, 'onboardingCompleted:', onboardingCompleted, 'showStudyPlan:', showStudyPlan);
 
   // Show study plan after quiz completion
   if (showStudyPlan && userAnswers) {
