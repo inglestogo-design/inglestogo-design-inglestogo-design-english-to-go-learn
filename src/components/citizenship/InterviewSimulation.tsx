@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Send, ArrowLeft } from "lucide-react";
+import { Loader2, Send, ArrowLeft, Mic, MicOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
+import { speakText } from "@/utils/speechUtils";
 
 interface Message {
   role: 'user' | 'assistant';
@@ -22,6 +24,14 @@ export const InterviewSimulation = ({ onBack }: InterviewSimulationProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
   const { toast } = useToast();
+  const { isRecording, transcript, startRecording, stopRecording, isSupported } = useSpeechRecognition();
+
+  // Update input when transcript changes
+  useEffect(() => {
+    if (transcript) {
+      setInput(transcript);
+    }
+  }, [transcript]);
 
   const startInterview = async () => {
     setIsLoading(true);
@@ -32,8 +42,12 @@ export const InterviewSimulation = ({ onBack }: InterviewSimulationProps) => {
 
       if (error) throw error;
 
-      setMessages([{ role: 'assistant', content: data.message }]);
+      const assistantMessage = { role: 'assistant' as const, content: data.message };
+      setMessages([assistantMessage]);
       setHasStarted(true);
+      
+      // Speak the interviewer's first question
+      await speakText(data.message, { rate: 0.85 });
     } catch (error: any) {
       console.error('Error starting interview:', error);
       toast({
@@ -61,7 +75,11 @@ export const InterviewSimulation = ({ onBack }: InterviewSimulationProps) => {
 
       if (error) throw error;
 
-      setMessages(prev => [...prev, { role: 'assistant', content: data.message }]);
+      const assistantMessage = { role: 'assistant' as const, content: data.message };
+      setMessages(prev => [...prev, assistantMessage]);
+      
+      // Speak the interviewer's response
+      await speakText(data.message, { rate: 0.85 });
     } catch (error: any) {
       console.error('Error sending message:', error);
       toast({
@@ -153,18 +171,36 @@ export const InterviewSimulation = ({ onBack }: InterviewSimulationProps) => {
                   sendMessage();
                 }
               }}
-              placeholder="Digite sua resposta em inglês... / Type your answer in English..."
+              placeholder="Digite ou fale sua resposta... / Type or speak your answer..."
               className="min-h-[80px]"
               disabled={isLoading}
             />
-            <Button 
-              onClick={sendMessage} 
-              disabled={isLoading || !input.trim()}
-              size="icon"
-              className="h-[80px] w-[80px]"
-            >
-              <Send className="h-5 w-5" />
-            </Button>
+            <div className="flex flex-col gap-2">
+              {isSupported && (
+                <Button
+                  onClick={isRecording ? stopRecording : startRecording}
+                  disabled={isLoading}
+                  size="icon"
+                  variant={isRecording ? "destructive" : "secondary"}
+                  className="h-[80px] w-[80px]"
+                  title={isRecording ? "Parar gravação / Stop recording" : "Gravar voz / Record voice"}
+                >
+                  {isRecording ? (
+                    <MicOff className="h-6 w-6" />
+                  ) : (
+                    <Mic className="h-6 w-6" />
+                  )}
+                </Button>
+              )}
+              <Button 
+                onClick={sendMessage} 
+                disabled={isLoading || !input.trim()}
+                size="icon"
+                className="h-[80px] w-[80px]"
+              >
+                <Send className="h-5 w-5" />
+              </Button>
+            </div>
           </div>
         </div>
       )}
