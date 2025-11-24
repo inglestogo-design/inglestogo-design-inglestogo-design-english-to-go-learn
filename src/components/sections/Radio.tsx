@@ -12,6 +12,7 @@ export const Radio = () => {
   const [isMuted, setIsMuted] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const { isPremium } = useAuth();
+  const FREE_STATIONS_COUNT = 1;
 
   // English learning radio stations (24/7 streams)
   const radioStations = [
@@ -93,6 +94,9 @@ export const Radio = () => {
   };
 
   const changeStation = (index: number) => {
+    if (!isPremium && index >= FREE_STATIONS_COUNT) {
+      return; // Block non-premium users from changing to locked stations
+    }
     const wasPlaying = isPlaying;
     if (audioRef.current) {
       audioRef.current.pause();
@@ -153,12 +157,6 @@ export const Radio = () => {
         </CardContent>
       </Card>
 
-      {!isPremium ? (
-        <LockedContent 
-          message="🔒 Desbloqueie o Rádio 24/7 e o Podcast Teacher Ao Vivo para praticar inglês todos os dias"
-          size="lg"
-        />
-      ) : (
       <Card className="border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-secondary/5">
         <CardContent className="p-8">
           <div className="space-y-6">
@@ -233,22 +231,31 @@ export const Radio = () => {
                 <div className="grid gap-2">
                   {radioStations.filter(s => s.category === "news").map((station, index) => {
                     const actualIndex = radioStations.indexOf(station);
+                    const isLocked = !isPremium && actualIndex >= FREE_STATIONS_COUNT;
                     return (
                       <button
                         key={actualIndex}
-                        onClick={() => changeStation(actualIndex)}
-                        className={`p-3 rounded-lg border-2 transition-all text-left ${
-                          currentStation === actualIndex
-                            ? 'border-primary bg-primary/10 shadow-md'
-                            : 'border-border hover:border-primary/50 hover:bg-muted'
+                        onClick={() => !isLocked && changeStation(actualIndex)}
+                        disabled={isLocked}
+                        className={`p-3 rounded-lg border-2 transition-all text-left relative ${
+                          isLocked 
+                            ? 'opacity-50 cursor-not-allowed border-muted'
+                            : currentStation === actualIndex
+                              ? 'border-primary bg-primary/10 shadow-md'
+                              : 'border-border hover:border-primary/50 hover:bg-muted'
                         }`}
                       >
+                        {isLocked && (
+                          <div className="absolute top-2 right-2">
+                            <Lock className="h-4 w-4 text-muted-foreground" />
+                          </div>
+                        )}
                         <div className="flex items-center gap-3">
                           <RadioIcon className={`h-5 w-5 ${
                             currentStation === actualIndex ? 'text-primary' : 'text-muted-foreground'
                           }`} />
                           <div className="flex-1">
-                            <p className="font-semibold text-sm">{station.name}</p>
+                            <p className="font-semibold text-sm">{station.name} {isLocked && '🔒'}</p>
                             <p className="text-xs text-muted-foreground">{station.description}</p>
                           </div>
                         </div>
@@ -266,22 +273,31 @@ export const Radio = () => {
                 <div className="grid gap-2">
                   {radioStations.filter(s => s.category === "music").map((station, index) => {
                     const actualIndex = radioStations.indexOf(station);
+                    const isLocked = !isPremium && actualIndex >= FREE_STATIONS_COUNT;
                     return (
                       <button
                         key={actualIndex}
-                        onClick={() => changeStation(actualIndex)}
-                        className={`p-3 rounded-lg border-2 transition-all text-left ${
-                          currentStation === actualIndex
-                            ? 'border-secondary bg-secondary/10 shadow-md'
-                            : 'border-border hover:border-secondary/50 hover:bg-muted'
+                        onClick={() => !isLocked && changeStation(actualIndex)}
+                        disabled={isLocked}
+                        className={`p-3 rounded-lg border-2 transition-all text-left relative ${
+                          isLocked 
+                            ? 'opacity-50 cursor-not-allowed border-muted'
+                            : currentStation === actualIndex
+                              ? 'border-secondary bg-secondary/10 shadow-md'
+                              : 'border-border hover:border-secondary/50 hover:bg-muted'
                         }`}
                       >
+                        {isLocked && (
+                          <div className="absolute top-2 right-2">
+                            <Lock className="h-4 w-4 text-muted-foreground" />
+                          </div>
+                        )}
                         <div className="flex items-center gap-3">
                           <RadioIcon className={`h-5 w-5 ${
                             currentStation === actualIndex ? 'text-secondary' : 'text-muted-foreground'
                           }`} />
                           <div className="flex-1">
-                            <p className="font-semibold text-sm">{station.name}</p>
+                            <p className="font-semibold text-sm">{station.name} {isLocked && '🔒'}</p>
                             <p className="text-xs text-muted-foreground">{station.description}</p>
                           </div>
                         </div>
@@ -302,6 +318,11 @@ export const Radio = () => {
           </div>
         </CardContent>
       </Card>
+
+      {!isPremium && (
+        <LockedContent 
+          message="🔒 Desbloqueie todas as estações de rádio 24/7 para praticar inglês com notícias e música"
+        />
       )}
 
       {/* Hidden Audio Element */}
