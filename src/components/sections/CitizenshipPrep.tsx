@@ -6,7 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { citizenshipLessons } from "@/data/citizenshipLessonsData";
 import { MiniLesson } from "@/components/citizenship/MiniLesson";
 import { N400Glossary } from "@/components/citizenship/N400Glossary";
-import { Lock, CheckCircle2, Flag, BookOpen, GraduationCap } from "lucide-react";
+import { InterviewSimulation } from "@/components/citizenship/InterviewSimulation";
+import { Lock, CheckCircle2, Flag, BookOpen, GraduationCap, MessageSquare } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { LockedContent } from "@/components/premium/LockedContent";
 
@@ -15,6 +16,7 @@ export const CitizenshipPrep = () => {
   const [selectedLesson, setSelectedLesson] = useState<number | null>(null);
   const [completedLessons, setCompletedLessons] = useState<number[]>([]);
   const [currentLevel, setCurrentLevel] = useState(1);
+  const [showInterview, setShowInterview] = useState(false);
 
   const handleLessonComplete = () => {
     if (selectedLesson) {
@@ -27,6 +29,10 @@ export const CitizenshipPrep = () => {
   const level2Lessons = citizenshipLessons.filter(l => l.level === 2);
   const allLevel1Complete = level1Lessons.every(l => completedLessons.includes(l.id));
   const allLevel2Complete = level2Lessons.every(l => completedLessons.includes(l.id));
+
+  if (showInterview) {
+    return <InterviewSimulation onBack={() => setShowInterview(false)} />;
+  }
 
   if (selectedLesson) {
     const lesson = citizenshipLessons.find(l => l.id === selectedLesson);
@@ -62,10 +68,14 @@ export const CitizenshipPrep = () => {
 
       {/* Main Tabs */}
       <Tabs defaultValue="lessons" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto">
+        <TabsList className="grid w-full grid-cols-3 max-w-2xl mx-auto">
           <TabsTrigger value="lessons" className="flex items-center gap-2">
             <GraduationCap className="w-4 h-4" />
             Mini-Aulas / Lessons
+          </TabsTrigger>
+          <TabsTrigger value="interview" className="flex items-center gap-2">
+            <MessageSquare className="w-4 h-4" />
+            Simulação / Interview
           </TabsTrigger>
           <TabsTrigger value="glossary" className="flex items-center gap-2">
             <BookOpen className="w-4 h-4" />
@@ -219,6 +229,20 @@ export const CitizenshipPrep = () => {
         
         <LockedContent message="Conteúdo Premium - Complete os Níveis 1 e 2 para desbloquear / Premium Content - Complete Levels 1 and 2 to unlock" />
       </div>
+        </TabsContent>
+
+        <TabsContent value="interview" className="mt-8">
+          <Card className="p-8 text-center space-y-6">
+            <div className="text-6xl mb-4">🎙️</div>
+            <h3 className="text-2xl font-bold">Simulação de Entrevista N-400</h3>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Pratique com um entrevistador virtual do USCIS. Receba feedback personalizado, 
+              adaptado ao seu nível, e prepare-se para a entrevista real.
+            </p>
+            <Button onClick={() => setShowInterview(true)} size="lg" className="mt-4">
+              Iniciar Simulação / Start Interview Simulation
+            </Button>
+          </Card>
         </TabsContent>
 
         <TabsContent value="glossary" className="mt-8">

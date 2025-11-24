@@ -1,5 +1,8 @@
 project_id = "mqixrtmnkogdpsaqosfm"
 
+[functions.citizenship-interview]
+verify_jwt = true
+
 [functions.generate-vocabulary-audio]
 verify_jwt = true
 
