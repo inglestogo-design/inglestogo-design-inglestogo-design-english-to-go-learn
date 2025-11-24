@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Volume2, X, Quote } from "lucide-react";
+import { Volume2, X, Sun } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -267,16 +267,16 @@ export const QuoteOfTheDay = () => {
             setShowMiniPopup(false);
           }}
         >
-          <Card className="w-80 shadow-2xl border-2 border-primary/30 bg-gradient-to-br from-card via-primary/5 to-secondary/5 hover:scale-105 transition-all duration-300">
+          <Card className="w-80 shadow-2xl border-2 border-emerald-400/40 bg-gradient-to-br from-sky-50 via-emerald-50 to-teal-50 dark:from-sky-950/40 dark:via-emerald-950/40 dark:to-teal-950/40 hover:scale-105 transition-all duration-300">
             <CardContent className="p-4">
               <div className="flex items-start gap-3 mb-3">
-                <div className="rounded-full bg-primary/20 p-2 animate-pulse">
-                  <Quote className="h-4 w-4 text-primary" />
+                <div className="rounded-full bg-gradient-to-br from-amber-400 to-orange-500 p-2 animate-pulse shadow-lg">
+                  <Sun className="h-5 w-5 text-white" />
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-1">
-                    <h4 className="text-xs font-bold text-primary">
-                      Frase do Dia / Quote of the Day
+                    <h4 className="text-xs font-bold bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-400 dark:to-teal-400 bg-clip-text text-transparent">
+                      ☀️ Inspiração do Dia / Daily Inspiration
                     </h4>
                     <Button
                       variant="ghost"
@@ -290,7 +290,7 @@ export const QuoteOfTheDay = () => {
                       <X className="h-3 w-3" />
                     </Button>
                   </div>
-                  <p className="text-[10px] text-muted-foreground">
+                  <p className="text-[10px] text-emerald-700 dark:text-emerald-300">
                     {new Date().toLocaleDateString('pt-BR', { 
                       weekday: 'long', 
                       year: 'numeric', 
@@ -303,13 +303,13 @@ export const QuoteOfTheDay = () => {
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <span className="text-3xl">{todayQuote.emoji}</span>
-                  <p className="text-xs italic text-foreground flex-1">
-                    <span className="text-primary font-bold">"</span>
+                  <p className="text-xs italic text-emerald-900 dark:text-emerald-100 flex-1 leading-relaxed">
+                    <span className="text-emerald-600 dark:text-emerald-400 font-black text-2xl leading-none">"</span>
                     {todayQuote.english}
-                    <span className="text-primary font-bold">"</span>
+                    <span className="text-emerald-600 dark:text-emerald-400 font-black text-2xl leading-none">"</span>
                   </p>
                 </div>
-                <p className="text-[9px] text-center text-primary/80">
+                <p className="text-[9px] text-center text-teal-600 dark:text-teal-400 font-medium">
                   ✨ Clique para ver pronúncia e tradução
                 </p>
               </div>
@@ -319,36 +319,46 @@ export const QuoteOfTheDay = () => {
       )}
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl border-emerald-400/40">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-2xl">
-              <Quote className="h-6 w-6 text-primary" />
-              Frase do Dia / Quote of the Day
+            <DialogTitle className="flex items-center gap-3 text-2xl">
+              <div className="rounded-full bg-gradient-to-br from-amber-400 to-orange-500 p-2.5 animate-pulse shadow-lg">
+                <Sun className="h-6 w-6 text-white" />
+              </div>
+              <span className="bg-gradient-to-r from-emerald-600 to-teal-600 dark:from-emerald-400 dark:to-teal-400 bg-clip-text text-transparent font-bold">
+                Inspiração do Dia / Daily Inspiration
+              </span>
             </DialogTitle>
           </DialogHeader>
           
           <div className="space-y-6 py-4">
-            <div className="relative rounded-2xl bg-gradient-to-br from-primary/20 via-secondary/15 to-accent/10 p-8 border-2 border-primary/30 shadow-2xl overflow-hidden">
-              <div className="absolute top-2 left-2 text-6xl text-primary/10 font-serif leading-none">"</div>
-              <div className="absolute bottom-2 right-2 text-6xl text-primary/10 font-serif leading-none">"</div>
-              <div className="relative z-10 space-y-4">
+            <div className="relative rounded-2xl bg-gradient-to-br from-sky-100 via-emerald-100 to-teal-100 dark:from-sky-950/60 dark:via-emerald-950/60 dark:to-teal-950/60 p-10 border-2 border-emerald-400/40 shadow-2xl overflow-hidden">
+              <div className="absolute top-3 left-3 text-7xl text-emerald-600/20 dark:text-emerald-400/20 font-serif leading-none">"</div>
+              <div className="absolute bottom-3 right-3 text-7xl text-emerald-600/20 dark:text-emerald-400/20 font-serif leading-none">"</div>
+              
+              {/* Decorative sun rays */}
+              <div className="absolute top-4 right-4 opacity-20">
+                <Sun className="h-20 w-20 text-amber-400 animate-spin-slow" />
+              </div>
+              
+              <div className="relative z-10 space-y-5">
                 <div className="flex justify-center">
-                  <span className="text-6xl animate-pulse">{todayQuote.emoji}</span>
+                  <span className="text-7xl animate-pulse drop-shadow-lg">{todayQuote.emoji}</span>
                 </div>
-                <p className="text-2xl font-bold text-center text-foreground leading-relaxed px-4">
+                <p className="text-2xl font-bold text-center text-emerald-900 dark:text-emerald-100 leading-relaxed px-4">
                   {todayQuote.english}
                 </p>
               </div>
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-emerald-200/30 dark:via-emerald-800/20 to-transparent animate-shimmer"></div>
             </div>
 
             <div className="space-y-4">
-              <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-gradient-to-r from-sky-50 to-emerald-50 dark:from-sky-950/40 dark:to-emerald-950/40 rounded-lg border border-emerald-300/30">
                 <div className="flex-1">
-                  <p className="text-xs text-muted-foreground mb-1">
-                    Pronúncia / Pronunciation:
+                  <p className="text-xs text-emerald-700 dark:text-emerald-300 mb-1 font-medium">
+                    🗣️ Pronúncia / Pronunciation:
                   </p>
-                  <p className="text-base font-medium text-accent">
+                  <p className="text-base font-medium text-teal-700 dark:text-teal-300">
                     /{todayQuote.pronunciation}/
                   </p>
                 </div>
@@ -357,24 +367,25 @@ export const QuoteOfTheDay = () => {
                   size="sm"
                   onClick={() => playAudio(todayQuote.english)}
                   disabled={loadingAudio}
-                  className="h-12 w-12 p-0"
+                  className="h-12 w-12 p-0 hover:bg-emerald-200 dark:hover:bg-emerald-800"
                 >
-                  <Volume2 className={`h-6 w-6 ${loadingAudio ? 'animate-pulse' : ''}`} />
+                  <Volume2 className={`h-6 w-6 text-emerald-600 dark:text-emerald-400 ${loadingAudio ? 'animate-pulse' : ''}`} />
                 </Button>
               </div>
 
-              <div className="p-4 bg-secondary/10 rounded-lg border border-secondary/20">
-                <p className="text-xs text-muted-foreground mb-1">
-                  Significado / Meaning:
+              <div className="p-4 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/40 dark:to-teal-950/40 rounded-lg border border-teal-300/30">
+                <p className="text-xs text-teal-700 dark:text-teal-300 mb-1 font-medium">
+                  💬 Significado / Meaning:
                 </p>
-                <p className="text-base font-medium text-secondary">
+                <p className="text-base font-medium text-emerald-800 dark:text-emerald-200">
                   {todayQuote.portuguese}
                 </p>
               </div>
             </div>
 
-            <div className="text-center text-sm text-muted-foreground bg-gradient-to-r from-transparent via-primary/5 to-transparent py-3 rounded-lg">
-              <span className="text-xl">💡</span> Uma nova frase aparecerá amanhã! / A new quote will appear tomorrow!
+            <div className="text-center text-sm bg-gradient-to-r from-transparent via-emerald-100 dark:via-emerald-950/40 to-transparent py-3 rounded-lg border border-emerald-300/20">
+              <span className="text-xl">🌅</span> 
+              <span className="text-emerald-700 dark:text-emerald-300 font-medium"> Uma nova inspiração aparecerá amanhã! / A new inspiration will appear tomorrow!</span>
             </div>
           </div>
         </DialogContent>
