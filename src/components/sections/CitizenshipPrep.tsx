@@ -48,11 +48,11 @@ export const CitizenshipPrep = () => {
         <div className="flex items-center justify-center gap-2">
           <Flag className="w-8 h-8 text-primary" />
           <h1 className="text-4xl font-bold">
-            Preparação para Cidadania
+            Teste Preparatório Cidadania
           </h1>
         </div>
         <p className="text-xl text-muted-foreground">
-          Citizenship Preparation Guide
+          Citizenship Prep Test
         </p>
         <p className="text-muted-foreground max-w-2xl mx-auto">
           Mini-aulas e glossário completo para preparação do teste de cidadania americana / 

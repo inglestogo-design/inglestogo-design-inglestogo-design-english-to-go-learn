@@ -16,7 +16,7 @@ export const Navigation = ({ activeSection, onSectionChange }: NavigationProps) 
     { id: "alphabet", label: "Alfabeto / Alphabet", icon: BookA },
     { id: "numbers", label: "Números / Numbers", icon: Hash },
     { id: "lessons", label: "Lições / Lessons", icon: GraduationCap },
-    { id: "citizenship", label: "🇺🇸 Cidadania / Citizenship", icon: Flag },
+    { id: "citizenship", label: "🇺🇸 Teste Cidadania / Citizenship Test", icon: Flag },
     { id: "radio", label: "Rádio 24h / Radio 24/7", icon: Radio },
     { id: "progress", label: "Progresso / Progress", icon: TrendingUp },
     { id: "survivalEnglish", label: "📚 Survival English", icon: Lightbulb },
