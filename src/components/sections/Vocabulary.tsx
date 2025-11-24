@@ -12,7 +12,9 @@ import {
   Briefcase,
   ChevronDown,
   ChevronUp,
-  Lock
+  Lock,
+  Users,
+  Heart
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { LockedContent } from "@/components/premium/LockedContent";
@@ -24,6 +26,7 @@ import { useState, useEffect } from "react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useToast } from "@/hooks/use-toast";
 import { speakText } from "@/utils/speechUtils";
+import { vocabularyThemes } from "@/data/vocabularyData";
 
 // Home images
 import houseImg from "@/assets/vocabulary/home/house.png";
@@ -198,198 +201,53 @@ export const Vocabulary = () => {
     }
   };
 
-  const themes: VocabularyTheme[] = [
-    {
-      id: "home",
-      title: "Casa",
-      titleEn: "Home",
-      icon: Home,
-      color: "text-blue-600",
-      bgColor: "bg-blue-50",
-      borderColor: "border-blue-200",
-      words: [
-        { word: "House", pronunciation: "ráus", translation: "casa", image: houseImg },
-        { word: "Door", pronunciation: "dór", translation: "porta", image: doorImg },
-        { word: "Window", pronunciation: "uíndou", translation: "janela", image: windowImg },
-        { word: "Kitchen", pronunciation: "kítchen", translation: "cozinha", image: kitchenImg },
-        { word: "Bedroom", pronunciation: "bédruum", translation: "quarto", image: bedroomImg },
-        { word: "Bathroom", pronunciation: "bázruum", translation: "banheiro", image: bathroomImg },
-        { word: "Living room", pronunciation: "líving ruum", translation: "sala de estar", image: livingRoomImg },
-        { word: "Garden", pronunciation: "gárden", translation: "jardim", image: gardenImg },
-      ]
-    },
-    {
-      id: "school",
-      title: "Escola",
-      titleEn: "School",
-      icon: School,
-      color: "text-purple-600",
-      bgColor: "bg-purple-50",
-      borderColor: "border-purple-200",
-      words: [
-        { word: "School", pronunciation: "skuul", translation: "escola", image: schoolImg },
-        { word: "Teacher", pronunciation: "títcher", translation: "professor(a)", image: teacherImg },
-        { word: "Student", pronunciation: "stiúdent", translation: "estudante", image: studentImg },
-        { word: "Book", pronunciation: "búk", translation: "livro", image: bookImg },
-        { word: "Pen", pronunciation: "pén", translation: "caneta", image: penImg },
-        { word: "Pencil", pronunciation: "pénsil", translation: "lápis", image: pencilImg },
-        { word: "Notebook", pronunciation: "nôutbuk", translation: "caderno", image: notebookImg },
-        { word: "Classroom", pronunciation: "klássruum", translation: "sala de aula", image: classroomImg },
-      ]
-    },
-    {
-      id: "food",
-      title: "Comida",
-      titleEn: "Food",
-      icon: UtensilsCrossed,
-      color: "text-orange-600",
-      bgColor: "bg-orange-50",
-      borderColor: "border-orange-200",
-      words: [
-        { word: "Food", pronunciation: "fúud", translation: "comida", image: foodImg },
-        { word: "Water", pronunciation: "uóter", translation: "água", image: waterImg },
-        { word: "Bread", pronunciation: "bréd", translation: "pão", image: breadImg },
-        { word: "Milk", pronunciation: "mílk", translation: "leite", image: milkImg },
-        { word: "Rice", pronunciation: "ráis", translation: "arroz", image: riceImg },
-        { word: "Chicken", pronunciation: "tchíken", translation: "frango", image: chickenImg },
-        { word: "Apple", pronunciation: "épol", translation: "maçã", image: appleImg },
-        { word: "Banana", pronunciation: "benéna", translation: "banana", image: bananaImg },
-      ]
-    },
-    {
-      id: "transportation",
-      title: "Transporte",
-      titleEn: "Transportation",
-      icon: Car,
-      color: "text-red-600",
-      bgColor: "bg-red-50",
-      borderColor: "border-red-200",
-      words: [
-        { word: "Car", pronunciation: "kár", translation: "carro", image: carImg },
-        { word: "Bus", pronunciation: "bâs", translation: "ônibus", image: busImg },
-        { word: "Train", pronunciation: "trêin", translation: "trem", image: trainImg },
-        { word: "Airplane", pronunciation: "érplêin", translation: "avião", image: airplaneImg },
-        { word: "Bicycle", pronunciation: "báisicol", translation: "bicicleta", image: bicycleImg },
-        { word: "Motorcycle", pronunciation: "môtorsáicol", translation: "motocicleta", image: motorcycleImg },
-        { word: "Boat", pronunciation: "bôut", translation: "barco", image: boatImg },
-        { word: "Subway", pronunciation: "sâbuêi", translation: "metrô", image: subwayImg },
-      ]
-    },
-    {
-      id: "body",
-      title: "Corpo",
-      titleEn: "Body",
-      icon: HeartPulse,
-      color: "text-pink-600",
-      bgColor: "bg-pink-50",
-      borderColor: "border-pink-200",
-      words: [
-        { word: "Head", pronunciation: "réd", translation: "cabeça", image: headImg },
-        { word: "Eye", pronunciation: "ái", translation: "olho", image: eyeImg },
-        { word: "Nose", pronunciation: "nôuz", translation: "nariz", image: noseImg },
-        { word: "Mouth", pronunciation: "máuz", translation: "boca", image: mouthImg },
-        { word: "Ear", pronunciation: "íer", translation: "orelha", image: earImg },
-        { word: "Hand", pronunciation: "rénd", translation: "mão", image: handImg },
-        { word: "Foot", pronunciation: "fút", translation: "pé", image: footImg },
-        { word: "Arm", pronunciation: "árm", translation: "braço", image: armImg },
-      ]
-    },
-    {
-      id: "colors",
-      title: "Cores",
-      titleEn: "Colors",
-      icon: Palette,
-      color: "text-indigo-600",
-      bgColor: "bg-indigo-50",
-      borderColor: "border-indigo-200",
-      words: [
-        { word: "Red", pronunciation: "réd", translation: "vermelho", image: redImg },
-        { word: "Blue", pronunciation: "blu", translation: "azul", image: blueImg },
-        { word: "Green", pronunciation: "gríin", translation: "verde", image: greenImg },
-        { word: "Yellow", pronunciation: "iélou", translation: "amarelo", image: yellowImg },
-        { word: "Black", pronunciation: "blék", translation: "preto", image: blackImg },
-        { word: "White", pronunciation: "uáit", translation: "branco", image: whiteImg },
-        { word: "Orange", pronunciation: "órendj", translation: "laranja", image: orangeImg },
-        { word: "Purple", pronunciation: "pârpol", translation: "roxo", image: purpleImg },
-      ]
-    },
-    {
-      id: "nature",
-      title: "Natureza",
-      titleEn: "Nature",
-      icon: Trees,
-      color: "text-green-600",
-      bgColor: "bg-green-50",
-      borderColor: "border-green-200",
-      words: [
-        { word: "Tree", pronunciation: "tríi", translation: "árvore", image: treeImg },
-        { word: "Flower", pronunciation: "fláuer", translation: "flor", image: flowerImg },
-        { word: "Sun", pronunciation: "sân", translation: "sol", image: sunImg },
-        { word: "Moon", pronunciation: "múun", translation: "lua", image: moonImg },
-        { word: "Star", pronunciation: "stár", translation: "estrela", image: starImg },
-        { word: "Mountain", pronunciation: "máunten", translation: "montanha", image: mountainImg },
-        { word: "River", pronunciation: "ríver", translation: "rio", image: riverImg },
-        { word: "Ocean", pronunciation: "ôuchen", translation: "oceano", image: oceanImg },
-      ]
-    },
-    {
-      id: "clothes",
-      title: "Roupas",
-      titleEn: "Clothes",
-      icon: ShirtIcon,
-      color: "text-teal-600",
-      bgColor: "bg-teal-50",
-      borderColor: "border-teal-200",
-      words: [
-        { word: "Shirt", pronunciation: "chért", translation: "camisa", image: shirtImg },
-        { word: "Pants", pronunciation: "pénts", translation: "calças", image: pantsImg },
-        { word: "Dress", pronunciation: "drés", translation: "vestido", image: dressImg },
-        { word: "Shoes", pronunciation: "chúuz", translation: "sapatos", image: shoesImg },
-        { word: "Socks", pronunciation: "sóks", translation: "meias", image: socksImg },
-        { word: "Hat", pronunciation: "rét", translation: "chapéu", image: hatImg },
-        { word: "Jacket", pronunciation: "djéket", translation: "jaqueta", image: jacketImg },
-        { word: "Skirt", pronunciation: "skért", translation: "saia", image: skirtImg },
-      ]
-    },
-    {
-      id: "animals",
-      title: "Animais",
-      titleEn: "Animals",
-      icon: PawPrint,
-      color: "text-amber-600",
-      bgColor: "bg-amber-50",
-      borderColor: "border-amber-200",
-      words: [
-        { word: "Dog", pronunciation: "dóg", translation: "cachorro", image: dogImg },
-        { word: "Cat", pronunciation: "két", translation: "gato", image: catImg },
-        { word: "Bird", pronunciation: "bêrd", translation: "pássaro", image: birdImg },
-        { word: "Fish", pronunciation: "fích", translation: "peixe", image: fishImg },
-        { word: "Horse", pronunciation: "rórss", translation: "cavalo", image: horseImg },
-        { word: "Cow", pronunciation: "káu", translation: "vaca", image: cowImg },
-        { word: "Lion", pronunciation: "láion", translation: "leão", image: lionImg },
-        { word: "Elephant", pronunciation: "élefent", translation: "elefante", image: elephantImg },
-      ]
-    },
-    {
-      id: "jobs",
-      title: "Profissões",
-      titleEn: "Jobs",
-      icon: Briefcase,
-      color: "text-slate-600",
-      bgColor: "bg-slate-50",
-      borderColor: "border-slate-200",
-      words: [
-        { word: "Doctor", pronunciation: "dóktor", translation: "médico(a)", image: doctorImg },
-        { word: "Teacher", pronunciation: "títcher", translation: "professor(a)", image: teacherJobImg },
-        { word: "Engineer", pronunciation: "endjiníer", translation: "engenheiro(a)", image: engineerImg },
-        { word: "Nurse", pronunciation: "nârss", translation: "enfermeiro(a)", image: nurseImg },
-        { word: "Police officer", pronunciation: "políss óficer", translation: "policial", image: policeImg },
-        { word: "Chef", pronunciation: "chéf", translation: "chef", image: chefImg },
-        { word: "Artist", pronunciation: "ártist", translation: "artista", image: artistImg },
-        { word: "Lawyer", pronunciation: "lóier", translation: "advogado(a)", image: lawyerImg },
-      ]
-    },
-  ];
+  // Map existing images to first 8 words of each theme
+  const themeImages: Record<string, string[]> = {
+    home: [houseImg, doorImg, windowImg, kitchenImg, bedroomImg, bathroomImg, livingRoomImg, gardenImg],
+    school: [schoolImg, teacherImg, studentImg, bookImg, penImg, pencilImg, notebookImg, classroomImg],
+    food: [foodImg, waterImg, breadImg, milkImg, riceImg, chickenImg, appleImg, bananaImg],
+    transportation: [carImg, busImg, trainImg, airplaneImg, bicycleImg, motorcycleImg, boatImg, subwayImg],
+    body: [headImg, eyeImg, noseImg, mouthImg, earImg, handImg, footImg, armImg],
+    colors: [redImg, blueImg, greenImg, yellowImg, blackImg, whiteImg, orangeImg, purpleImg],
+    nature: [treeImg, flowerImg, sunImg, moonImg, starImg, mountainImg, riverImg, oceanImg],
+    clothes: [shirtImg, pantsImg, dressImg, shoesImg, socksImg, hatImg, jacketImg, skirtImg],
+    animals: [dogImg, catImg, birdImg, fishImg, horseImg, cowImg, lionImg, elephantImg],
+    jobs: [doctorImg, teacherJobImg, engineerImg, nurseImg, policeImg, chefImg, artistImg, lawyerImg],
+  };
+
+  const themeConfig = {
+    home: { icon: Home, color: "text-blue-600", bgColor: "bg-blue-50", borderColor: "border-blue-200", title: "Casa", titleEn: "Home" },
+    school: { icon: School, color: "text-purple-600", bgColor: "bg-purple-50", borderColor: "border-purple-200", title: "Escola", titleEn: "School" },
+    food: { icon: UtensilsCrossed, color: "text-orange-600", bgColor: "bg-orange-50", borderColor: "border-orange-200", title: "Comida", titleEn: "Food" },
+    transportation: { icon: Car, color: "text-red-600", bgColor: "bg-red-50", borderColor: "border-red-200", title: "Transporte", titleEn: "Transportation" },
+    body: { icon: HeartPulse, color: "text-pink-600", bgColor: "bg-pink-50", borderColor: "border-pink-200", title: "Corpo", titleEn: "Body" },
+    colors: { icon: Palette, color: "text-indigo-600", bgColor: "bg-indigo-50", borderColor: "border-indigo-200", title: "Cores", titleEn: "Colors" },
+    nature: { icon: Trees, color: "text-green-600", bgColor: "bg-green-50", borderColor: "border-green-200", title: "Natureza", titleEn: "Nature" },
+    clothes: { icon: ShirtIcon, color: "text-teal-600", bgColor: "bg-teal-50", borderColor: "border-teal-200", title: "Roupas", titleEn: "Clothes" },
+    animals: { icon: PawPrint, color: "text-amber-600", bgColor: "bg-amber-50", borderColor: "border-amber-200", title: "Animais", titleEn: "Animals" },
+    jobs: { icon: Briefcase, color: "text-slate-600", bgColor: "bg-slate-50", borderColor: "border-slate-200", title: "Profissões", titleEn: "Jobs" },
+    family: { icon: Users, color: "text-yellow-600", bgColor: "bg-yellow-50", borderColor: "border-yellow-200", title: "Família", titleEn: "Family" },
+    emotions: { icon: Heart, color: "text-rose-600", bgColor: "bg-rose-50", borderColor: "border-rose-200", title: "Emoções", titleEn: "Emotions" },
+  };
+
+  const themes: VocabularyTheme[] = Object.entries(vocabularyThemes).map(([themeId, words]) => {
+    const config = themeConfig[themeId as keyof typeof themeConfig];
+    const images = themeImages[themeId] || [];
+    
+    return {
+      id: themeId,
+      title: config.title,
+      titleEn: config.titleEn,
+      icon: config.icon,
+      color: config.color,
+      bgColor: config.bgColor,
+      borderColor: config.borderColor,
+      words: words.map((word, index) => ({
+        ...word,
+        image: images[index] || `https://via.placeholder.com/150/CCCCCC/666666?text=${encodeURIComponent(word.word)}`
+      }))
+    };
+  });
 
   const totalWords = themes.reduce((acc, theme) => acc + theme.words.length, 0);
   const learnedWords = Math.floor(totalWords * 0.65);
@@ -505,7 +363,7 @@ export const Vocabulary = () => {
         })}
         {!isPremium && (
           <LockedContent 
-            message="🔒 Desbloqueie todos os 10 temas de vocabulário (80 palavras) com áudio e tradução"
+            message="🔒 Desbloqueie todos os 12 temas de vocabulário (240 palavras) com áudio e tradução"
           />
         )}
       </div>
