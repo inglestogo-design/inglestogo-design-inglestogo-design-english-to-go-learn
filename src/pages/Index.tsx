@@ -16,8 +16,8 @@ import { FontSamples } from "@/components/sections/FontSamples";
 import { HeaderFontPreview } from "@/components/sections/HeaderFontPreview";
 
 const Index = () => {
-  const [activeSection, setActiveSection] = useState("header-fonts");
-  const [headerFont, setHeaderFont] = useState("font-baloo");
+  const [activeSection, setActiveSection] = useState("dashboard");
+  const [headerFont, setHeaderFont] = useState("font-fredoka");
 
   const renderSection = () => {
     switch (activeSection) {
