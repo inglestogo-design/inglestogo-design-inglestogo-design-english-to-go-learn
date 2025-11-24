@@ -15,10 +15,67 @@ import { QuoteOfTheDay } from "@/components/sections/QuoteOfTheDay";
 import { LevelingTest } from "@/components/leveling-test/LevelingTest";
 import { VirtualCoach } from "@/components/sections/VirtualCoach";
 import { SurvivalEnglish } from "@/components/sections/SurvivalEnglish";
+import { OnboardingQuiz } from "@/components/onboarding/OnboardingQuiz";
+import { StudyPlan } from "@/components/onboarding/StudyPlan";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
+  const { user, onboardingCompleted, loading } = useAuth();
   const [activeSection, setActiveSection] = useState("dashboard");
   const [headerFont, setHeaderFont] = useState("font-fredoka");
+  const [showStudyPlan, setShowStudyPlan] = useState(false);
+  const [userAnswers, setUserAnswers] = useState<any>(null);
+
+  const handleQuizComplete = async () => {
+    // Fetch user answers to show in study plan
+    if (user) {
+      const { data } = await supabase
+        .from('profiles')
+        .select('english_level, motivation, main_difficulties')
+        .eq('id', user.id)
+        .single();
+      
+      if (data) {
+        setUserAnswers(data);
+        setShowStudyPlan(true);
+      }
+    }
+  };
+
+  const handleStartApp = () => {
+    setShowStudyPlan(false);
+    setActiveSection("home");
+  };
+
+  // Show loading while checking auth status
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-muted-foreground">Carregando...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show onboarding quiz if not completed
+  if (user && !onboardingCompleted && !showStudyPlan) {
+    return <OnboardingQuiz onComplete={handleQuizComplete} />;
+  }
+
+  // Show study plan after quiz completion
+  if (showStudyPlan && userAnswers) {
+    return (
+      <StudyPlan
+        userLevel={userAnswers.english_level}
+        motivation={userAnswers.motivation}
+        difficulties={userAnswers.main_difficulties || []}
+        onStart={handleStartApp}
+      />
+    );
+  }
 
   const renderSection = () => {
     switch (activeSection) {

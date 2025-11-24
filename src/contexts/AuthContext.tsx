@@ -8,6 +8,7 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   isPremium: boolean;
+  onboardingCompleted: boolean;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signUp: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
@@ -20,6 +21,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [isPremium, setIsPremium] = useState(false);
+  const [onboardingCompleted, setOnboardingCompleted] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -29,7 +31,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setSession(session);
         setUser(session?.user ?? null);
         
-        // Check premium status when user changes
+        // Check premium status and onboarding when user changes
         if (session?.user) {
           setTimeout(async () => {
             // Call check-subscription edge function to verify with Stripe
@@ -38,7 +40,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             // Also get from database
             const { data } = await supabase
               .from("profiles")
-              .select("is_premium, premium_until")
+              .select("is_premium, premium_until, onboarding_completed")
               .eq("id", session.user.id)
               .single();
             
@@ -46,10 +48,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               const isActive = data.is_premium && 
                 (!data.premium_until || new Date(data.premium_until) > new Date());
               setIsPremium(isActive);
+              setOnboardingCompleted(data.onboarding_completed || false);
             }
           }, 0);
         } else {
           setIsPremium(false);
+          setOnboardingCompleted(false);
         }
       }
     );
@@ -91,7 +95,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, isPremium, signIn, signUp, signOut }}>
+    <AuthContext.Provider value={{ user, session, loading, isPremium, onboardingCompleted, signIn, signUp, signOut }}>
       {children}
     </AuthContext.Provider>
   );

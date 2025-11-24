@@ -16,30 +16,54 @@ export type Database = {
     Tables: {
       profiles: {
         Row: {
+          age_range: string | null
           created_at: string | null
           email: string | null
+          english_level: string | null
           id: string
+          interests: string[] | null
           is_premium: boolean | null
+          main_difficulties: string[] | null
+          motivation: string | null
+          onboarding_completed: boolean | null
+          personal_preference: string | null
           premium_until: string | null
           stripe_customer_id: string | null
+          topics_interest: string[] | null
           updated_at: string | null
         }
         Insert: {
+          age_range?: string | null
           created_at?: string | null
           email?: string | null
+          english_level?: string | null
           id: string
+          interests?: string[] | null
           is_premium?: boolean | null
+          main_difficulties?: string[] | null
+          motivation?: string | null
+          onboarding_completed?: boolean | null
+          personal_preference?: string | null
           premium_until?: string | null
           stripe_customer_id?: string | null
+          topics_interest?: string[] | null
           updated_at?: string | null
         }
         Update: {
+          age_range?: string | null
           created_at?: string | null
           email?: string | null
+          english_level?: string | null
           id?: string
+          interests?: string[] | null
           is_premium?: boolean | null
+          main_difficulties?: string[] | null
+          motivation?: string | null
+          onboarding_completed?: boolean | null
+          personal_preference?: string | null
           premium_until?: string | null
           stripe_customer_id?: string | null
+          topics_interest?: string[] | null
           updated_at?: string | null
         }
         Relationships: []
