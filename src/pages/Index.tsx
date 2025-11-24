@@ -13,12 +13,19 @@ import { Numbers } from "@/components/sections/Numbers";
 import { Radio } from "@/components/sections/Radio";
 import { QuoteOfTheDay } from "@/components/sections/QuoteOfTheDay";
 import { FontSamples } from "@/components/sections/FontSamples";
+import { HeaderFontPreview } from "@/components/sections/HeaderFontPreview";
 
 const Index = () => {
-  const [activeSection, setActiveSection] = useState("dashboard");
+  const [activeSection, setActiveSection] = useState("header-fonts");
+  const [headerFont, setHeaderFont] = useState("font-baloo");
 
   const renderSection = () => {
     switch (activeSection) {
+      case "header-fonts":
+        return <HeaderFontPreview onSelect={(font) => {
+          setHeaderFont(font);
+          setActiveSection("dashboard");
+        }} />;
       case "dashboard":
         return <Dashboard onNavigate={setActiveSection} />;
       case "pronunciation":
@@ -46,7 +53,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <Header />
+      <Header fontClass={headerFont} />
       <Navigation activeSection={activeSection} onSectionChange={setActiveSection} />
       <main className="container px-4 py-8 flex-1">
         {renderSection()}
