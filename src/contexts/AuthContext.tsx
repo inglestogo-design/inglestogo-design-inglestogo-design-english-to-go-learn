@@ -27,35 +27,58 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     let isInitialLoad = true;
     
-    // Check for existing session FIRST
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      console.log('🚀 Initial session load:', session?.user?.id);
-      setSession(session);
-      setUser(session?.user ?? null);
-      
-      // Load onboarding status on initial load
-      if (session?.user) {
-        try {
-          const { data } = await supabase
-            .from("profiles")
-            .select("is_premium, premium_until, onboarding_completed")
-            .eq("id", session.user.id)
-            .single();
-          
-          if (data) {
-            console.log('📊 Initial profile load:', { onboarding_completed: data.onboarding_completed });
-            const isActive = data.is_premium && 
-              (!data.premium_until || new Date(data.premium_until) > new Date());
-            setIsPremium(isActive);
-            setOnboardingCompleted(data.onboarding_completed || false);
-          }
-        } catch (error) {
-          console.error('❌ Error loading profile:', error);
+    // Check for existing session FIRST with timeout fallback
+    const loadSession = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error('❌ Error getting session:', error);
+          setLoading(false);
+          return;
         }
+        
+        console.log('🚀 Initial session load:', session?.user?.id);
+        setSession(session);
+        setUser(session?.user ?? null);
+        
+        // Load onboarding status on initial load
+        if (session?.user) {
+          try {
+            const { data } = await supabase
+              .from("profiles")
+              .select("is_premium, premium_until, onboarding_completed")
+              .eq("id", session.user.id)
+              .single();
+            
+            if (data) {
+              console.log('📊 Initial profile load:', { onboarding_completed: data.onboarding_completed });
+              const isActive = data.is_premium && 
+                (!data.premium_until || new Date(data.premium_until) > new Date());
+              setIsPremium(isActive);
+              setOnboardingCompleted(data.onboarding_completed || false);
+            }
+          } catch (error) {
+            console.error('❌ Error loading profile:', error);
+          }
+        }
+        
+        setLoading(false);
+        isInitialLoad = false;
+      } catch (error) {
+        console.error('❌ Fatal error loading session:', error);
+        setLoading(false);
       }
-      
+    };
+    
+    // Set a timeout to ensure loading always completes
+    const timeoutId = setTimeout(() => {
+      console.warn('⚠️ Session load timeout - forcing loading to false');
       setLoading(false);
-      isInitialLoad = false;
+    }, 5000);
+    
+    loadSession().finally(() => {
+      clearTimeout(timeoutId);
     });
 
     // Set up auth state listener - but ignore INITIAL_SESSION to prevent double loading
