@@ -20,6 +20,7 @@ import { Progress } from "@/components/ui/progress";
 import { useState, useEffect } from "react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useToast } from "@/hooks/use-toast";
+import { speakText } from "@/utils/speechUtils";
 
 // Home images
 import houseImg from "@/assets/vocabulary/home/house.png";
@@ -169,79 +170,23 @@ export const Vocabulary = () => {
     setLoadingAudio(audioKey);
     
     try {
-      // Check if browser supports speech synthesis
-      if (!('speechSynthesis' in window)) {
-        throw new Error('Speech synthesis not supported');
-      }
-
-      const utterance = new SpeechSynthesisUtterance(word);
-      
-      // Configure voice settings for American English
-      utterance.lang = 'en-US';
-      utterance.rate = 0.8; // Slightly slower for learning
-      utterance.pitch = 1.0;
-      
-      // Get available voices and prioritize US English
-      const voices = speechSynthesis.getVoices();
-      
-      // Try to find US English voice first
-      let selectedVoice = voices.find(voice => 
-        voice.lang === 'en-US' || voice.lang === 'en_US'
-      );
-      
-      // If no US voice, try any English voice with US indicators
-      if (!selectedVoice) {
-        selectedVoice = voices.find(voice => 
-          (voice.lang.startsWith('en') && voice.name.includes('US')) ||
-          voice.name.includes('American')
-        );
-      }
-      
-      // Last resort: any English voice
-      if (!selectedVoice) {
-        selectedVoice = voices.find(voice => voice.lang.startsWith('en'));
-      }
-
-      // Apply voice gender preference by theme
+      // Apply voice gender preference by theme for variety
       const maleThemes = ['home', 'food', 'body', 'nature', 'animals'];
-      const preferMale = maleThemes.includes(themeId);
+      const gender = maleThemes.includes(themeId) ? 'male' : 'female';
       
-      // Try to get gender-specific US voice
-      const genderVoice = voices.find(v => {
-        const isUSEnglish = v.lang === 'en-US' || v.lang === 'en_US' || 
-                           (v.lang.startsWith('en') && v.name.includes('US'));
-        if (!isUSEnglish) return false;
-        
-        if (preferMale) {
-          return v.name.includes('Male') || v.name.includes('David') || 
-                 v.name.includes('Alex') || v.name.includes('James');
-        } else {
-          return v.name.includes('Female') || v.name.includes('Samantha') || 
-                 v.name.includes('Victoria') || v.name.includes('Karen');
-        }
+      await speakText(word, { 
+        gender, 
+        rate: 0.85, 
+        pitch: 1.05,
+        volume: 0.9
       });
       
-      if (genderVoice) {
-        utterance.voice = genderVoice;
-      } else if (selectedVoice) {
-        utterance.voice = selectedVoice;
-      }
-
-      utterance.onend = () => {
-        setLoadingAudio(null);
-      };
-
-      utterance.onerror = (error) => {
-        console.error('Speech synthesis error:', error);
-        setLoadingAudio(null);
-      };
-
-      speechSynthesis.speak(utterance);
+      setLoadingAudio(null);
     } catch (error) {
       console.error('Error playing audio:', error);
       toast({
         title: "Erro ao reproduzir áudio",
-        description: "Seu navegador não suporta síntese de voz.",
+        description: "Não foi possível reproduzir o áudio.",
         variant: "destructive",
       });
       setLoadingAudio(null);

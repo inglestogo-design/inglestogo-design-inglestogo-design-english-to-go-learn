@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { speakText } from "@/utils/speechUtils";
 
 interface LetterSound {
   sound: string;
@@ -34,42 +35,29 @@ export const Alphabet = () => {
     }
   }, []);
 
-  const playAudio = (text: string, key: string, isLetter: boolean = false) => {
+  const playAudio = async (text: string, key: string, isLetter: boolean = false) => {
     setLoadingAudio(key);
     
     try {
-      if (!('speechSynthesis' in window)) {
-        throw new Error('Speech synthesis not supported');
-      }
-
-      // For single letters, spell them out phonetically to avoid "Capital X"
+      // For single letters, use lowercase to avoid "Capital" prefix
       let textToSpeak = text;
       if (isLetter && text.length === 1) {
-        // Use lowercase to avoid "Capital" prefix
         textToSpeak = text.toLowerCase();
       }
 
-      const utterance = new SpeechSynthesisUtterance(textToSpeak);
-      utterance.lang = 'en-US';
-      utterance.rate = 0.8;
-      utterance.pitch = 1.0;
+      // Alternate voices for variety (letters alternate automatically)
+      await speakText(textToSpeak, { 
+        rate: 0.85, 
+        pitch: 1.05,
+        volume: 0.9
+      });
       
-      const voices = speechSynthesis.getVoices();
-      const usVoice = voices.find(voice => 
-        voice.lang === 'en-US' || voice.lang === 'en_US'
-      ) || voices.find(voice => voice.lang.startsWith('en'));
-      
-      if (usVoice) utterance.voice = usVoice;
-
-      utterance.onend = () => setLoadingAudio(null);
-      utterance.onerror = () => setLoadingAudio(null);
-
-      speechSynthesis.speak(utterance);
+      setLoadingAudio(null);
     } catch (error) {
       console.error('Error playing audio:', error);
       toast({
         title: "Erro ao reproduzir áudio",
-        description: "Seu navegador não suporta síntese de voz.",
+        description: "Não foi possível reproduzir o áudio.",
         variant: "destructive",
       });
       setLoadingAudio(null);

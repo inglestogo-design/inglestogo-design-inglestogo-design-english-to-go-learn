@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Mic, Volume2 } from "lucide-react";
+import { speakText } from "@/utils/speechUtils";
 import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
 import { useToast } from "@/hooks/use-toast";
 
@@ -33,11 +34,12 @@ export const SpeakingSection = ({ onComplete }: SpeakingSectionProps) => {
   const { isRecording, transcript, startRecording, stopRecording } = useSpeechRecognition();
   const { toast } = useToast();
 
-  const playExample = () => {
-    const utterance = new SpeechSynthesisUtterance(prompts[currentPrompt].example);
-    utterance.rate = 0.85;
-    utterance.lang = 'en-US';
-    speechSynthesis.speak(utterance);
+  const playExample = async () => {
+    await speakText(prompts[currentPrompt].example, { 
+      rate: 0.85, 
+      pitch: 1.0,
+      volume: 0.9
+    });
   };
 
   const handleRecord = () => {

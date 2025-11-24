@@ -3,6 +3,7 @@ import { Volume2, X, Quote } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { speakText } from "@/utils/speechUtils";
 
 interface DailyQuote {
   english: string;
@@ -242,34 +243,14 @@ export const QuoteOfTheDay = () => {
     setLoadingAudio(true);
     
     try {
-      if (!('speechSynthesis' in window)) {
-        throw new Error('Speech synthesis not supported');
-      }
-
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-US';
-      utterance.rate = 0.7;
-      utterance.pitch = 1.0;
-      
-      const voices = speechSynthesis.getVoices();
-      const selectedVoice = voices.find(voice => 
-        voice.lang === 'en-US' || voice.lang === 'en_US'
-      ) || voices.find(voice => voice.lang.startsWith('en'));
-      
-      if (selectedVoice) {
-        utterance.voice = selectedVoice;
-      }
-
-      utterance.onend = () => {
-        setLoadingAudio(false);
-      };
-
-      utterance.onerror = () => {
-        setLoadingAudio(false);
-      };
-
-      speechSynthesis.speak(utterance);
+      await speakText(text, { 
+        rate: 0.75, 
+        pitch: 1.1,
+        volume: 0.9
+      });
+      setLoadingAudio(false);
     } catch (error) {
+      console.error('Error playing audio:', error);
       setLoadingAudio(false);
     }
   };

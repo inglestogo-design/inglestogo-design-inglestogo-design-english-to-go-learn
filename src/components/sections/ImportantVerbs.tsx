@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { speakText } from "@/utils/speechUtils";
 
 // Import verb illustrations
 import beImg from "@/assets/verbs/be.png";
@@ -63,37 +64,18 @@ export const ImportantVerbs = () => {
     setLoadingAudio(word);
     
     try {
-      if (!('speechSynthesis' in window)) {
-        throw new Error('Speech synthesis not supported');
-      }
-
-      const utterance = new SpeechSynthesisUtterance(word);
-      utterance.lang = 'en-US';
-      utterance.rate = 0.8;
-      utterance.pitch = 1.0;
+      // Alternate voices for variety (verbs alternate automatically)
+      await speakText(word, { 
+        rate: 0.85, 
+        pitch: 1.05,
+        volume: 0.9
+      });
       
-      const voices = speechSynthesis.getVoices();
-      const selectedVoice = voices.find(voice => 
-        voice.lang === 'en-US' || voice.lang === 'en_US'
-      ) || voices.find(voice => voice.lang.startsWith('en'));
-      
-      if (selectedVoice) {
-        utterance.voice = selectedVoice;
-      }
-
-      utterance.onend = () => {
-        setLoadingAudio(null);
-      };
-
-      utterance.onerror = () => {
-        setLoadingAudio(null);
-      };
-
-      speechSynthesis.speak(utterance);
+      setLoadingAudio(null);
     } catch (error) {
       toast({
         title: "Erro ao reproduzir áudio",
-        description: "Seu navegador não suporta síntese de voz.",
+        description: "Não foi possível reproduzir o áudio.",
         variant: "destructive",
       });
       setLoadingAudio(null);

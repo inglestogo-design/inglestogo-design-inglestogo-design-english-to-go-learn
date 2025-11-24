@@ -9,6 +9,7 @@ import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
 import { pronunciationPhrases } from "@/data/pronunciationPhrases";
 import { useToast } from "@/hooks/use-toast";
 import { usePronunciationProgress } from "@/hooks/usePronunciationProgress";
+import { speakText } from "@/utils/speechUtils";
 
 export const Pronunciation = () => {
   const [selectedLevel, setSelectedLevel] = useState<'basic' | 'intermediate' | 'advanced'>('basic');
@@ -129,12 +130,15 @@ export const Pronunciation = () => {
     }
   };
 
-  const playAudio = () => {
-    if ('speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(currentPhrase.english);
-      utterance.lang = 'en-US';
-      utterance.rate = 0.8;
-      window.speechSynthesis.speak(utterance);
+  const playAudio = async () => {
+    try {
+      await speakText(currentPhrase.english, { 
+        rate: 0.85, 
+        pitch: 1.05,
+        volume: 0.9
+      });
+    } catch (error) {
+      console.error('Error playing audio:', error);
     }
   };
 

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Headphones, Volume2 } from "lucide-react";
+import { speakText } from "@/utils/speechUtils";
 
 interface ListeningSectionProps {
   onComplete: (score: number) => void;
@@ -49,11 +50,12 @@ export const ListeningSection = ({ onComplete }: ListeningSectionProps) => {
   const [selectedAnswer, setSelectedAnswer] = useState<string>("");
   const [hasPlayed, setHasPlayed] = useState(false);
 
-  const playAudio = () => {
-    const utterance = new SpeechSynthesisUtterance(questions[currentQuestion].audio);
-    utterance.rate = 0.9;
-    utterance.lang = 'en-US';
-    speechSynthesis.speak(utterance);
+  const playAudio = async () => {
+    await speakText(questions[currentQuestion].audio, { 
+      rate: 0.9, 
+      pitch: 1.0,
+      volume: 0.9
+    });
     setHasPlayed(true);
   };
 

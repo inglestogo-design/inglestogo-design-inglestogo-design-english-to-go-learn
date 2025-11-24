@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Volume2, Mic, ChevronRight, Trophy, Star, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { speakText } from "@/utils/speechUtils";
 
 interface FillBlankQuestion {
   sentence: string;
@@ -56,32 +57,24 @@ export const LessonContent = ({ lesson, onComplete, onBack }: LessonContentProps
   const totalQuestions = lesson.fillBlanks.length + lesson.multipleChoice.length + lesson.finalPractice.length;
   const progress = ((Object.keys(answers).length / totalQuestions) * 100);
 
-  const playAudio = (text: string) => {
+  const playAudio = async (text: string) => {
     setLoadingAudio(true);
     
-    if (!('speechSynthesis' in window)) {
+    try {
+      await speakText(text, { 
+        rate: 0.85, 
+        pitch: 1.05,
+        volume: 0.9
+      });
+      setLoadingAudio(false);
+    } catch (error) {
       toast({
         title: "Erro",
-        description: "Seu navegador não suporta síntese de voz.",
+        description: "Não foi possível reproduzir o áudio.",
         variant: "destructive",
       });
       setLoadingAudio(false);
-      return;
     }
-
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'en-US';
-    utterance.rate = 0.8;
-    
-    const voices = speechSynthesis.getVoices();
-    const usVoice = voices.find(v => v.lang === 'en-US' || v.lang === 'en_US') || 
-                    voices.find(v => v.lang.startsWith('en'));
-    if (usVoice) utterance.voice = usVoice;
-
-    utterance.onend = () => setLoadingAudio(false);
-    utterance.onerror = () => setLoadingAudio(false);
-    
-    speechSynthesis.speak(utterance);
   };
 
   const recordPronunciation = () => {
