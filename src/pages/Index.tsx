@@ -20,7 +20,7 @@ const Index = () => {
   const renderSection = () => {
     switch (activeSection) {
       case "dashboard":
-        return <Dashboard />;
+        return <Dashboard onNavigate={setActiveSection} />;
       case "pronunciation":
         return <Pronunciation />;
       case "vocabulary":
