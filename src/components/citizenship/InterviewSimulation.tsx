@@ -30,6 +30,13 @@ export const InterviewSimulation = ({ onBack }: InterviewSimulationProps) => {
   const navigate = useNavigate();
   const { isRecording, transcript, startRecording, stopRecording, isSupported } = useSpeechRecognition();
 
+  // Update input when transcript changes
+  useEffect(() => {
+    if (transcript) {
+      setInput(transcript);
+    }
+  }, [transcript]);
+
   // Check if user is authenticated
   if (!user) {
     return (
@@ -60,13 +67,6 @@ export const InterviewSimulation = ({ onBack }: InterviewSimulationProps) => {
       </div>
     );
   }
-
-  // Update input when transcript changes
-  useEffect(() => {
-    if (transcript) {
-      setInput(transcript);
-    }
-  }, [transcript]);
 
   const startInterview = async () => {
     setIsLoading(true);
