@@ -1,4 +1,4 @@
-import logo from "@/assets/logo.png";
+import logo from "@/assets/logo-final.png";
 
 export const Footer = () => {
   return (
@@ -7,12 +7,17 @@ export const Footer = () => {
         <div className="flex flex-col items-center justify-center gap-4">
           <img 
             src={logo} 
-            alt="Inglês To Go - A Sua Escola Digital" 
-            className="h-16 w-auto opacity-80 hover:opacity-100 transition-opacity"
+            alt="Inglês To Go - Inglês que se move com você" 
+            className="h-20 w-auto opacity-40 hover:opacity-60 transition-opacity duration-300"
           />
-          <p className="text-sm text-muted-foreground text-center">
-            © 2025 Inglês To Go - A Sua Escola Digital. Todos os direitos reservados.
-          </p>
+          <div className="text-center space-y-1">
+            <p className="text-sm font-fredoka font-medium text-muted-foreground italic">
+              "Inglês que se move com você"
+            </p>
+            <p className="text-xs text-muted-foreground">
+              © 2025 Inglês To Go. Todos os direitos reservados.
+            </p>
+          </div>
         </div>
       </div>
     </footer>
