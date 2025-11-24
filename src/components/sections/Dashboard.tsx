@@ -1,11 +1,15 @@
-import { Award, BookOpen, Clock, TrendingUp } from "lucide-react";
+import { Award, BookOpen, Clock, TrendingUp, Palette } from "lucide-react";
 import { StatsCard } from "@/components/dashboard/StatsCard";
 import { ProgressChart } from "@/components/dashboard/ProgressChart";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { QuoteOfTheDay } from "./QuoteOfTheDay";
 
-export const Dashboard = () => {
+interface DashboardProps {
+  onNavigate?: (section: string) => void;
+}
+
+export const Dashboard = ({ onNavigate }: DashboardProps) => {
   const progressData = [
     { label: "Pronúncia / Pronunciation", value: 75, color: "primary" as const },
     { label: "Vocabulário / Vocabulary", value: 60, color: "secondary" as const },
@@ -49,6 +53,27 @@ export const Dashboard = () => {
       </div>
 
       <QuoteOfTheDay />
+
+      <Card className="border-2 border-primary/30 bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10 hover:shadow-xl transition-all duration-300">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-2xl">
+            <Palette className="h-7 w-7 text-primary" />
+            <span>🎨 Escolha sua Fonte Favorita! / Choose Your Favorite Font!</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-muted-foreground text-lg">
+            Veja 9 fontes diferentes aplicadas ao slogan <strong>"Inglês que se move com você"</strong> e escolha a que mais combina com você!
+          </p>
+          <Button 
+            size="lg" 
+            className="w-full text-lg font-bold"
+            onClick={() => onNavigate?.("fonts")}
+          >
+            Ver Fontes Disponíveis / View Available Fonts
+          </Button>
+        </CardContent>
+      </Card>
 
       <div className="grid gap-6 md:grid-cols-2">
         <ProgressChart title="Seu Progresso / Your Progress" items={progressData} />
