@@ -1,280 +1,206 @@
-import { useState, useEffect, useRef } from "react";
-import { Card } from "@/components/ui/card";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
-import { Send, Bot, User, Sparkles, Lock } from "lucide-react";
+import { MessageCircle, Send, Volume2, RefreshCw, CheckCircle, XCircle, Bot } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { getRandomPhrase, coachPhrases, type CoachPhrase } from "@/data/coachPhrases";
+import { speakText } from "@/utils/speechUtils";
+import { Badge } from "@/components/ui/badge";
 
 interface Message {
   role: "user" | "assistant";
   content: string;
+  isCorrect?: boolean;
 }
 
 export const VirtualCoach = () => {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [freeMessagesLeft, setFreeMessagesLeft] = useState(3);
-  const [isPremium, setIsPremium] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const [currentPhrase, setCurrentPhrase] = useState<CoachPhrase | null>(null);
+  const [userAnswer, setUserAnswer] = useState("");
+  const [feedback, setFeedback] = useState<Message | null>(null);
+  const [attemptCount, setAttemptCount] = useState(0);
+  const [freeAttemptsLeft, setFreeAttemptsLeft] = useState(5);
+  const { isPremium } = useAuth();
   const { toast } = useToast();
-  const { isPremium: userIsPremium } = useAuth();
 
   useEffect(() => {
-    // Sync premium status
-    setIsPremium(userIsPremium);
-    
-    // Load free messages count from localStorage
-    const stored = localStorage.getItem("coachFreeMessages");
-    if (stored) {
-      setFreeMessagesLeft(parseInt(stored));
+    const savedAttempts = localStorage.getItem('coachFreeAttempts');
+    if (savedAttempts) {
+      setFreeAttemptsLeft(parseInt(savedAttempts));
+    }
+    loadNewPhrase();
+  }, []);
+
+  const loadNewPhrase = () => {
+    const phrase = getRandomPhrase();
+    setCurrentPhrase(phrase);
+    setUserAnswer("");
+    setFeedback(null);
+  };
+
+  const normalizeText = (text: string): string => {
+    return text
+      .toLowerCase()
+      .trim()
+      .replace(/[.,!?;:]/g, '')
+      .replace(/\s+/g, ' ');
+  };
+
+  const checkAnswer = () => {
+    if (!currentPhrase || !userAnswer.trim()) return;
+
+    if (!isPremium && freeAttemptsLeft <= 0) {
+      toast({
+        title: "Limite atingido / Limit reached",
+        description: "Você usou suas 5 tentativas grátis. Assine Premium para praticar ilimitado! / You've used your 5 free attempts. Subscribe to Premium for unlimited practice!",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const normalizedUser = normalizeText(userAnswer);
+    const normalizedCorrect = normalizeText(currentPhrase.english);
+    const isCorrect = normalizedUser === normalizedCorrect;
+
+    let feedbackContent = "";
+    if (isCorrect) {
+      feedbackContent = `✅ **Perfeito!** / **Perfect!**\n\n**Sua resposta:** ${userAnswer}\n**Your answer:** ${userAnswer}\n\n🎯 Você acertou! Continue assim!\n🎯 You got it right! Keep it up!\n\n📘 **Pronúncia:** ${currentPhrase.pronunciation}`;
+      speakText(currentPhrase.english);
     } else {
-      setFreeMessagesLeft(3); // Default to 3
-      localStorage.setItem("coachFreeMessages", "3");
+      feedbackContent = `🔴 **Ops! Vamos corrigir** / **Oops! Let's correct**\n\n**Sua resposta:** ${userAnswer}\n**Your answer:** ${userAnswer}\n\n**Resposta correta:** ${currentPhrase.english}\n**Correct answer:** ${currentPhrase.english}\n\n💡 **Dica:** Compare sua resposta com a correta e tente novamente!\n💡 **Tip:** Compare your answer with the correct one and try again!\n\n📘 **Pronúncia:** ${currentPhrase.pronunciation}`;
+      speakText(currentPhrase.english);
     }
 
-    // Add welcome message
-    if (messages.length === 0) {
-      setMessages([
-        {
-          role: "assistant",
-          content: `👋 **Olá! Welcome!**
+    setFeedback({ role: "assistant", content: feedbackContent, isCorrect });
+    setAttemptCount(prev => prev + 1);
 
-Sou seu **Coach Virtual** de inglês! 🎯
-
-**Como funciona:**
-1. Escreva qualquer frase em inglês ✍️
-2. Eu corrijo automaticamente com cores e explicações 🎨
-3. Você aprende praticando! 💪
-
-**Você tem 3 mensagens grátis** para testar! 🎁
-
-Pode começar! Try writing something in English... 🚀`,
-        },
-      ]);
-    }
-  }, [userIsPremium]);
-
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [messages]);
-
-  const sendMessage = async () => {
-    if (!input.trim()) {
-      toast({
-        title: "Digite algo / Type something",
-        description: "Por favor, escreva uma frase em inglês / Please write something in English",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (!isPremium && freeMessagesLeft <= 0) {
-      toast({
-        title: "🔒 Mensagens grátis esgotadas / Free messages used",
-        description: "Assine premium para continuar praticando! / Subscribe to premium to continue!",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const userMessage: Message = { role: "user", content: input };
-    setMessages((prev) => [...prev, userMessage]);
-    setInput("");
-    setIsLoading(true);
-
-    try {
-      const { data, error } = await supabase.functions.invoke("virtual-coach-chat", {
-        body: {
-          message: input,
-          conversationHistory: messages,
-        },
-      });
-
-      if (error) {
-        console.error("Error calling edge function:", error);
-        throw error;
-      }
-
-      if (!data || !data.response) {
-        throw new Error("No response from AI");
-      }
-
-      const assistantMessage: Message = {
-        role: "assistant",
-        content: data.response,
-      };
-
-      setMessages((prev) => [...prev, assistantMessage]);
-
-      // Decrease free messages if not premium
-      if (!isPremium) {
-        const newCount = freeMessagesLeft - 1;
-        setFreeMessagesLeft(newCount);
-        localStorage.setItem("coachFreeMessages", newCount.toString());
-
-        if (newCount === 3) {
-          toast({
-            title: "⚠️ Só restam 3 mensagens grátis! / Only 3 free messages left!",
-            description: "Consider upgrading to premium! 🚀",
-          });
-        }
-      }
-    } catch (error) {
-      console.error("Error sending message:", error);
-      toast({
-        title: "Erro / Error",
-        description: "Não foi possível enviar a mensagem. Tente novamente. / Could not send message. Try again.",
-        variant: "destructive",
-      });
-      // Remove user message on error
-      setMessages((prev) => prev.filter((msg) => msg !== userMessage));
-    } finally {
-      setIsLoading(false);
+    if (!isPremium) {
+      const newCount = freeAttemptsLeft - 1;
+      setFreeAttemptsLeft(newCount);
+      localStorage.setItem('coachFreeAttempts', newCount.toString());
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      sendMessage();
+      checkAnswer();
     }
   };
+
+  const playPronunciation = () => {
+    if (currentPhrase) {
+      speakText(currentPhrase.english);
+    }
+  };
+
+  if (!currentPhrase) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 py-8 px-4">
-      <div className="max-w-4xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="text-center space-y-3">
-          <div className="flex items-center justify-center gap-3">
-            <Sparkles className="h-8 w-8 text-primary animate-pulse" />
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent">
-              Coach Virtual
-            </h1>
-            <Sparkles className="h-8 w-8 text-primary animate-pulse" />
-          </div>
-          <p className="text-lg text-muted-foreground">
-            Seu treinador de inglês com IA / Your AI English Coach 🎯
-          </p>
+    <div className="space-y-6 animate-fade-in">
+      <div className="flex items-center gap-3">
+        <div className="p-3 rounded-full bg-gradient-to-r from-primary to-accent animate-pulse-glow">
+          <MessageCircle className="w-6 h-6 text-white" />
         </div>
-
-        {/* Free Messages Counter */}
-        {!isPremium && (
-          <Card className="p-4 bg-gradient-to-r from-primary/10 to-secondary/10 border-primary/20">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Lock className="h-5 w-5 text-primary" />
-                <span className="font-semibold text-foreground">
-                  Mensagens grátis restantes / Free messages left:
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-2xl font-bold text-primary">{freeMessagesLeft}</span>
-                <span className="text-muted-foreground">/ 3</span>
-              </div>
-            </div>
-            {freeMessagesLeft <= 3 && (
-              <p className="mt-2 text-sm text-muted-foreground text-center">
-                ⚠️ Assine premium para mensagens ilimitadas! / Subscribe for unlimited messages!
-              </p>
-            )}
-          </Card>
-        )}
-
-        {/* Chat Area */}
-        <Card className="h-[500px] flex flex-col bg-card/50 backdrop-blur-sm border-2">
-          <ScrollArea className="flex-1 p-6" ref={scrollRef}>
-            <div className="space-y-4">
-              {messages.map((msg, idx) => (
-                <div
-                  key={idx}
-                  className={`flex gap-3 ${
-                    msg.role === "assistant" ? "justify-start" : "justify-end"
-                  }`}
-                >
-                  {msg.role === "assistant" && (
-                    <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
-                      <Bot className="h-5 w-5 text-primary" />
-                    </div>
-                  )}
-                  <div
-                    className={`rounded-2xl px-4 py-3 max-w-[80%] ${
-                      msg.role === "assistant"
-                        ? "bg-primary/10 text-foreground"
-                        : "bg-primary text-primary-foreground"
-                    }`}
-                  >
-                    <div
-                      className="text-sm md:text-base whitespace-pre-wrap"
-                      dangerouslySetInnerHTML={{ __html: msg.content }}
-                    />
-                  </div>
-                  {msg.role === "user" && (
-                    <div className="w-8 h-8 rounded-full bg-secondary/20 flex items-center justify-center flex-shrink-0">
-                      <User className="h-5 w-5 text-secondary" />
-                    </div>
-                  )}
-                </div>
-              ))}
-              {isLoading && (
-                <div className="flex gap-3 justify-start">
-                  <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
-                    <Bot className="h-5 w-5 text-primary animate-pulse" />
-                  </div>
-                  <div className="rounded-2xl px-4 py-3 bg-primary/10">
-                    <div className="flex gap-1">
-                      <div className="w-2 h-2 rounded-full bg-primary animate-bounce" />
-                      <div className="w-2 h-2 rounded-full bg-primary animate-bounce delay-100" />
-                      <div className="w-2 h-2 rounded-full bg-primary animate-bounce delay-200" />
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </ScrollArea>
-
-          {/* Input Area */}
-          <div className="p-4 border-t bg-background/50 backdrop-blur-sm">
-            <div className="flex gap-2">
-              <Textarea
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKeyPress}
-                placeholder="Escreva em inglês... / Write in English... ✍️"
-                className="min-h-[60px] resize-none"
-                disabled={isLoading || (!isPremium && freeMessagesLeft <= 0)}
-              />
-              <Button
-                onClick={sendMessage}
-                disabled={isLoading || !input.trim() || (!isPremium && freeMessagesLeft <= 0)}
-                size="lg"
-                className="px-6"
-              >
-                <Send className="h-5 w-5" />
-              </Button>
-            </div>
-            <p className="text-xs text-muted-foreground mt-2 text-center">
-              Pressione Enter para enviar / Press Enter to send ⏎
-            </p>
-          </div>
-        </Card>
-
-        {/* Tips Card */}
-        <Card className="p-6 bg-gradient-to-r from-secondary/10 to-primary/10">
-          <h3 className="font-bold text-lg mb-3 text-foreground">💡 Dicas / Tips:</h3>
-          <ul className="space-y-2 text-sm text-muted-foreground">
-            <li>✓ Escreva frases simples no início / Start with simple sentences</li>
-            <li>✓ Pratique diariamente / Practice daily</li>
-            <li>✓ Preste atenção nas explicações / Pay attention to explanations</li>
-            <li>✓ Tente corrigir os mesmos erros / Try to fix the same mistakes</li>
-          </ul>
-        </Card>
+        <h2 className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+          💬 Virtual Coach
+        </h2>
       </div>
+
+      <Card className="border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-accent/5">
+        <CardContent className="pt-6">
+          <p className="text-sm text-muted-foreground mb-4">
+            🎯 <strong>Como funciona:</strong> Traduza a frase do português para o inglês e receba correção instantânea com pronúncia!<br/>
+            🎯 <strong>How it works:</strong> Translate the phrase from Portuguese to English and get instant correction with pronunciation!
+          </p>
+          {!isPremium && (
+            <div className="flex items-center gap-2 text-sm">
+              <MessageCircle className="w-4 h-4 text-accent" />
+              <span className="font-semibold">
+                Tentativas grátis restantes / Free attempts left: {freeAttemptsLeft}/5
+              </span>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card className="border-2 border-primary/20">
+        <CardHeader className="bg-gradient-to-r from-primary/10 to-accent/10">
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
+              <Bot className="w-5 h-5 text-primary" />
+              Traduza / Translate
+            </CardTitle>
+            <Badge variant="outline" className="text-xs">{currentPhrase.category}</Badge>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-6 pt-6">
+          <div className="p-6 bg-gradient-to-br from-primary/10 to-accent/10 rounded-lg border-2 border-primary/20">
+            <p className="text-sm text-muted-foreground mb-2">
+              🇧🇷 Como você diria em inglês? / How would you say in English?
+            </p>
+            <p className="text-2xl font-bold text-primary mb-2">{currentPhrase.portuguese}</p>
+            <Button variant="ghost" size="sm" onClick={playPronunciation} className="text-xs text-accent hover:text-accent/80">
+              <Volume2 className="w-4 h-4 mr-1" />
+              Ouvir pronúncia / Listen
+            </Button>
+          </div>
+
+          {feedback && (
+            <Card className={`border-2 ${feedback.isCorrect ? 'border-green-500 bg-green-500/5' : 'border-orange-500 bg-orange-500/5'}`}>
+              <CardContent className="pt-6">
+                <div className="flex items-start gap-3">
+                  <div className={`flex-shrink-0 w-8 h-8 rounded-full ${feedback.isCorrect ? 'bg-green-500' : 'bg-orange-500'} flex items-center justify-center`}>
+                    {feedback.isCorrect ? <CheckCircle className="w-5 h-5 text-white" /> : <XCircle className="w-5 h-5 text-white" />}
+                  </div>
+                  <div className="flex-1 text-sm whitespace-pre-wrap">{feedback.content}</div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium">✍️ Sua resposta / Your answer:</label>
+            <Textarea
+              value={userAnswer}
+              onChange={(e) => setUserAnswer(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder="Digite sua tradução em inglês... / Type your translation in English..."
+              className="min-h-[80px] resize-none"
+            />
+          </div>
+
+          <div className="flex gap-2">
+            <Button onClick={checkAnswer} disabled={!userAnswer.trim()} className="flex-1 bg-gradient-to-r from-primary to-accent hover:opacity-90">
+              <Send className="w-4 h-4 mr-2" />
+              Verificar / Check
+            </Button>
+            <Button onClick={loadNewPhrase} variant="outline" className="border-primary/20">
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Nova frase / New phrase
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="border-2 border-accent/20 bg-gradient-to-br from-accent/5 to-transparent">
+        <CardHeader>
+          <CardTitle className="text-lg flex items-center gap-2">📊 Suas Estatísticas / Your Stats</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="text-center p-3 bg-primary/10 rounded-lg">
+              <p className="text-2xl font-bold text-primary">{attemptCount}</p>
+              <p className="text-muted-foreground">Tentativas / Attempts</p>
+            </div>
+            <div className="text-center p-3 bg-accent/10 rounded-lg">
+              <p className="text-2xl font-bold text-accent">{coachPhrases.length}</p>
+              <p className="text-muted-foreground">Frases disponíveis / Available phrases</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
