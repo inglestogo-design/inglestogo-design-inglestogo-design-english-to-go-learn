@@ -2,9 +2,11 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { citizenshipLessons } from "@/data/citizenshipLessonsData";
 import { MiniLesson } from "@/components/citizenship/MiniLesson";
-import { Lock, CheckCircle2, Flag } from "lucide-react";
+import { N400Glossary } from "@/components/citizenship/N400Glossary";
+import { Lock, CheckCircle2, Flag, BookOpen, GraduationCap } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { LockedContent } from "@/components/premium/LockedContent";
 
@@ -53,10 +55,25 @@ export const CitizenshipPrep = () => {
           Citizenship Preparation Guide
         </p>
         <p className="text-muted-foreground max-w-2xl mx-auto">
-          Mini-aulas de 5-10 minutos para preparação completa do teste de cidadania americana / 
-          5-10 minute mini-lessons for complete U.S. citizenship test preparation
+          Mini-aulas e glossário completo para preparação do teste de cidadania americana / 
+          Mini-lessons and complete glossary for U.S. citizenship test preparation
         </p>
       </div>
+
+      {/* Main Tabs */}
+      <Tabs defaultValue="lessons" className="w-full">
+        <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto">
+          <TabsTrigger value="lessons" className="flex items-center gap-2">
+            <GraduationCap className="w-4 h-4" />
+            Mini-Aulas / Lessons
+          </TabsTrigger>
+          <TabsTrigger value="glossary" className="flex items-center gap-2">
+            <BookOpen className="w-4 h-4" />
+            Glossário N-400
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="lessons" className="space-y-8 mt-8">
 
       {/* Progress Overview */}
       <Card className="p-6 bg-gradient-to-br from-primary/10 to-secondary/10">
@@ -202,6 +219,12 @@ export const CitizenshipPrep = () => {
         
         <LockedContent message="Conteúdo Premium - Complete os Níveis 1 e 2 para desbloquear / Premium Content - Complete Levels 1 and 2 to unlock" />
       </div>
+        </TabsContent>
+
+        <TabsContent value="glossary" className="mt-8">
+          <N400Glossary />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
