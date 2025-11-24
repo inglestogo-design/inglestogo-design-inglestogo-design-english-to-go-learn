@@ -12,8 +12,6 @@ import { ProgressSection } from "@/components/sections/Progress";
 import { Numbers } from "@/components/sections/Numbers";
 import { Radio } from "@/components/sections/Radio";
 import { QuoteOfTheDay } from "@/components/sections/QuoteOfTheDay";
-import { FontSamples } from "@/components/sections/FontSamples";
-import { HeaderFontPreview } from "@/components/sections/HeaderFontPreview";
 
 const Index = () => {
   const [activeSection, setActiveSection] = useState("dashboard");
@@ -21,11 +19,6 @@ const Index = () => {
 
   const renderSection = () => {
     switch (activeSection) {
-      case "header-fonts":
-        return <HeaderFontPreview onSelect={(font) => {
-          setHeaderFont(font);
-          setActiveSection("dashboard");
-        }} />;
       case "dashboard":
         return <Dashboard onNavigate={setActiveSection} />;
       case "pronunciation":
@@ -44,8 +37,6 @@ const Index = () => {
         return <ProgressSection />;
       case "radio":
         return <Radio />;
-      case "fonts":
-        return <FontSamples />;
       default:
         return <Dashboard />;
     }
