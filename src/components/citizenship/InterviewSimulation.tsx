@@ -8,6 +8,8 @@ import { Loader2, Send, ArrowLeft, Mic, MicOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
 import { speakText } from "@/utils/speechUtils";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 interface Message {
   role: 'user' | 'assistant';
@@ -24,7 +26,40 @@ export const InterviewSimulation = ({ onBack }: InterviewSimulationProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
   const { toast } = useToast();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const { isRecording, transcript, startRecording, stopRecording, isSupported } = useSpeechRecognition();
+
+  // Check if user is authenticated
+  if (!user) {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center gap-4 mb-6">
+          <Button variant="ghost" size="icon" onClick={onBack}>
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <h2 className="text-2xl font-bold text-primary">
+            Simulação de Entrevista / Interview Simulation 🎙️
+          </h2>
+        </div>
+        <Card className="p-8 text-center space-y-4">
+          <div className="text-6xl mb-4">🔒</div>
+          <h3 className="text-xl font-semibold">Autenticação Necessária / Authentication Required</h3>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Você precisa estar logado para usar a simulação de entrevista. / You need to be logged in to use the interview simulation.
+          </p>
+          <div className="pt-4 flex gap-4 justify-center">
+            <Button onClick={() => navigate('/auth')} size="lg">
+              Fazer Login / Login
+            </Button>
+            <Button onClick={onBack} variant="outline" size="lg">
+              Voltar / Go Back
+            </Button>
+          </div>
+        </Card>
+      </div>
+    );
+  }
 
   // Update input when transcript changes
   useEffect(() => {
