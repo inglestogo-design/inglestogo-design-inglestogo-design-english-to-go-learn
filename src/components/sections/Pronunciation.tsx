@@ -1,12 +1,14 @@
-import { Mic, Volume2, RotateCw, CheckCircle2, XCircle } from "lucide-react";
+import { Mic, Volume2, RotateCw, CheckCircle2, XCircle, Lock, Trophy } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Progress } from "@/components/ui/progress";
 import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
 import { pronunciationPhrases } from "@/data/pronunciationPhrases";
 import { useToast } from "@/hooks/use-toast";
+import { usePronunciationProgress } from "@/hooks/usePronunciationProgress";
 
 export const Pronunciation = () => {
   const [selectedLevel, setSelectedLevel] = useState<'basic' | 'intermediate' | 'advanced'>('basic');
@@ -15,14 +17,39 @@ export const Pronunciation = () => {
   const [accuracyScore, setAccuracyScore] = useState<number | null>(null);
   const { isRecording, transcript, startRecording, stopRecording, isSupported } = useSpeechRecognition();
   const { toast } = useToast();
+  const { 
+    saveProgress, 
+    isLevelUnlocked, 
+    getLevelProgress, 
+    isPhraseCompleted,
+    resetProgress 
+  } = usePronunciationProgress();
 
   const filteredPhrases = pronunciationPhrases.filter(p => p.level === selectedLevel);
   const currentPhrase = filteredPhrases[currentPhraseIndex];
+  const basicProgress = getLevelProgress('basic');
+  const intermediateProgress = getLevelProgress('intermediate');
+  const advancedProgress = getLevelProgress('advanced');
 
   useEffect(() => {
     setCurrentPhraseIndex(0);
     setFeedback(null);
   }, [selectedLevel]);
+
+  const handleLevelChange = (newLevel: string) => {
+    const level = newLevel as 'basic' | 'intermediate' | 'advanced';
+    if (!isLevelUnlocked(level)) {
+      toast({
+        title: "Nível Bloqueado / Level Locked",
+        description: level === 'intermediate' 
+          ? "Complete todas as 30 frases do nível Básico primeiro / Complete all 30 Basic phrases first"
+          : "Complete todas as 30 frases do nível Intermediário primeiro / Complete all 30 Intermediate phrases first",
+        variant: "destructive",
+      });
+      return;
+    }
+    setSelectedLevel(level);
+  };
 
   useEffect(() => {
     if (transcript && !isRecording) {
@@ -50,10 +77,29 @@ export const Pronunciation = () => {
 
     if (accuracy >= 70) {
       setFeedback("correct");
+      saveProgress(selectedLevel, currentPhraseIndex);
+      
+      const newProgress = getLevelProgress(selectedLevel);
+      const isLevelComplete = newProgress.completed + 1 >= 30;
+      
       toast({
         title: "Excelente! / Excellent!",
-        description: `${accuracy}% de precisão / accuracy`,
+        description: isLevelComplete 
+          ? `🎉 Nível completo! ${accuracy}% de precisão / Level complete! ${accuracy}% accuracy`
+          : `${accuracy}% de precisão / accuracy`,
       });
+
+      if (isLevelComplete && selectedLevel === 'basic') {
+        toast({
+          title: "🎓 Nível Intermediário Desbloqueado!",
+          description: "Você completou todas as frases básicas! / You completed all basic phrases!",
+        });
+      } else if (isLevelComplete && selectedLevel === 'intermediate') {
+        toast({
+          title: "🏆 Nível Avançado Desbloqueado!",
+          description: "Você completou todas as frases intermediárias! / You completed all intermediate phrases!",
+        });
+      }
     } else {
       setFeedback("incorrect");
       toast({
@@ -116,15 +162,66 @@ export const Pronunciation = () => {
         </p>
       </div>
 
-      <Tabs value={selectedLevel} onValueChange={(v) => setSelectedLevel(v as any)} className="w-full">
+      <div className="grid gap-4 md:grid-cols-3 mb-6">
+        <Card className="border-2 border-primary/20">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="font-semibold"><strong>Básico</strong> / Basic</h3>
+              <Trophy className="h-5 w-5 text-success" />
+            </div>
+            <Progress value={(basicProgress.completed / basicProgress.total) * 100} className="mb-2" />
+            <p className="text-sm text-muted-foreground">
+              {basicProgress.completed}/{basicProgress.total} frases
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className={`border-2 ${isLevelUnlocked('intermediate') ? 'border-secondary/20' : 'border-muted/20 opacity-60'}`}>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="font-semibold"><strong>Intermediário</strong> / Intermediate</h3>
+              {isLevelUnlocked('intermediate') ? (
+                <Trophy className="h-5 w-5 text-secondary" />
+              ) : (
+                <Lock className="h-5 w-5 text-muted-foreground" />
+              )}
+            </div>
+            <Progress value={(intermediateProgress.completed / intermediateProgress.total) * 100} className="mb-2" />
+            <p className="text-sm text-muted-foreground">
+              {intermediateProgress.completed}/{intermediateProgress.total} frases
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className={`border-2 ${isLevelUnlocked('advanced') ? 'border-accent/20' : 'border-muted/20 opacity-60'}`}>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="font-semibold"><strong>Avançado</strong> / Advanced</h3>
+              {isLevelUnlocked('advanced') ? (
+                <Trophy className="h-5 w-5 text-accent" />
+              ) : (
+                <Lock className="h-5 w-5 text-muted-foreground" />
+              )}
+            </div>
+            <Progress value={(advancedProgress.completed / advancedProgress.total) * 100} className="mb-2" />
+            <p className="text-sm text-muted-foreground">
+              {advancedProgress.completed}/{advancedProgress.total} frases
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Tabs value={selectedLevel} onValueChange={handleLevelChange} className="w-full">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="basic">
             <strong>Básico</strong> / Basic
           </TabsTrigger>
-          <TabsTrigger value="intermediate">
+          <TabsTrigger value="intermediate" disabled={!isLevelUnlocked('intermediate')}>
+            {!isLevelUnlocked('intermediate') && <Lock className="h-4 w-4 mr-2" />}
             <strong>Intermediário</strong> / Intermediate
           </TabsTrigger>
-          <TabsTrigger value="advanced">
+          <TabsTrigger value="advanced" disabled={!isLevelUnlocked('advanced')}>
+            {!isLevelUnlocked('advanced') && <Lock className="h-4 w-4 mr-2" />}
             <strong>Avançado</strong> / Advanced
           </TabsTrigger>
         </TabsList>
@@ -133,7 +230,12 @@ export const Pronunciation = () => {
           <Card className="border-2 border-primary/20">
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
-                <span><strong>Frase</strong> {currentPhraseIndex + 1} / {filteredPhrases.length}</span>
+                <div className="flex items-center gap-2">
+                  <span><strong>Frase</strong> {currentPhraseIndex + 1} / {filteredPhrases.length}</span>
+                  {isPhraseCompleted(selectedLevel, currentPhraseIndex) && (
+                    <CheckCircle2 className="h-5 w-5 text-success" />
+                  )}
+                </div>
                 <Badge variant="secondary">
                   {selectedLevel === 'basic' && '<strong>Básico</strong> / Basic'}
                   {selectedLevel === 'intermediate' && '<strong>Intermediário</strong> / Intermediate'}
