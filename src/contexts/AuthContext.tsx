@@ -28,11 +28,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log('🔐 Auth state changed:', event, 'User:', session?.user?.id);
         setSession(session);
         setUser(session?.user ?? null);
         
-        // Check premium status and onboarding when user changes
-        if (session?.user) {
+        // Only update onboarding status on SIGNED_IN event, not on INITIAL_SESSION
+        // This prevents overwriting the value loaded in getSession()
+        if (session?.user && event === 'SIGNED_IN') {
+          console.log('🔄 Loading profile after SIGNED_IN event');
           setTimeout(async () => {
             // Call check-subscription edge function to verify with Stripe
             const { data: subData } = await supabase.functions.invoke("check-subscription");
@@ -45,13 +48,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               .single();
             
             if (data) {
+              console.log('✅ Profile loaded:', { onboarding_completed: data.onboarding_completed });
               const isActive = data.is_premium && 
                 (!data.premium_until || new Date(data.premium_until) > new Date());
               setIsPremium(isActive);
               setOnboardingCompleted(data.onboarding_completed || false);
             }
           }, 0);
-        } else {
+        } else if (!session?.user) {
           setIsPremium(false);
           setOnboardingCompleted(false);
         }
@@ -60,6 +64,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     // Check for existing session
     supabase.auth.getSession().then(async ({ data: { session } }) => {
+      console.log('🚀 Initial session load:', session?.user?.id);
       setSession(session);
       setUser(session?.user ?? null);
       
@@ -73,13 +78,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             .single();
           
           if (data) {
+            console.log('📊 Initial profile load:', { onboarding_completed: data.onboarding_completed });
             const isActive = data.is_premium && 
               (!data.premium_until || new Date(data.premium_until) > new Date());
             setIsPremium(isActive);
             setOnboardingCompleted(data.onboarding_completed || false);
           }
         } catch (error) {
-          console.error('Error loading profile:', error);
+          console.error('❌ Error loading profile:', error);
         }
       }
       
