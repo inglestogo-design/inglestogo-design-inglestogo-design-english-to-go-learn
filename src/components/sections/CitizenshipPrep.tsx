@@ -22,7 +22,9 @@ export const CitizenshipPrep = () => {
   };
 
   const level1Lessons = citizenshipLessons.filter(l => l.level === 1);
+  const level2Lessons = citizenshipLessons.filter(l => l.level === 2);
   const allLevel1Complete = level1Lessons.every(l => completedLessons.includes(l.id));
+  const allLevel2Complete = level2Lessons.every(l => completedLessons.includes(l.id));
 
   if (selectedLesson) {
     const lesson = citizenshipLessons.find(l => l.id === selectedLesson);
@@ -123,19 +125,18 @@ export const CitizenshipPrep = () => {
         </div>
       </div>
 
-      {/* Level 2 - Coming Soon (Locked) */}
-      <div className="space-y-4 opacity-60">
+      {/* Level 2 - Interview Procedures */}
+      <div className={`space-y-4 ${!allLevel1Complete ? 'opacity-60' : ''}`}>
         <div className="flex items-center gap-3">
-          <Badge variant="secondary" className="text-lg px-4 py-1">
+          <Badge variant={allLevel1Complete ? "default" : "secondary"} className="text-lg px-4 py-1">
             Nível 2 / Level 2
           </Badge>
-          <h2 className="text-2xl font-bold">Procedimentos da Entrevista</h2>
-          <Lock className="w-6 h-6 text-muted-foreground" />
+          <h2 className="text-2xl font-bold">Procedimentos da Entrevista / Interview Procedures</h2>
+          {allLevel2Complete && <CheckCircle2 className="w-6 h-6 text-green-500" />}
+          {!allLevel1Complete && <Lock className="w-6 h-6 text-muted-foreground" />}
         </div>
-        
-        {!isPremium ? (
-          <LockedContent message="Conteúdo Premium - Complete o Nível 1 para desbloquear / Premium Content - Complete Level 1 to unlock" />
-        ) : !allLevel1Complete ? (
+
+        {!allLevel1Complete ? (
           <Card className="p-6 text-center">
             <Lock className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
             <p className="text-muted-foreground">
@@ -144,9 +145,48 @@ export const CitizenshipPrep = () => {
             </p>
           </Card>
         ) : (
-          <Card className="p-6 text-center">
-            <p className="text-muted-foreground">Em breve / Coming soon</p>
-          </Card>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {level2Lessons.map((lesson) => {
+              const isCompleted = completedLessons.includes(lesson.id);
+              const isLocked = !isPremium && lesson.id > 4; // First 2 free for premium check
+              
+              return (
+                <Card
+                  key={lesson.id}
+                  className={`p-6 transition-all ${
+                    isLocked 
+                      ? 'opacity-60 cursor-not-allowed' 
+                      : 'cursor-pointer hover:shadow-lg'
+                  } ${isCompleted ? 'bg-green-500/10 border-green-500' : ''}`}
+                  onClick={() => !isLocked && setSelectedLesson(lesson.id)}
+                >
+                  <div className="space-y-3">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline">Aula {lesson.id}</Badge>
+                        {isCompleted && <CheckCircle2 className="w-5 h-5 text-green-500" />}
+                        {isLocked && <Lock className="w-5 h-5 text-muted-foreground" />}
+                      </div>
+                    </div>
+                    
+                    <h3 className="font-semibold text-lg">{lesson.title}</h3>
+                    <p className="text-sm text-muted-foreground">{lesson.objective}</p>
+                    
+                    {isLocked ? (
+                      <Button variant="outline" className="w-full" disabled>
+                        <Lock className="w-4 h-4 mr-2" />
+                        Premium
+                      </Button>
+                    ) : (
+                      <Button variant="outline" className="w-full">
+                        {isCompleted ? "Revisar / Review" : "Começar / Start"}
+                      </Button>
+                    )}
+                  </div>
+                </Card>
+              );
+            })}
+          </div>
         )}
       </div>
 
