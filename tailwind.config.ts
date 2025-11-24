@@ -64,6 +64,14 @@ export default {
       fontFamily: {
         'poppins': ['Poppins', 'sans-serif'],
         'fredoka': ['Fredoka', 'sans-serif'],
+        'nunito': ['Nunito', 'sans-serif'],
+        'quicksand': ['Quicksand', 'sans-serif'],
+        'comfortaa': ['Comfortaa', 'sans-serif'],
+        'baloo': ['Baloo 2', 'cursive'],
+        'righteous': ['Righteous', 'cursive'],
+        'bubblegum': ['Bubblegum Sans', 'cursive'],
+        'luckiest': ['Luckiest Guy', 'cursive'],
+        'pacifico': ['Pacifico', 'cursive'],
       },
       keyframes: {
         "accordion-down": {
