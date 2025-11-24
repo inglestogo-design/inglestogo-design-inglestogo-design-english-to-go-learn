@@ -53,7 +53,7 @@ export const Header = ({ fontClass = "font-baloo" }: HeaderProps) => {
                   <User className="h-6 w-6" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuContent align="end" className="w-56 bg-background z-50">
                 <DropdownMenuLabel>
                   <div className="flex flex-col space-y-1">
                     <p className="text-sm font-medium">Minha Conta / My Account</p>
@@ -61,6 +61,10 @@ export const Header = ({ fontClass = "font-baloo" }: HeaderProps) => {
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => navigate("/settings")}>
+                  <Settings className="mr-2 h-4 w-4" />
+                  Configurações / Settings
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setVoiceSettingsOpen(true)}>
                   <Settings className="mr-2 h-4 w-4" />
                   Configurar Voz / Voice Settings

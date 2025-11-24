@@ -1,4 +1,5 @@
-import { Home, Mic, BookText, BookA, GraduationCap, TrendingUp, BookOpen, Hash, Radio, Zap, Bot, Lightbulb, Flag } from "lucide-react";
+import { Home, Mic, BookText, BookA, GraduationCap, TrendingUp, BookOpen, Hash, Radio, Zap, Bot, Lightbulb, Flag, Settings } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import {
   Sidebar,
   SidebarContent,
@@ -35,6 +36,7 @@ const navItems = [
 
 export function AppSidebar({ activeSection, onSectionChange }: AppSidebarProps) {
   const { open } = useSidebar();
+  const navigate = useNavigate();
 
   return (
     <Sidebar className={cn("border-r", open ? "w-60" : "w-16")} collapsible="icon">
@@ -66,6 +68,18 @@ export function AppSidebar({ activeSection, onSectionChange }: AppSidebarProps) 
                   </SidebarMenuItem>
                 );
               })}
+              
+              {/* Settings Link - Always at bottom */}
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  onClick={() => navigate('/settings')}
+                  className="transition-smooth mt-4 border-t pt-4"
+                  tooltip="Configurações"
+                >
+                  <Settings className="h-4 w-4" />
+                  {open && <span>Configurações</span>}
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
