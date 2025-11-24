@@ -23,8 +23,10 @@ export type Database = {
           id: string
           interests: string[] | null
           is_premium: boolean | null
+          language_preference: string | null
           main_difficulties: string[] | null
           motivation: string | null
+          notification_settings: Json | null
           onboarding_completed: boolean | null
           personal_preference: string | null
           premium_until: string | null
@@ -40,8 +42,10 @@ export type Database = {
           id: string
           interests?: string[] | null
           is_premium?: boolean | null
+          language_preference?: string | null
           main_difficulties?: string[] | null
           motivation?: string | null
+          notification_settings?: Json | null
           onboarding_completed?: boolean | null
           personal_preference?: string | null
           premium_until?: string | null
@@ -57,8 +61,10 @@ export type Database = {
           id?: string
           interests?: string[] | null
           is_premium?: boolean | null
+          language_preference?: string | null
           main_difficulties?: string[] | null
           motivation?: string | null
+          notification_settings?: Json | null
           onboarding_completed?: boolean | null
           personal_preference?: string | null
           premium_until?: string | null
