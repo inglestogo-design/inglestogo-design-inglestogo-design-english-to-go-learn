@@ -25,44 +25,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Set up auth state listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        console.log('🔐 Auth state changed:', event, 'User:', session?.user?.id);
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        // Only update onboarding status on SIGNED_IN event, not on INITIAL_SESSION
-        // This prevents overwriting the value loaded in getSession()
-        if (session?.user && event === 'SIGNED_IN') {
-          console.log('🔄 Loading profile after SIGNED_IN event');
-          setTimeout(async () => {
-            // Call check-subscription edge function to verify with Stripe
-            const { data: subData } = await supabase.functions.invoke("check-subscription");
-            
-            // Also get from database
-            const { data } = await supabase
-              .from("profiles")
-              .select("is_premium, premium_until, onboarding_completed")
-              .eq("id", session.user.id)
-              .single();
-            
-            if (data) {
-              console.log('✅ Profile loaded:', { onboarding_completed: data.onboarding_completed });
-              const isActive = data.is_premium && 
-                (!data.premium_until || new Date(data.premium_until) > new Date());
-              setIsPremium(isActive);
-              setOnboardingCompleted(data.onboarding_completed || false);
-            }
-          }, 0);
-        } else if (!session?.user) {
-          setIsPremium(false);
-          setOnboardingCompleted(false);
-        }
-      }
-    );
-
-    // Check for existing session
+    let isInitialLoad = true;
+    
+    // Check for existing session FIRST
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       console.log('🚀 Initial session load:', session?.user?.id);
       setSession(session);
@@ -90,7 +55,44 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
       
       setLoading(false);
+      isInitialLoad = false;
     });
+
+    // Set up auth state listener - but ignore INITIAL_SESSION to prevent double loading
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log('🔐 Auth state changed:', event, 'User:', session?.user?.id, 'isInitialLoad:', isInitialLoad);
+        
+        // Ignore INITIAL_SESSION event since we already handled it in getSession()
+        if (event === 'INITIAL_SESSION') {
+          return;
+        }
+        
+        setSession(session);
+        setUser(session?.user ?? null);
+        
+        // Only reload profile data when user actually signs in (not on initial load)
+        if (session?.user && event === 'SIGNED_IN') {
+          console.log('🔄 Loading profile after SIGNED_IN event');
+          const { data } = await supabase
+            .from("profiles")
+            .select("is_premium, premium_until, onboarding_completed")
+            .eq("id", session.user.id)
+            .single();
+          
+          if (data) {
+            console.log('✅ Profile loaded:', { onboarding_completed: data.onboarding_completed });
+            const isActive = data.is_premium && 
+              (!data.premium_until || new Date(data.premium_until) > new Date());
+            setIsPremium(isActive);
+            setOnboardingCompleted(data.onboarding_completed || false);
+          }
+        } else if (!session?.user) {
+          setIsPremium(false);
+          setOnboardingCompleted(false);
+        }
+      }
+    );
 
     return () => subscription.unsubscribe();
   }, []);
