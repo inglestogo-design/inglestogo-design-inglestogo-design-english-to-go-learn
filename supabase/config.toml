@@ -3,6 +3,9 @@ project_id = "mqixrtmnkogdpsaqosfm"
 [functions.generate-vocabulary-audio]
 verify_jwt = false
 
+[functions.generate-vocabulary-images]
+verify_jwt = false
+
 [functions.create-checkout]
 verify_jwt = true
 

@@ -11,10 +11,10 @@ serve(async (req) => {
   }
 
   try {
-    const { word, theme } = await req.json();
+    const { words } = await req.json();
 
-    if (!word || !theme) {
-      throw new Error('Word and theme are required');
+    if (!words || !Array.isArray(words)) {
+      throw new Error('Words array is required');
     }
 
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
@@ -22,45 +22,65 @@ serve(async (req) => {
       throw new Error('LOVABLE_API_KEY not configured');
     }
 
-    // Generate image with Lovable AI
-    const prompt = `Create a clean modern cartoon illustration of "${word}" for an English learning app. 
-Style: minimal cartoon aesthetic, vibrant colors (${getThemeColors(theme)}), clean lines, modern design, friendly and educational.
-The illustration should be simple, recognizable, and suitable for language learners.
-Background: transparent or solid colored matching the theme.
-High quality, professional, vector-style cartoon illustration.`;
+    console.log(`Generating ${words.length} images...`);
+    const results = [];
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-flash-image-preview",
-        messages: [
-          {
-            role: "user",
-            content: prompt
+    // Generate images in batches
+    for (const wordData of words) {
+      const { word, theme } = wordData;
+      
+      try {
+        const prompt = `Create a clean modern cartoon illustration of "${word}".
+Style: minimal flat design, vibrant colors, simple shapes, friendly educational aesthetic matching children's learning materials.
+The illustration should be iconic, immediately recognizable, with clean outlines and solid colors.
+Background: solid color or simple gradient matching ${getThemeColors(theme)}.
+Must look similar to simple icon-style educational illustrations - clean, professional, kid-friendly.`;
+
+        const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${LOVABLE_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: "google/gemini-2.5-flash-image-preview",
+            messages: [{ role: "user", content: prompt }],
+            modalities: ["image", "text"]
+          })
+        });
+
+        if (!response.ok) {
+          if (response.status === 429) {
+            throw new Error('Rate limit exceeded - too many requests');
           }
-        ],
-        modalities: ["image", "text"]
-      })
-    });
+          if (response.status === 402) {
+            throw new Error('Payment required - add credits to Lovable AI');
+          }
+          throw new Error(`AI API error: ${response.status}`);
+        }
 
-    if (!response.ok) {
-      const error = await response.text();
-      throw new Error(`AI API error: ${error}`);
-    }
+        const data = await response.json();
+        const imageUrl = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
 
-    const data = await response.json();
-    const imageUrl = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+        if (!imageUrl) {
+          throw new Error('No image generated');
+        }
 
-    if (!imageUrl) {
-      throw new Error('No image generated');
+        results.push({ word, success: true, imageUrl });
+        console.log(`✓ Generated: ${word}`);
+        
+        // Small delay to avoid rate limits
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        console.error(`✗ Failed: ${word} - ${errorMessage}`);
+        results.push({ word, success: false, error: errorMessage });
+      }
     }
 
     return new Response(
-      JSON.stringify({ imageUrl }),
+      JSON.stringify({ results }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
