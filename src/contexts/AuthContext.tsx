@@ -59,9 +59,30 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     );
 
     // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
+      
+      // Load onboarding status on initial load
+      if (session?.user) {
+        try {
+          const { data } = await supabase
+            .from("profiles")
+            .select("is_premium, premium_until, onboarding_completed")
+            .eq("id", session.user.id)
+            .single();
+          
+          if (data) {
+            const isActive = data.is_premium && 
+              (!data.premium_until || new Date(data.premium_until) > new Date());
+            setIsPremium(isActive);
+            setOnboardingCompleted(data.onboarding_completed || false);
+          }
+        } catch (error) {
+          console.error('Error loading profile:', error);
+        }
+      }
+      
       setLoading(false);
     });
 

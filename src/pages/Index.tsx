@@ -27,8 +27,6 @@ const Index = () => {
   const [showStudyPlan, setShowStudyPlan] = useState(false);
   const [userAnswers, setUserAnswers] = useState<any>(null);
 
-  const [localOnboardingComplete, setLocalOnboardingComplete] = useState(false);
-
   const handleQuizComplete = async () => {
     // Fetch user answers to show in study plan
     if (user) {
@@ -41,7 +39,6 @@ const Index = () => {
       if (data) {
         setUserAnswers(data);
         setShowStudyPlan(true);
-        setLocalOnboardingComplete(true); // Mark as complete locally
       }
     }
   };
@@ -64,7 +61,7 @@ const Index = () => {
   }
 
   // Show onboarding quiz if not completed
-  if (user && !onboardingCompleted && !localOnboardingComplete && !showStudyPlan) {
+  if (user && !onboardingCompleted && !showStudyPlan) {
     return <OnboardingQuiz onComplete={handleQuizComplete} />;
   }
 
