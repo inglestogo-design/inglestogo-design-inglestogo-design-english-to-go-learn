@@ -3,17 +3,31 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Crown, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 export const UpgradeToPremium = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const handleUpgrade = () => {
+  const handleUpgrade = async () => {
     if (!user) {
       navigate("/auth");
-    } else {
-      // TODO: Implement Stripe checkout
-      window.open("https://buy.stripe.com/your-payment-link", "_blank");
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase.functions.invoke("create-checkout");
+      
+      if (error) {
+        console.error("Error creating checkout:", error);
+        return;
+      }
+
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      }
+    } catch (error) {
+      console.error("Error invoking checkout function:", error);
     }
   };
 

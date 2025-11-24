@@ -32,6 +32,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         // Check premium status when user changes
         if (session?.user) {
           setTimeout(async () => {
+            // Call check-subscription edge function to verify with Stripe
+            const { data: subData } = await supabase.functions.invoke("check-subscription");
+            
+            // Also get from database
             const { data } = await supabase
               .from("profiles")
               .select("is_premium, premium_until")
