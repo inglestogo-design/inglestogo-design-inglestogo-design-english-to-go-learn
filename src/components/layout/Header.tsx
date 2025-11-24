@@ -10,17 +10,19 @@ export const Header = () => {
           <img 
             src={logo} 
             alt="Inglês To Go - A Sua Escola Digital" 
-            className="h-16 w-auto drop-shadow-lg animate-fade-in"
+            className="h-16 w-auto drop-shadow-xl animate-fade-in"
           />
           <div className="flex flex-col">
-            <h1 className="text-3xl md:text-4xl font-black bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent tracking-tight">
+            <h1 className="text-3xl md:text-5xl font-black font-poppins bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent tracking-tight leading-tight">
               INGLÊS TO GO
             </h1>
-            <p className="text-xs text-muted-foreground font-medium">A Sua Escola Digital</p>
+            <p className="text-xs md:text-sm text-muted-foreground font-fredoka font-medium tracking-wide">
+              ✨ A Sua Escola Digital
+            </p>
           </div>
         </div>
         
-        <Button variant="ghost" size="icon" className="rounded-full hover:bg-primary/10">
+        <Button variant="ghost" size="icon" className="rounded-full hover:bg-primary/10 hover:scale-110 transition-transform">
           <User className="h-6 w-6" />
         </Button>
       </div>
