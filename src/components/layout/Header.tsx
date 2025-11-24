@@ -1,6 +1,6 @@
 import { User } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import logo from "@/assets/logo-smile.png";
+import logo from "@/assets/logo-final.png";
 
 export const Header = () => {
   return (
