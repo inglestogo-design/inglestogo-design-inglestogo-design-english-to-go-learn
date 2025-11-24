@@ -219,20 +219,6 @@ import { LockedContent } from "@/components/premium/LockedContent";
       </div>
         </TabsContent>
 
-        <TabsContent value="interview" className="mt-8">
-          <Card className="p-8 text-center space-y-6">
-            <div className="text-6xl mb-4">🎙️</div>
-            <h3 className="text-2xl font-bold">Simulação de Entrevista N-400</h3>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Pratique com um entrevistador virtual do USCIS. Receba feedback personalizado, 
-              adaptado ao seu nível, e prepare-se para a entrevista real.
-            </p>
-            <Button onClick={() => setShowInterview(true)} size="lg" className="mt-4">
-              Iniciar Simulação / Start Interview Simulation
-            </Button>
-          </Card>
-        </TabsContent>
-
         <TabsContent value="glossary" className="mt-8">
           <N400Glossary />
         </TabsContent>
