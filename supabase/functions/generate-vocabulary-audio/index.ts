@@ -1,4 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -19,13 +21,36 @@ const THEME_VOICES: Record<string, string> = {
   jobs: "jBpfuIE2acCO8z3wKNLl", // Gigi (female)
 };
 
+const RequestSchema = z.object({
+  word: z.string().min(1).max(50),
+  theme: z.string().min(1).max(50).optional()
+});
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { word, theme } = await req.json();
+    // Authenticate user
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      throw new Error("Authentication required");
+    }
+
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    const { data: { user }, error: authError } = await supabase.auth.getUser(
+      authHeader.replace("Bearer ", "")
+    );
+
+    if (authError || !user) {
+      throw new Error("Invalid authentication");
+    }
+    const body = await req.json();
+    const { word, theme } = RequestSchema.parse(body);
     
     if (!word) {
       throw new Error("Word is required");
@@ -33,14 +58,11 @@ serve(async (req) => {
 
     const ELEVENLABS_API_KEY = Deno.env.get("ELEVENLABS_API_KEY");
     if (!ELEVENLABS_API_KEY) {
-      console.error("ELEVENLABS_API_KEY is not configured");
-      throw new Error("ELEVENLABS_API_KEY is not configured");
+      throw new Error("API key not configured");
     }
-    
-    console.log(`API Key length: ${ELEVENLABS_API_KEY.length}, starts with: ${ELEVENLABS_API_KEY.substring(0, 10)}...`);
 
     // Get voice ID for theme, default to Adam if theme not found
-    const voiceId = THEME_VOICES[theme] || THEME_VOICES.home;
+    const voiceId = theme ? THEME_VOICES[theme] || THEME_VOICES.home : THEME_VOICES.home;
 
     console.log(`Generating audio for word: "${word}", theme: "${theme}", voice: ${voiceId}`);
 
@@ -79,9 +101,9 @@ serve(async (req) => {
       },
     });
   } catch (error) {
-    console.error("Error in generate-vocabulary-audio:", error);
+    console.error("Error in generate-vocabulary-audio:", error instanceof Error ? error.message : "Unknown error");
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }),
+      JSON.stringify({ error: "An error occurred generating audio. Please try again." }),
       {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },

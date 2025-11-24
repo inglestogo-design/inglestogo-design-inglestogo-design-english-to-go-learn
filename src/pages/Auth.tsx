@@ -7,12 +7,27 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { toast } from "sonner";
 import { ArrowLeft } from "lucide-react";
 import logo from "@/assets/logo-final.png";
+import { z } from "zod";
+
+const authSchema = z.object({
+  email: z.string()
+    .trim()
+    .email({ message: "Formato de email inválido / Invalid email format" })
+    .max(255),
+  password: z.string()
+    .min(8, { message: "A senha deve ter pelo menos 8 caracteres / Password must be at least 8 characters" })
+    .regex(/[A-Z]/, { message: "A senha deve conter uma letra maiúscula / Password must contain an uppercase letter" })
+    .regex(/[a-z]/, { message: "A senha deve conter uma letra minúscula / Password must contain a lowercase letter" })
+    .regex(/[0-9]/, { message: "A senha deve conter um número / Password must contain a number" })
+});
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [loginAttempts, setLoginAttempts] = useState(0);
+  const [lockoutUntil, setLockoutUntil] = useState<Date | null>(null);
   const { signIn, signUp, user } = useAuth();
   const navigate = useNavigate();
 
@@ -25,14 +40,23 @@ const Auth = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!email || !password) {
-      toast.error("Por favor, preencha todos os campos / Please fill all fields");
+    // Check for account lockout
+    if (lockoutUntil && new Date() < lockoutUntil) {
+      const minutesLeft = Math.ceil((lockoutUntil.getTime() - Date.now()) / 60000);
+      toast.error(
+        `Conta bloqueada. Tente novamente em ${minutesLeft} minutos / Account locked. Try again in ${minutesLeft} minutes.`
+      );
       return;
     }
 
-    if (password.length < 6) {
-      toast.error("Senha deve ter no mínimo 6 caracteres / Password must be at least 6 characters");
-      return;
+    // Validate inputs
+    try {
+      authSchema.parse({ email, password });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast.error(error.issues[0].message);
+        return;
+      }
     }
 
     setLoading(true);
@@ -41,30 +65,37 @@ const Auth = () => {
       if (isLogin) {
         const { error } = await signIn(email, password);
         if (error) {
-          if (error.message.includes("Invalid login credentials")) {
-            toast.error("Email ou senha incorretos / Invalid email or password");
+          // Increment login attempts on error
+          const newAttempts = loginAttempts + 1;
+          setLoginAttempts(newAttempts);
+          
+          if (newAttempts >= 5) {
+            const lockoutTime = new Date(Date.now() + 5 * 60 * 1000);
+            setLockoutUntil(lockoutTime);
+            toast.error(
+              "Muitas tentativas falhadas. Bloqueado por 5 minutos / Too many failed attempts. Locked for 5 minutes."
+            );
           } else {
-            toast.error(error.message);
+            toast.error(
+              `Credenciais inválidas. Tentativa ${newAttempts} de 5 / Invalid credentials. Attempt ${newAttempts} of 5.`
+            );
           }
         } else {
           toast.success("Login realizado com sucesso! / Login successful!");
+          setLoginAttempts(0); // Reset on successful login
           navigate("/");
         }
       } else {
         const { error } = await signUp(email, password);
         if (error) {
-          if (error.message.includes("already registered")) {
-            toast.error("Email já cadastrado / Email already registered");
-          } else {
-            toast.error(error.message);
-          }
+          toast.error("Erro ao criar conta. Tente novamente / Error creating account. Please try again.");
         } else {
           toast.success("Conta criada com sucesso! / Account created successfully!");
           navigate("/");
         }
       }
     } catch (error: any) {
-      toast.error(error.message || "Erro inesperado / Unexpected error");
+      toast.error("Erro inesperado. Tente novamente / Unexpected error. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -126,14 +157,20 @@ const Auth = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                minLength={6}
+                minLength={8}
               />
+              {!isLogin && (
+                <p className="text-xs text-muted-foreground">
+                  Mínimo 8 caracteres, com maiúscula, minúscula e número / 
+                  Min 8 characters with uppercase, lowercase and number
+                </p>
+              )}
             </div>
 
             <Button 
               type="submit" 
               className="w-full" 
-              disabled={loading}
+              disabled={loading || (lockoutUntil !== null && new Date() < lockoutUntil)}
             >
               {loading 
                 ? "Aguarde... / Wait..." 

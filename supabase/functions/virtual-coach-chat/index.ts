@@ -1,10 +1,20 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
+
+const RequestSchema = z.object({
+  message: z.string().min(1).max(1000),
+  conversationHistory: z.array(z.object({
+    role: z.enum(['user', 'assistant']),
+    content: z.string().max(2000)
+  })).max(50)
+});
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -12,7 +22,26 @@ serve(async (req) => {
   }
 
   try {
-    const { message, conversationHistory } = await req.json();
+    // Authenticate user
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      throw new Error("Authentication required");
+    }
+
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    const { data: { user }, error: authError } = await supabase.auth.getUser(
+      authHeader.replace("Bearer ", "")
+    );
+
+    if (authError || !user) {
+      throw new Error("Invalid authentication");
+    }
+
+    const body = await req.json();
+    const { message, conversationHistory } = RequestSchema.parse(body);
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 
     if (!LOVABLE_API_KEY) {
@@ -121,9 +150,9 @@ Great effort! You're learning past tense! Keep practicing and you'll master it! 
     );
 
   } catch (error) {
-    console.error("Error in virtual-coach-chat:", error);
+    console.error("Error in virtual-coach-chat:", error instanceof Error ? error.message : "Unknown error");
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }),
+      JSON.stringify({ error: "An error occurred processing your request. Please try again." }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }

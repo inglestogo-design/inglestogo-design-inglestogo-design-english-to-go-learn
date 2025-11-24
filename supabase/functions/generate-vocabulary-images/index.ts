@@ -1,9 +1,16 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
+
+const RequestSchema = z.object({
+  words: z.array(z.string().min(1).max(50)).min(1).max(20),
+  theme: z.string().min(1).max(50)
+});
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -11,7 +18,25 @@ serve(async (req) => {
   }
 
   try {
-    const { words } = await req.json();
+    // Authenticate user
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      throw new Error("Authentication required");
+    }
+
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    const { data: { user }, error: authError } = await supabase.auth.getUser(
+      authHeader.replace("Bearer ", "")
+    );
+
+    if (authError || !user) {
+      throw new Error("Invalid authentication");
+    }
+    const body = await req.json();
+    const { words } = body;
 
     if (!words || !Array.isArray(words)) {
       throw new Error('Words array is required');
@@ -85,10 +110,9 @@ Must look similar to simple icon-style educational illustrations - clean, profes
     );
 
   } catch (error) {
-    console.error('Error:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Error in generate-vocabulary-images:', error instanceof Error ? error.message : 'Unknown error');
     return new Response(
-      JSON.stringify({ error: errorMessage }),
+      JSON.stringify({ error: 'An error occurred generating images. Please try again.' }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
     );
   }
