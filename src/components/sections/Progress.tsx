@@ -2,26 +2,83 @@ import { TrendingUp, Award, Target, Calendar } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { useUserProgress } from "@/hooks/useUserProgress";
 
 export const ProgressSection = () => {
-  const weeklyData = [
-    { day: "Seg", value: 80 },
-    { day: "Ter", value: 65 },
-    { day: "Qua", value: 90 },
-    { day: "Qui", value: 75 },
-    { day: "Sex", value: 85 },
-    { day: "Sáb", value: 60 },
-    { day: "Dom", value: 70 },
-  ];
+  const { weeklyActivity, stats, loading } = useUserProgress();
 
+  // Generate last 7 days including today
+  const getLast7Days = () => {
+    const days = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+    const result = [];
+    const today = new Date();
+    
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(today.getDate() - i);
+      const dateStr = date.toISOString().split('T')[0];
+      const dayName = days[date.getDay()];
+      
+      const activity = weeklyActivity.find(a => a.activity_date === dateStr);
+      const value = activity 
+        ? (activity.pronunciation_count + activity.vocabulary_count + activity.lessons_completed) * 10
+        : 0;
+      
+      result.push({ day: dayName, value });
+    }
+    return result;
+  };
+
+  const weeklyData = getLast7Days();
+  const maxValue = Math.max(...weeklyData.map(d => d.value), 1);
+
+  // Calculate achievements
   const achievements = [
-    { title: "Primeira Semana", description: "Complete 7 dias consecutivos", unlocked: true },
-    { title: "100 Palavras", description: "Aprenda 100 palavras novas", unlocked: true },
-    { title: "Pronúncia Perfeita", description: "10 pronúncias perfeitas seguidas", unlocked: false },
-    { title: "Mestre da Fluência", description: "Alcance 90% de fluência", unlocked: false },
+    { 
+      title: "Primeira Semana", 
+      description: "Complete 7 dias consecutivos", 
+      unlocked: (stats?.current_streak || 0) >= 7 
+    },
+    { 
+      title: "100 Palavras", 
+      description: "Aprenda 100 palavras novas", 
+      unlocked: (stats?.total_words_learned || 0) >= 100 
+    },
+    { 
+      title: "Pronúncia Perfeita", 
+      description: "Alcance 75% em pronúncia", 
+      unlocked: (stats?.pronunciation_skill || 0) >= 75 
+    },
+    { 
+      title: "Mestre da Fluência", 
+      description: "Alcance 90% de fluência", 
+      unlocked: (stats?.fluency_skill || 0) >= 90 
+    },
   ];
 
-  const maxValue = Math.max(...weeklyData.map((d) => d.value));
+  // Calculate weekly progress
+  const thisWeekTotal = weeklyActivity.reduce((sum, day) => 
+    sum + day.pronunciation_count + day.vocabulary_count + day.lessons_completed, 0
+  );
+  const avgDaily = thisWeekTotal / 7;
+  const weeklyProgress = Math.round(avgDaily * 10);
+
+  // Calculate monthly goal (assuming 30 days/month)
+  const daysCompleted = weeklyActivity.filter(day => 
+    day.pronunciation_count + day.vocabulary_count + day.lessons_completed > 0
+  ).length;
+  const monthlyGoal = Math.round((daysCompleted / 30) * 100);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-muted-foreground">Carregando progresso...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -39,8 +96,8 @@ export const ProgressSection = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-primary">+15%</div>
-            <p className="text-sm text-muted-foreground">vs. semana passada / last week</p>
+            <div className="text-3xl font-bold text-primary">+{weeklyProgress}%</div>
+            <p className="text-sm text-muted-foreground">atividades esta semana / activities this week</p>
           </CardContent>
         </Card>
 
@@ -52,8 +109,8 @@ export const ProgressSection = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-secondary">78%</div>
-            <p className="text-sm text-muted-foreground">23/30 dias completos / completed days</p>
+            <div className="text-3xl font-bold text-secondary">{monthlyGoal}%</div>
+            <p className="text-sm text-muted-foreground">{daysCompleted}/30 dias completos / completed days</p>
           </CardContent>
         </Card>
 
@@ -65,8 +122,8 @@ export const ProgressSection = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-accent">7 dias / days</div>
-            <p className="text-sm text-muted-foreground">Melhor / Best: 12 dias / days</p>
+            <div className="text-3xl font-bold text-accent">{stats?.current_streak || 0} dias / days</div>
+            <p className="text-sm text-muted-foreground">Melhor / Best: {stats?.best_streak || 0} dias / days</p>
           </CardContent>
         </Card>
       </div>
@@ -131,10 +188,10 @@ export const ProgressSection = () => {
         </CardHeader>
         <CardContent className="space-y-4">
           {[
-            { skill: "Pronúncia / Pronunciation", level: 75, color: "primary" },
-            { skill: "Vocabulário / Vocabulary", level: 60, color: "secondary" },
-            { skill: "Gramática / Grammar", level: 55, color: "accent" },
-            { skill: "Fluência / Fluency", level: 45, color: "info" },
+            { skill: "Pronúncia / Pronunciation", level: stats?.pronunciation_skill || 0, color: "primary" },
+            { skill: "Vocabulário / Vocabulary", level: stats?.vocabulary_skill || 0, color: "secondary" },
+            { skill: "Gramática / Grammar", level: stats?.grammar_skill || 0, color: "accent" },
+            { skill: "Fluência / Fluency", level: stats?.fluency_skill || 0, color: "info" },
           ].map((item, index) => (
             <div key={index} className="space-y-2">
               <div className="flex items-center justify-between">
