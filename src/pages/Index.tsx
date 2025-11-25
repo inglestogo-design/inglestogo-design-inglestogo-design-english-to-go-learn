@@ -30,52 +30,6 @@ const Index = () => {
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState("dashboard");
   const [headerFont, setHeaderFont] = useState("font-fredoka");
-  const [showStudyPlan, setShowStudyPlan] = useState(false);
-  const [userAnswers, setUserAnswers] = useState<any>(null);
-  const [onboardingStatus, setOnboardingStatus] = useState<boolean | null>(null);
-  const [checkingOnboarding, setCheckingOnboarding] = useState(true);
-
-  // Check onboarding status once when user loads
-  useEffect(() => {
-    const checkOnboarding = async () => {
-      if (user) {
-        const { data } = await supabase
-          .from('profiles')
-          .select('onboarding_completed')
-          .eq('id', user.id)
-          .single();
-        
-        setOnboardingStatus(data?.onboarding_completed || false);
-      }
-      setCheckingOnboarding(false);
-    };
-    
-    if (!loading) {
-      checkOnboarding();
-    }
-  }, [user, loading]);
-
-  const handleQuizComplete = async () => {
-    // Fetch user answers to show in study plan
-    if (user) {
-      const { data } = await supabase
-        .from('profiles')
-        .select('english_level, motivation, main_difficulties')
-        .eq('id', user.id)
-        .single();
-      
-      if (data) {
-        setUserAnswers(data);
-        setOnboardingStatus(true); // Mark as completed locally
-        setShowStudyPlan(true);
-      }
-    }
-  };
-
-  const handleStartApp = () => {
-    setShowStudyPlan(false);
-    setActiveSection("dashboard");
-  };
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -84,8 +38,8 @@ const Index = () => {
     }
   }, [loading, user, navigate]);
 
-  // Show loading while checking auth status and onboarding
-  if (loading || checkingOnboarding) {
+  // Show loading while checking auth status
+  if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center">
         <div className="text-center">
@@ -99,23 +53,6 @@ const Index = () => {
   // Don't render if not authenticated
   if (!user) {
     return null;
-  }
-
-  // Show onboarding quiz if not completed
-  if (user && onboardingStatus === false && !showStudyPlan) {
-    return <OnboardingQuiz onComplete={handleQuizComplete} />;
-  }
-
-  // Show study plan after quiz completion
-  if (showStudyPlan && userAnswers) {
-    return (
-      <StudyPlan
-        userLevel={userAnswers.english_level}
-        motivation={userAnswers.motivation}
-        difficulties={userAnswers.main_difficulties || []}
-        onStart={handleStartApp}
-      />
-    );
   }
 
   const renderSection = () => {
