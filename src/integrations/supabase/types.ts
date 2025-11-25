@@ -118,6 +118,90 @@ export type Database = {
           },
         ]
       }
+      user_activity: {
+        Row: {
+          activity_date: string
+          created_at: string | null
+          id: string
+          lessons_completed: number | null
+          minutes_studied: number | null
+          pronunciation_count: number | null
+          updated_at: string | null
+          user_id: string
+          vocabulary_count: number | null
+        }
+        Insert: {
+          activity_date?: string
+          created_at?: string | null
+          id?: string
+          lessons_completed?: number | null
+          minutes_studied?: number | null
+          pronunciation_count?: number | null
+          updated_at?: string | null
+          user_id: string
+          vocabulary_count?: number | null
+        }
+        Update: {
+          activity_date?: string
+          created_at?: string | null
+          id?: string
+          lessons_completed?: number | null
+          minutes_studied?: number | null
+          pronunciation_count?: number | null
+          updated_at?: string | null
+          user_id?: string
+          vocabulary_count?: number | null
+        }
+        Relationships: []
+      }
+      user_stats: {
+        Row: {
+          achievements: Json | null
+          best_streak: number | null
+          created_at: string | null
+          current_streak: number | null
+          fluency_skill: number | null
+          grammar_skill: number | null
+          id: string
+          last_activity_date: string | null
+          pronunciation_skill: number | null
+          total_words_learned: number | null
+          updated_at: string | null
+          user_id: string
+          vocabulary_skill: number | null
+        }
+        Insert: {
+          achievements?: Json | null
+          best_streak?: number | null
+          created_at?: string | null
+          current_streak?: number | null
+          fluency_skill?: number | null
+          grammar_skill?: number | null
+          id?: string
+          last_activity_date?: string | null
+          pronunciation_skill?: number | null
+          total_words_learned?: number | null
+          updated_at?: string | null
+          user_id: string
+          vocabulary_skill?: number | null
+        }
+        Update: {
+          achievements?: Json | null
+          best_streak?: number | null
+          created_at?: string | null
+          current_streak?: number | null
+          fluency_skill?: number | null
+          grammar_skill?: number | null
+          id?: string
+          last_activity_date?: string | null
+          pronunciation_skill?: number | null
+          total_words_learned?: number | null
+          updated_at?: string | null
+          user_id?: string
+          vocabulary_skill?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
