@@ -31,11 +31,16 @@ export const useUserProgress = () => {
   useEffect(() => {
     if (user) {
       fetchUserProgress();
+    } else {
+      setLoading(false);
     }
   }, [user]);
 
   const fetchUserProgress = async () => {
-    if (!user) return;
+    if (!user) {
+      setLoading(false);
+      return;
+    }
 
     try {
       // Fetch last 7 days of activity
@@ -43,22 +48,30 @@ export const useUserProgress = () => {
       const sevenDaysAgo = new Date(today);
       sevenDaysAgo.setDate(today.getDate() - 6);
 
-      const { data: activityData } = await supabase
+      const { data: activityData, error: activityError } = await supabase
         .from('user_activity')
         .select('*')
         .eq('user_id', user.id)
         .gte('activity_date', sevenDaysAgo.toISOString().split('T')[0])
         .order('activity_date', { ascending: true });
 
-      // Fetch user stats
-      const { data: statsData } = await supabase
+      if (activityError) {
+        console.error('Error fetching activity:', activityError);
+      }
+
+      // Fetch user stats - use maybeSingle() to handle new users without stats
+      const { data: statsData, error: statsError } = await supabase
         .from('user_stats')
         .select('*')
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
+
+      if (statsError) {
+        console.error('Error fetching stats:', statsError);
+      }
 
       setWeeklyActivity(activityData || []);
-      setStats(statsData);
+      setStats(statsData || null);
     } catch (error) {
       console.error('Error fetching user progress:', error);
     } finally {
@@ -78,7 +91,7 @@ export const useUserProgress = () => {
         .select('*')
         .eq('user_id', user.id)
         .eq('activity_date', today)
-        .single();
+        .maybeSingle();
 
       const updates: any = {
         user_id: user.id,
@@ -115,7 +128,7 @@ export const useUserProgress = () => {
         .from('user_stats')
         .select('*')
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
 
       const updates: any = {
         user_id: user.id,
