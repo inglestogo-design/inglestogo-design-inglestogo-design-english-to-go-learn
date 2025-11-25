@@ -8,6 +8,7 @@ import { LessonContent } from "@/components/lessons/LessonContent";
 import { lessons } from "@/data/lessonsData";
 import { useAuth } from "@/contexts/AuthContext";
 import { LockedContent } from "@/components/premium/LockedContent";
+import { useUserProgress } from "@/hooks/useUserProgress";
 
 interface LessonProgress {
   completed: boolean;
@@ -19,6 +20,7 @@ export const Lessons = () => {
   const [selectedLesson, setSelectedLesson] = useState<number | null>(null);
   const [progress, setProgress] = useState<Record<number, LessonProgress>>({});
   const { isPremium } = useAuth();
+  const { trackActivity } = useUserProgress();
   const FREE_LESSONS_COUNT = 1;
 
   const handleLessonComplete = (lessonNumber: number, score: number, stars: number) => {
@@ -30,6 +32,7 @@ export const Lessons = () => {
         points: score
       }
     }));
+    trackActivity('lesson', 1);
     setSelectedLesson(null);
   };
 

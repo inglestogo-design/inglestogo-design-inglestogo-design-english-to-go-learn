@@ -25,6 +25,7 @@ import { Progress } from "@/components/ui/progress";
 import { useState, useEffect } from "react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useToast } from "@/hooks/use-toast";
+import { useUserProgress } from "@/hooks/useUserProgress";
 import { speakText } from "@/utils/speechUtils";
 import { vocabularyThemes } from "@/data/vocabularyData";
 
@@ -315,6 +316,7 @@ export const Vocabulary = () => {
   const [loadingAudio, setLoadingAudio] = useState<string | null>(null);
   const { toast } = useToast();
   const { isPremium } = useAuth();
+  const { trackActivity } = useUserProgress();
   const FREE_THEMES = ['home', 'school'];
 
   // Load voices when component mounts
@@ -353,6 +355,7 @@ export const Vocabulary = () => {
         volume: 0.9
       });
       
+      trackActivity('vocabulary', 1);
       setLoadingAudio(null);
     } catch (error) {
       console.error('Error playing audio:', error);

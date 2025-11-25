@@ -11,6 +11,7 @@ import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
 import { pronunciationPhrases } from "@/data/pronunciationPhrases";
 import { useToast } from "@/hooks/use-toast";
 import { usePronunciationProgress } from "@/hooks/usePronunciationProgress";
+import { useUserProgress } from "@/hooks/useUserProgress";
 import { speakText } from "@/utils/speechUtils";
 
 export const Pronunciation = () => {
@@ -29,6 +30,7 @@ export const Pronunciation = () => {
     isPhraseCompleted,
     resetProgress 
   } = usePronunciationProgress();
+  const { trackActivity } = useUserProgress();
 
   const filteredPhrases = pronunciationPhrases.filter(p => p.level === selectedLevel);
   const currentPhrase = filteredPhrases[currentPhraseIndex];
@@ -94,6 +96,7 @@ export const Pronunciation = () => {
     if (accuracy >= 70) {
       setFeedback("correct");
       saveProgress(selectedLevel, currentPhraseIndex);
+      trackActivity('pronunciation', 1);
       
       const newProgress = getLevelProgress(selectedLevel);
       const isLevelComplete = newProgress.completed + 1 >= 30;
