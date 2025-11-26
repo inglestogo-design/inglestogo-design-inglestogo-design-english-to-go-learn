@@ -1,4 +1,4 @@
-import { Mic, Volume2, RotateCw, CheckCircle2, XCircle, Lock, Trophy } from "lucide-react";
+import { Mic, Volume2, RotateCw, CheckCircle2, XCircle, Lock, Trophy, Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { LockedContent } from "@/components/premium/LockedContent";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,12 +13,15 @@ import { useToast } from "@/hooks/use-toast";
 import { usePronunciationProgress } from "@/hooks/usePronunciationProgress";
 import { useUserProgress } from "@/hooks/useUserProgress";
 import { speakText } from "@/utils/speechUtils";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Pronunciation = () => {
   const [selectedLevel, setSelectedLevel] = useState<'basic' | 'intermediate' | 'advanced'>('basic');
   const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
   const [feedback, setFeedback] = useState<"correct" | "incorrect" | null>(null);
   const [accuracyScore, setAccuracyScore] = useState<number | null>(null);
+  const [aiAnalysis, setAiAnalysis] = useState<any>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const { isRecording, transcript, startRecording, stopRecording, isSupported } = useSpeechRecognition();
   const { toast } = useToast();
   const { isPremium } = useAuth();
@@ -75,57 +78,86 @@ export const Pronunciation = () => {
     }
   }, [transcript, isRecording]);
 
-  const checkPronunciation = (spokenText: string) => {
-    const normalized = (text: string) => text.toLowerCase().replace(/[.,!?]/g, '').trim();
-    const spokenNormalized = normalized(spokenText);
-    const expectedNormalized = normalized(currentPhrase.english);
-
-    const words = expectedNormalized.split(' ');
-    const spokenWords = spokenNormalized.split(' ');
-    
-    let matchCount = 0;
-    words.forEach(word => {
-      if (spokenWords.some(sw => sw.includes(word) || word.includes(sw))) {
-        matchCount++;
-      }
-    });
-
-    const accuracy = Math.round((matchCount / words.length) * 100);
-    setAccuracyScore(accuracy);
-
-    if (accuracy >= 70) {
-      setFeedback("correct");
-      saveProgress(selectedLevel, currentPhraseIndex);
-      trackActivity('pronunciation', 1);
-      
-      const newProgress = getLevelProgress(selectedLevel);
-      const isLevelComplete = newProgress.completed + 1 >= 30;
-      
+  const checkPronunciation = async (spokenText: string) => {
+    if (!spokenText || spokenText.trim().length === 0) {
       toast({
-        title: "Excelente! / Excellent!",
-        description: isLevelComplete 
-          ? `🎉 Nível completo! ${accuracy}% de precisão / Level complete! ${accuracy}% accuracy`
-          : `${accuracy}% de precisão / accuracy`,
-      });
-
-      if (isLevelComplete && selectedLevel === 'basic') {
-        toast({
-          title: "🎓 Nível Intermediário Desbloqueado!",
-          description: "Você completou todas as frases básicas! / You completed all basic phrases!",
-        });
-      } else if (isLevelComplete && selectedLevel === 'intermediate') {
-        toast({
-          title: "🏆 Nível Avançado Desbloqueado!",
-          description: "Você completou todas as frases intermediárias! / You completed all intermediate phrases!",
-        });
-      }
-    } else {
-      setFeedback("incorrect");
-      toast({
-        title: "Vamos tentar novamente / Let's try again",
-        description: `${accuracy}% de precisão / accuracy`,
+        title: "Nenhuma fala detectada / No speech detected",
+        description: "Tente falar mais alto ou mais próximo do microfone / Try speaking louder or closer to the microphone",
         variant: "destructive",
       });
+      return;
+    }
+
+    setIsAnalyzing(true);
+    setAiAnalysis(null);
+
+    try {
+      console.log('Calling pronunciation-analysis with:', {
+        spokenText,
+        expectedWord: currentPhrase.english,
+        expectedPronunciation: currentPhrase.phonetic
+      });
+
+      const { data, error } = await supabase.functions.invoke('pronunciation-analysis', {
+        body: {
+          spokenText: spokenText,
+          expectedWord: currentPhrase.english,
+          expectedPronunciation: currentPhrase.phonetic
+        }
+      });
+
+      if (error) {
+        console.error('Error calling pronunciation-analysis:', error);
+        throw error;
+      }
+
+      console.log('AI Analysis result:', data);
+      setAiAnalysis(data);
+      setAccuracyScore(data.accuracyPercentage);
+
+      if (data.isCorrect) {
+        setFeedback("correct");
+        saveProgress(selectedLevel, currentPhraseIndex);
+        trackActivity('pronunciation', 1);
+        
+        const newProgress = getLevelProgress(selectedLevel);
+        const isLevelComplete = newProgress.completed + 1 >= 30;
+        
+        toast({
+          title: data.feedback,
+          description: `${data.accuracyPercentage}% de precisão / accuracy`,
+        });
+
+        if (isLevelComplete && selectedLevel === 'basic') {
+          toast({
+            title: "🎓 Nível Intermediário Desbloqueado!",
+            description: "Você completou todas as frases básicas! / You completed all basic phrases!",
+          });
+        } else if (isLevelComplete && selectedLevel === 'intermediate') {
+          toast({
+            title: "🏆 Nível Avançado Desbloqueado!",
+            description: "Você completou todas as frases intermediárias! / You completed all intermediate phrases!",
+          });
+        }
+      } else {
+        setFeedback("incorrect");
+        toast({
+          title: data.feedback,
+          description: `${data.accuracyPercentage}% de precisão / accuracy`,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Error analyzing pronunciation:', error);
+      toast({
+        title: "Erro na análise / Analysis error",
+        description: "Não foi possível analisar sua pronúncia. Tente novamente. / Could not analyze your pronunciation. Try again.",
+        variant: "destructive",
+      });
+      setFeedback("incorrect");
+      setAccuracyScore(0);
+    } finally {
+      setIsAnalyzing(false);
     }
   };
 
@@ -178,6 +210,7 @@ export const Pronunciation = () => {
   const handleTryAgain = () => {
     setFeedback(null);
     setAccuracyScore(null);
+    setAiAnalysis(null);
   };
 
   return (
@@ -296,29 +329,35 @@ export const Pronunciation = () => {
                   size="lg"
                   variant={isRecording ? "destructive" : "default"}
                   onClick={handleRecord}
-                  disabled={!isSupported}
+                  disabled={!isSupported || isAnalyzing}
                   className={`h-24 w-24 rounded-full ${isRecording ? "animate-pulse-soft" : ""}`}
                 >
-                  <Mic className="h-8 w-8" />
+                  {isAnalyzing ? (
+                    <Loader2 className="h-8 w-8 animate-spin" />
+                  ) : (
+                    <Mic className="h-8 w-8" />
+                  )}
                 </Button>
               </div>
 
               <div className="text-center">
                 <p className="text-sm text-muted-foreground">
-                  {isRecording ? (
+                  {isAnalyzing ? (
+                    <><strong>Analisando com IA...</strong> / Analyzing with AI...</>
+                  ) : isRecording ? (
                     <><strong>Gravando...</strong> / Recording...</>
                   ) : (
                     <><strong>Clique para gravar</strong> / Click to record</>
                   )}
                 </p>
-                {transcript && (
+                {transcript && !isAnalyzing && (
                   <p className="text-xs text-muted-foreground mt-2">
                     <strong>Você disse:</strong> {transcript}
                   </p>
                 )}
               </div>
 
-              {feedback && (
+              {feedback && aiAnalysis && (
                 <Card className={`border-2 ${
                   feedback === "correct" 
                     ? "border-success/50 bg-success/5" 
@@ -331,23 +370,59 @@ export const Pronunciation = () => {
                       ) : (
                         <XCircle className="h-6 w-6 text-destructive flex-shrink-0" />
                       )}
-                      <div className="space-y-2 flex-1">
-                        <h4 className="font-semibold">
-                          {feedback === "correct" ? (
-                            <><strong>Excelente!</strong> / Excellent! ({accuracyScore}% precisão)</>
-                          ) : (
-                            <><strong>Vamos tentar novamente</strong> / Let's try again ({accuracyScore}% precisão)</>
-                          )}
+                      <div className="space-y-3 flex-1">
+                        <h4 className="font-semibold text-lg">
+                          {aiAnalysis.feedback} ({aiAnalysis.accuracyPercentage}% precisão)
                         </h4>
-                        {feedback === "correct" ? (
-                          <p className="text-sm text-muted-foreground">
-                            Sua pronúncia está ótima! Continue praticando. / Your pronunciation is great! Keep practicing.
-                          </p>
-                        ) : (
+                        
+                        {aiAnalysis.detailedAnalysis && (
+                          <div className="space-y-2 text-sm">
+                            <p className="font-medium">📊 Análise Detalhada:</p>
+                            <p className="text-muted-foreground">{aiAnalysis.detailedAnalysis}</p>
+                          </div>
+                        )}
+
+                        {aiAnalysis.correctSounds && aiAnalysis.correctSounds.length > 0 && (
+                          <div className="space-y-1">
+                            <p className="text-sm font-medium text-success">✅ Sons Corretos:</p>
+                            <div className="flex flex-wrap gap-1">
+                              {aiAnalysis.correctSounds.map((sound: string, idx: number) => (
+                                <Badge key={idx} variant="outline" className="bg-success/10 text-success border-success/20">
+                                  {sound}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {aiAnalysis.incorrectSounds && aiAnalysis.incorrectSounds.length > 0 && (
+                          <div className="space-y-1">
+                            <p className="text-sm font-medium text-destructive">❌ Sons para Melhorar:</p>
+                            <div className="flex flex-wrap gap-1">
+                              {aiAnalysis.incorrectSounds.map((sound: string, idx: number) => (
+                                <Badge key={idx} variant="outline" className="bg-destructive/10 text-destructive border-destructive/20">
+                                  {sound}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {aiAnalysis.suggestions && (
+                          <div className="space-y-2 bg-primary/5 p-3 rounded-lg">
+                            <p className="text-sm font-medium">💡 Como Melhorar:</p>
+                            <p className="text-sm text-muted-foreground">{aiAnalysis.suggestions}</p>
+                          </div>
+                        )}
+
+                        {aiAnalysis.tips && aiAnalysis.tips.length > 0 && (
                           <div className="space-y-2">
-                            <p className="text-sm text-muted-foreground">
-                              Ouça novamente e tente prestar atenção na pronúncia de cada palavra. / Listen again and try to pay attention to the pronunciation of each word.
-                            </p>
+                            <p className="text-sm font-medium">🎯 Dicas Práticas:</p>
+                            <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
+                              {aiAnalysis.tips.map((tip: string, idx: number) => (
+                                <li key={idx}>{tip}</li>
+                              ))}
+                            </ul>
                           </div>
                         )}
                       </div>
