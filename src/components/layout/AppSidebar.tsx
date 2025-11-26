@@ -39,7 +39,7 @@ export function AppSidebar({ activeSection, onSectionChange }: AppSidebarProps) 
 
   return (
     <Sidebar 
-      className="border-r bg-white shadow-xl"
+      className="border-r !bg-white shadow-xl"
       collapsible="icon"
     >
       <SidebarContent className="pt-4">
@@ -83,9 +83,9 @@ export function AppSidebar({ activeSection, onSectionChange }: AppSidebarProps) 
                         isActive={isActive}
                         className={cn(
                           "w-full justify-start gap-3 px-4 py-3 rounded-lg transition-all text-base",
-                          "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:scale-[1.02]",
+                          "hover:bg-primary/10 hover:scale-[1.02]",
                           isActive && "bg-primary text-white hover:bg-primary/90 shadow-lg scale-[1.03] font-bold",
-                          !isActive && "text-sidebar-foreground font-semibold"
+                          !isActive && "!text-[#3D3F92] font-semibold"
                         )}
                         tooltip={!open ? item.label : undefined}
                       >
@@ -116,8 +116,8 @@ export function AppSidebar({ activeSection, onSectionChange }: AppSidebarProps) 
                   onClick={() => navigate('/settings')}
                   className={cn(
                     "w-full justify-start gap-3 px-4 py-3 rounded-lg transition-all text-base",
-                    "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:scale-[1.02]",
-                    "text-sidebar-foreground font-semibold"
+                    "hover:bg-primary/10 hover:scale-[1.02]",
+                    "!text-[#3D3F92] font-semibold"
                   )}
                   tooltip={!open ? "Configurações / Settings" : undefined}
                 >
