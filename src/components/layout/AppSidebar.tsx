@@ -40,7 +40,10 @@ export function AppSidebar({ activeSection, onSectionChange }: AppSidebarProps) 
   const navigate = useNavigate();
 
   return (
-    <Sidebar className={cn("border-r", open ? "w-60" : "w-16")} collapsible="icon">
+    <Sidebar 
+      className={cn("border-r", open ? "w-60" : "w-16")} 
+      collapsible="icon"
+    >
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel className={cn(!open && "opacity-0")}>
