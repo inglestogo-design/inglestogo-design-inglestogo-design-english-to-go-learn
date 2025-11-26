@@ -30,7 +30,7 @@ export const Header = ({ fontClass = "font-baloo" }: HeaderProps) => {
       <div className="container flex h-20 items-center justify-between px-4">
         <div className="flex items-center gap-2 md:gap-4">
           {/* Sidebar Toggle Button - Always visible */}
-          <SidebarTrigger className="h-10 w-10 hover:bg-primary/10 hover:scale-110 transition-transform">
+          <SidebarTrigger className="h-10 w-10 hover:bg-primary/10 hover:scale-110 transition-all duration-300 ease-in-out hover:rotate-180">
             <Menu className="h-5 w-5" />
           </SidebarTrigger>
           <img 

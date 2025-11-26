@@ -25,7 +25,10 @@ export function AppSidebar({ activeSection, onSectionChange }: AppSidebarProps) 
 
   return (
     <Sidebar 
-      className={cn("border-r", open ? "w-60" : "w-16")} 
+      className={cn(
+        "border-r transition-all duration-300 ease-in-out",
+        open ? "w-60 animate-fade-in" : "w-16"
+      )} 
       collapsible="icon"
     >
       <SidebarContent>
@@ -45,13 +48,13 @@ export function AppSidebar({ activeSection, onSectionChange }: AppSidebarProps) 
                       onClick={() => onSectionChange(item.id)}
                       isActive={isActive}
                       className={cn(
-                        "transition-smooth",
+                        "transition-all duration-300 ease-in-out hover:scale-105",
                         isActive && "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground"
                       )}
                       tooltip={item.label}
                     >
-                      <Icon className="h-4 w-4" />
-                      {open && <span>{item.label}</span>}
+                      <Icon className="h-4 w-4 transition-transform duration-200" />
+                      {open && <span className="animate-fade-in">{item.label}</span>}
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 );
@@ -61,11 +64,11 @@ export function AppSidebar({ activeSection, onSectionChange }: AppSidebarProps) 
               <SidebarMenuItem>
                 <SidebarMenuButton
                   onClick={() => navigate('/settings')}
-                  className="transition-smooth mt-4 border-t pt-4"
+                  className="transition-all duration-300 ease-in-out hover:scale-105 mt-4 border-t pt-4"
                   tooltip="Configurações"
                 >
-                  <Settings className="h-4 w-4" />
-                  {open && <span>Configurações</span>}
+                  <Settings className="h-4 w-4 transition-transform duration-200" />
+                  {open && <span className="animate-fade-in">Configurações</span>}
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
