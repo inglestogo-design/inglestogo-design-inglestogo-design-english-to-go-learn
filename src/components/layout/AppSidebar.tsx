@@ -25,19 +25,19 @@ export function AppSidebar({ activeSection, onSectionChange }: AppSidebarProps) 
 
   return (
     <Sidebar 
-      className={cn(
-        "border-r transition-all duration-300 ease-in-out",
-        open ? "w-60 animate-fade-in" : "w-16"
-      )} 
+      className="border-r"
       collapsible="icon"
     >
-      <SidebarContent>
+      <SidebarContent className="pt-4">
         <SidebarGroup>
-          <SidebarGroupLabel className={cn(!open && "opacity-0")}>
-            Menu Principal
+          <SidebarGroupLabel className={cn(
+            "text-sm font-semibold px-4 mb-2 transition-opacity duration-200",
+            !open && "sr-only"
+          )}>
+            Menu Principal / Main Menu
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="space-y-1">
               {navigationItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = activeSection === item.id;
@@ -48,27 +48,43 @@ export function AppSidebar({ activeSection, onSectionChange }: AppSidebarProps) 
                       onClick={() => onSectionChange(item.id)}
                       isActive={isActive}
                       className={cn(
-                        "transition-all duration-300 ease-in-out hover:scale-105",
-                        isActive && "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground"
+                        "w-full justify-start gap-3 px-3 py-2.5 rounded-lg transition-all",
+                        "hover:bg-primary/10 hover:scale-[1.02]",
+                        isActive && "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground font-semibold"
                       )}
-                      tooltip={item.label}
+                      tooltip={!open ? item.label : undefined}
                     >
-                      <Icon className="h-4 w-4 transition-transform duration-200" />
-                      {open && <span className="animate-fade-in">{item.label}</span>}
+                      <Icon className="h-5 w-5 flex-shrink-0" />
+                      <span className={cn(
+                        "text-sm whitespace-nowrap overflow-hidden transition-all duration-200",
+                        !open && "w-0 opacity-0",
+                        open && "w-auto opacity-100"
+                      )}>
+                        {item.label}
+                      </span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 );
               })}
               
               {/* Settings Link - Always at bottom */}
-              <SidebarMenuItem>
+              <SidebarMenuItem className="mt-6 pt-4 border-t">
                 <SidebarMenuButton
                   onClick={() => navigate('/settings')}
-                  className="transition-all duration-300 ease-in-out hover:scale-105 mt-4 border-t pt-4"
-                  tooltip="Configurações"
+                  className={cn(
+                    "w-full justify-start gap-3 px-3 py-2.5 rounded-lg transition-all",
+                    "hover:bg-primary/10 hover:scale-[1.02]"
+                  )}
+                  tooltip={!open ? "Configurações / Settings" : undefined}
                 >
-                  <Settings className="h-4 w-4 transition-transform duration-200" />
-                  {open && <span className="animate-fade-in">Configurações</span>}
+                  <Settings className="h-5 w-5 flex-shrink-0" />
+                  <span className={cn(
+                    "text-sm whitespace-nowrap overflow-hidden transition-all duration-200",
+                    !open && "w-0 opacity-0",
+                    open && "w-auto opacity-100"
+                  )}>
+                    Configurações / Settings
+                  </span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>

@@ -11,7 +11,7 @@ const Premium = () => {
   const navigate = useNavigate();
 
   return (
-    <SidebarProvider defaultOpen={false}>
+    <SidebarProvider defaultOpen={true}>
       <div className="min-h-screen flex w-full">
         <AppSidebar activeSection="premium" onSectionChange={() => navigate('/')} />
         <div className="flex-1 flex flex-col min-w-0">
