@@ -75,7 +75,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const timeoutId = setTimeout(() => {
       console.warn('⚠️ Session load timeout - forcing loading to false');
       setLoading(false);
-    }, 5000);
+    }, 3000);
     
     loadSession().finally(() => {
       clearTimeout(timeoutId);

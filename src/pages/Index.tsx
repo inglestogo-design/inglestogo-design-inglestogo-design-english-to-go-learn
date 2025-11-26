@@ -31,6 +31,7 @@ const Index = () => {
   const [activeSection, setActiveSection] = useState("dashboard");
   const [headerFont, setHeaderFont] = useState("font-fredoka");
   const [showStudyPlan, setShowStudyPlan] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const [userAnswers, setUserAnswers] = useState<any>(null);
   const [onboardingStatus, setOnboardingStatus] = useState<boolean | null>(null);
   const [checkingOnboarding, setCheckingOnboarding] = useState(true);
@@ -101,8 +102,8 @@ const Index = () => {
     return null;
   }
 
-  // Show onboarding quiz if not completed
-  if (user && onboardingStatus === false && !showStudyPlan) {
+  // Show onboarding quiz if user explicitly chooses to start it
+  if (showOnboarding && !showStudyPlan) {
     return <OnboardingQuiz onComplete={handleQuizComplete} />;
   }
 
@@ -121,7 +122,7 @@ const Index = () => {
   const renderSection = () => {
     switch (activeSection) {
       case "dashboard":
-        return <Dashboard onNavigate={setActiveSection} />;
+        return <Dashboard onNavigate={setActiveSection} onStartOnboarding={() => setShowOnboarding(true)} />;
       case "leveling-test":
         return <LevelingTest />;
       case "pronunciation":

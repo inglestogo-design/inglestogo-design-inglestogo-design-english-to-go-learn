@@ -205,9 +205,10 @@ const quotes: DailyQuote[] = [
 
 interface DashboardProps {
   onNavigate?: (section: string) => void;
+  onStartOnboarding?: () => void;
 }
 
-export const Dashboard = ({ onNavigate }: DashboardProps) => {
+export const Dashboard = ({ onNavigate, onStartOnboarding }: DashboardProps) => {
   const [todayQuote, setTodayQuote] = useState<DailyQuote>(quotes[0]);
   const [loadingAudio, setLoadingAudio] = useState(false);
   const [currentTemp, setCurrentTemp] = useState(72); // Default temperature
@@ -373,6 +374,28 @@ export const Dashboard = ({ onNavigate }: DashboardProps) => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Study Plan Card */}
+      <Card className="bg-gradient-to-br from-primary/20 via-secondary/10 to-accent/20 border-2 border-primary/30 shadow-lg">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-2xl">
+            📋 Monte seu Plano de Estudo Personalizado / Create Your Personalized Study Plan
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-foreground/90 text-lg">
+            Responda algumas perguntas rápidas e receba um plano de estudos feito sob medida para você! / Answer a few quick questions and receive a study plan tailored for you!
+          </p>
+          {onStartOnboarding && (
+            <Button 
+              onClick={onStartOnboarding}
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-lg py-6"
+            >
+              🚀 Começar Agora / Start Now
+            </Button>
+          )}
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>
