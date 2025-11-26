@@ -103,6 +103,7 @@ const Index = () => {
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
           <p className="text-muted-foreground">Carregando...</p>
+          <p className="text-xs text-muted-foreground mt-2">Se demorar muito, recarregue a página</p>
         </div>
       </div>
     );

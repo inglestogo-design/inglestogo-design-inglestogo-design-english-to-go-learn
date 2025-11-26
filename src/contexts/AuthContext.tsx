@@ -45,21 +45,31 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         // Load onboarding status on initial load
         if (session?.user) {
           try {
-            const { data } = await supabase
+            const { data, error: profileError } = await supabase
               .from("profiles")
               .select("is_premium, premium_until, onboarding_completed")
               .eq("id", session.user.id)
-              .single();
+              .maybeSingle();
             
-            if (data) {
+            if (profileError) {
+              console.error('❌ Error loading profile:', profileError);
+              setIsPremium(false);
+              setOnboardingCompleted(false);
+            } else if (data) {
               console.log('📊 Initial profile load:', { onboarding_completed: data.onboarding_completed });
               const isActive = data.is_premium && 
                 (!data.premium_until || new Date(data.premium_until) > new Date());
               setIsPremium(isActive);
               setOnboardingCompleted(data.onboarding_completed || false);
+            } else {
+              // No profile found
+              setIsPremium(false);
+              setOnboardingCompleted(false);
             }
           } catch (error) {
             console.error('❌ Error loading profile:', error);
+            setIsPremium(false);
+            setOnboardingCompleted(false);
           }
         }
         
@@ -75,7 +85,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const timeoutId = setTimeout(() => {
       console.warn('⚠️ Session load timeout - forcing loading to false');
       setLoading(false);
-    }, 3000);
+      isInitialLoad = false;
+    }, 2000);
     
     loadSession().finally(() => {
       clearTimeout(timeoutId);
@@ -97,18 +108,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         // Only reload profile data when user actually signs in (not on initial load)
         if (session?.user && event === 'SIGNED_IN') {
           console.log('🔄 Loading profile after SIGNED_IN event');
-          const { data } = await supabase
-            .from("profiles")
-            .select("is_premium, premium_until, onboarding_completed")
-            .eq("id", session.user.id)
-            .single();
-          
-          if (data) {
-            console.log('✅ Profile loaded:', { onboarding_completed: data.onboarding_completed });
-            const isActive = data.is_premium && 
-              (!data.premium_until || new Date(data.premium_until) > new Date());
-            setIsPremium(isActive);
-            setOnboardingCompleted(data.onboarding_completed || false);
+          try {
+            const { data, error: profileError } = await supabase
+              .from("profiles")
+              .select("is_premium, premium_until, onboarding_completed")
+              .eq("id", session.user.id)
+              .maybeSingle();
+            
+            if (profileError) {
+              console.error('❌ Error loading profile after sign in:', profileError);
+            } else if (data) {
+              console.log('✅ Profile loaded:', { onboarding_completed: data.onboarding_completed });
+              const isActive = data.is_premium && 
+                (!data.premium_until || new Date(data.premium_until) > new Date());
+              setIsPremium(isActive);
+              setOnboardingCompleted(data.onboarding_completed || false);
+            }
+          } catch (error) {
+            console.error('❌ Error in SIGNED_IN handler:', error);
           }
         } else if (!session?.user) {
           setIsPremium(false);
