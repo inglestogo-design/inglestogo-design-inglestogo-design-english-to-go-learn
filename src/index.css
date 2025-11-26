@@ -49,6 +49,14 @@ All colors MUST be HSL.
 
     --radius: 0.75rem;
 
+    /* Sidebar colors - BRANCO SÓLIDO com texto escuro */
+    --sidebar: 0 0% 100%;
+    --sidebar-foreground: 239 40% 40%;
+    --sidebar-border: 0 0% 90%;
+    --sidebar-accent: 76 57% 55%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-ring: 76 57% 55%;
+
     /* Success color (verde) */
     --success: 76 57% 55%;
     --success-foreground: 0 0% 100%;
@@ -102,6 +110,14 @@ All colors MUST be HSL.
     --border: 0 0% 20%;
     --input: 0 0% 20%;
     --ring: 76 57% 55%;
+
+    /* Sidebar colors for dark mode */
+    --sidebar: 0 0% 15%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-border: 0 0% 20%;
+    --sidebar-accent: 76 57% 55%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-ring: 76 57% 55%;
   }
 }
 
