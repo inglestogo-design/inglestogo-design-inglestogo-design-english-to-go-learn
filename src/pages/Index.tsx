@@ -21,6 +21,7 @@ import { LevelingTest } from "@/components/leveling-test/LevelingTest";
 import { VirtualCoach } from "@/components/sections/VirtualCoach";
 import { SurvivalEnglish } from "@/components/sections/SurvivalEnglish";
 import { AuPairCourse } from "@/components/sections/AuPairCourse";
+import { ToeflCourse } from "@/components/sections/ToeflCourse";
 import { OnboardingQuiz } from "@/components/onboarding/OnboardingQuiz";
 import { StudyPlan } from "@/components/onboarding/StudyPlan";
 import { useAuth } from "@/contexts/AuthContext";
@@ -152,6 +153,8 @@ const Index = () => {
         return <SurvivalEnglish />;
       case "auPairCourse":
         return <AuPairCourse />;
+      case "toeflCourse":
+        return <ToeflCourse />;
       default:
         return <Dashboard />;
     }

@@ -1,4 +1,4 @@
-import { Home, Mic, BookText, BookA, GraduationCap, TrendingUp, BookOpen, Hash, Radio, Zap, Bot, Lightbulb, Flag, BookMarked, Plane, LucideIcon } from "lucide-react";
+import { Home, Mic, BookText, BookA, GraduationCap, TrendingUp, BookOpen, Hash, Radio, Zap, Bot, Lightbulb, Flag, BookMarked, Plane, FileText, LucideIcon } from "lucide-react";
 
 export interface NavigationItem {
   id: string;
@@ -21,6 +21,7 @@ export const navigationItems: NavigationItem[] = [
   { id: "radio", label: "Rádio 24h / Radio 24/7", icon: Radio },
   { id: "survivalEnglish", label: "Survival English", icon: Lightbulb },
   { id: "leveling-test", label: "Teste de Nível / Level Test", icon: Zap },
+  { id: "toeflCourse", label: "TOEFL 360° / TOEFL 360°", icon: FileText },
   { id: "verbs", label: "Verbos / Verbs", icon: BookOpen },
   { id: "vocabulary", label: "Vocabulário / Vocabulary", icon: BookText },
 ];
