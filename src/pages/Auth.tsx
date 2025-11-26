@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { ArrowLeft } from "lucide-react";
 import logo from "@/assets/logo-final.png";
 import { z } from "zod";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 const authSchema = z.object({
   email: z.string()
@@ -102,8 +103,9 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-secondary/10 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
+    <SidebarProvider defaultOpen={false}>
+      <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-secondary/10 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
         <CardHeader className="text-center space-y-4">
           <Button
             variant="ghost"
@@ -207,6 +209,7 @@ const Auth = () => {
         </CardContent>
       </Card>
     </div>
+    </SidebarProvider>
   );
 };
 
