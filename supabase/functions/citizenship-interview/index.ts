@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -29,7 +30,33 @@ serve(async (req) => {
       throw new Error('Unauthorized');
     }
 
-    const { messages } = await req.json();
+    // Zod validation schema for input security
+    const MessageSchema = z.object({
+      role: z.enum(['user', 'assistant', 'system'], { 
+        errorMap: () => ({ message: "Role must be 'user', 'assistant', or 'system'" })
+      }),
+      content: z.string().min(1, "Message content is required").max(2000, "Message content must be less than 2000 characters")
+    });
+
+    const RequestSchema = z.object({
+      messages: z.array(MessageSchema).min(1, "At least one message is required").max(50, "Maximum 50 messages allowed")
+    });
+
+    const body = await req.json();
+    const validationResult = RequestSchema.safeParse(body);
+    
+    if (!validationResult.success) {
+      console.error('Input validation failed:', validationResult.error.errors);
+      return new Response(
+        JSON.stringify({ 
+          error: 'Invalid input',
+          details: validationResult.error.errors[0].message
+        }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const { messages } = validationResult.data;
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
 
     if (!LOVABLE_API_KEY) {

@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -11,13 +12,29 @@ serve(async (req) => {
   }
 
   try {
-    const { spokenText, expectedWord, expectedPronunciation } = await req.json();
-    
-    console.log('Pronunciation analysis request:', { spokenText, expectedWord, expectedPronunciation });
+    // Zod validation schema for input security
+    const RequestSchema = z.object({
+      spokenText: z.string().min(1, "Spoken text is required").max(500, "Spoken text must be less than 500 characters"),
+      expectedWord: z.string().min(1, "Expected word is required").max(100, "Expected word must be less than 100 characters"),
+      expectedPronunciation: z.string().max(200, "Expected pronunciation must be less than 200 characters").optional()
+    });
 
-    if (!spokenText || !expectedWord) {
-      throw new Error('Missing required parameters');
+    const body = await req.json();
+    const validationResult = RequestSchema.safeParse(body);
+    
+    if (!validationResult.success) {
+      console.error('Input validation failed:', validationResult.error.errors);
+      return new Response(
+        JSON.stringify({ 
+          error: 'Invalid input',
+          details: validationResult.error.errors[0].message
+        }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
+
+    const { spokenText, expectedWord, expectedPronunciation } = validationResult.data;
+    console.log('Pronunciation analysis request:', { spokenText, expectedWord, expectedPronunciation });
 
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     if (!LOVABLE_API_KEY) {
