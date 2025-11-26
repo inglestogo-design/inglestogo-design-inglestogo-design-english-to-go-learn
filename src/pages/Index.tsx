@@ -28,40 +28,13 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
-  const { user, loading } = useAuth();
+  const { user, loading, onboardingCompleted } = useAuth();
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState("dashboard");
   const [headerFont, setHeaderFont] = useState("font-fredoka");
   const [showStudyPlan, setShowStudyPlan] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [userAnswers, setUserAnswers] = useState<any>(null);
-  const [onboardingStatus, setOnboardingStatus] = useState<boolean | null>(null);
-  const [checkingOnboarding, setCheckingOnboarding] = useState(true);
-
-  // Check onboarding status once when user loads
-  useEffect(() => {
-    const checkOnboarding = async () => {
-      if (user) {
-        try {
-          const { data } = await supabase
-            .from('profiles')
-            .select('onboarding_completed')
-            .eq('id', user.id)
-            .maybeSingle();
-          
-          setOnboardingStatus(data?.onboarding_completed || false);
-        } catch (error) {
-          console.error('Error checking onboarding:', error);
-          setOnboardingStatus(false);
-        }
-      }
-      setCheckingOnboarding(false);
-    };
-    
-    if (!loading) {
-      checkOnboarding();
-    }
-  }, [user, loading]);
 
   const handleQuizComplete = async () => {
     // Fetch user answers to show in study plan
@@ -75,7 +48,6 @@ const Index = () => {
         
         if (data) {
           setUserAnswers(data);
-          setOnboardingStatus(true); // Mark as completed locally
           setShowStudyPlan(true);
         }
       } catch (error) {
@@ -96,14 +68,13 @@ const Index = () => {
     }
   }, [loading, user, navigate]);
 
-  // Show loading while checking auth status and onboarding
-  if (loading || checkingOnboarding) {
+  // Show loading while checking auth status
+  if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
           <p className="text-muted-foreground">Carregando...</p>
-          <p className="text-xs text-muted-foreground mt-2">Se demorar muito, recarregue a página</p>
         </div>
       </div>
     );
