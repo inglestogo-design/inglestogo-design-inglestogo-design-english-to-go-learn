@@ -85,13 +85,13 @@ export function AppSidebar({ activeSection, onSectionChange }: AppSidebarProps) 
                           "w-full justify-start gap-3 px-3 py-2.5 rounded-lg transition-all",
                           "hover:bg-primary/10 hover:scale-[1.02]",
                           isActive && "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground font-semibold",
-                          !isActive && "text-foreground"
+                          !isActive && "text-secondary"
                         )}
                         tooltip={!open ? item.label : undefined}
                       >
                         <Icon className="h-5 w-5 flex-shrink-0" />
                         {open && (
-                          <span className="text-sm font-medium">
+                          <span className="text-sm font-semibold">
                             {item.label}
                           </span>
                         )}
@@ -117,13 +117,13 @@ export function AppSidebar({ activeSection, onSectionChange }: AppSidebarProps) 
                   className={cn(
                     "w-full justify-start gap-3 px-3 py-2.5 rounded-lg transition-all",
                     "hover:bg-primary/10 hover:scale-[1.02]",
-                    "text-foreground"
+                    "text-secondary"
                   )}
                   tooltip={!open ? "Configurações / Settings" : undefined}
                 >
                   <Settings className="h-5 w-5 flex-shrink-0" />
                   {open && (
-                    <span className="text-sm font-medium">
+                    <span className="text-sm font-semibold">
                       Configurações / Settings
                     </span>
                   )}
