@@ -82,16 +82,16 @@ export function AppSidebar({ activeSection, onSectionChange }: AppSidebarProps) 
                         }}
                         isActive={isActive}
                         className={cn(
-                          "w-full justify-start gap-3 px-3 py-2.5 rounded-lg transition-all",
+                          "w-full justify-start gap-3 px-4 py-3 rounded-lg transition-all",
                           "hover:bg-primary/10 hover:scale-[1.02]",
-                          isActive && "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground font-semibold",
-                          !isActive && "text-secondary"
+                          isActive && "bg-primary text-white hover:bg-primary/90 shadow-lg scale-[1.03] font-bold",
+                          !isActive && "text-secondary font-semibold"
                         )}
                         tooltip={!open ? item.label : undefined}
                       >
-                        <Icon className="h-5 w-5 flex-shrink-0" />
+                        <Icon className="h-6 w-6 flex-shrink-0" />
                         {open && (
-                          <span className="text-sm font-semibold">
+                          <span className="text-base font-bold">
                             {item.label}
                           </span>
                         )}
@@ -115,15 +115,15 @@ export function AppSidebar({ activeSection, onSectionChange }: AppSidebarProps) 
                 <SidebarMenuButton
                   onClick={() => navigate('/settings')}
                   className={cn(
-                    "w-full justify-start gap-3 px-3 py-2.5 rounded-lg transition-all",
+                    "w-full justify-start gap-3 px-4 py-3 rounded-lg transition-all",
                     "hover:bg-primary/10 hover:scale-[1.02]",
-                    "text-secondary"
+                    "text-secondary font-semibold"
                   )}
                   tooltip={!open ? "Configurações / Settings" : undefined}
                 >
-                  <Settings className="h-5 w-5 flex-shrink-0" />
+                  <Settings className="h-6 w-6 flex-shrink-0" />
                   {open && (
-                    <span className="text-sm font-semibold">
+                    <span className="text-base font-bold">
                       Configurações / Settings
                     </span>
                   )}
