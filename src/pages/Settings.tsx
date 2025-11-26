@@ -11,6 +11,8 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { RefreshCw, Save, Languages, Bell, ArrowLeft } from "lucide-react";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/layout/AppSidebar";
 
 export default function Settings() {
   const { user, loading } = useAuth();
@@ -143,10 +145,13 @@ export default function Settings() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <Header fontClass="font-fredoka" />
-      
-      <main className="container px-4 py-8 flex-1 max-w-4xl mx-auto">
+    <SidebarProvider defaultOpen={false}>
+      <div className="min-h-screen flex w-full">
+        <AppSidebar activeSection="settings" onSectionChange={() => navigate('/')} />
+        <div className="flex-1 flex flex-col min-w-0">
+          <Header fontClass="font-fredoka" />
+          
+          <main className="container px-4 py-8 flex-1 max-w-4xl mx-auto">
         <Button
           variant="ghost"
           onClick={() => navigate('/')}
@@ -319,9 +324,11 @@ export default function Settings() {
             </Button>
           </div>
         </div>
-      </main>
+          </main>
 
-      <Footer />
-    </div>
+          <Footer />
+        </div>
+      </div>
+    </SidebarProvider>
   );
 }
