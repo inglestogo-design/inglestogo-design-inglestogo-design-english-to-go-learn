@@ -39,7 +39,7 @@ export function AppSidebar({ activeSection, onSectionChange }: AppSidebarProps) 
 
   return (
     <Sidebar 
-      className="border-r shadow-xl"
+      className="border-r bg-white shadow-xl"
       collapsible="icon"
     >
       <SidebarContent className="pt-4">
