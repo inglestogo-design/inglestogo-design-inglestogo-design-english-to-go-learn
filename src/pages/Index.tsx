@@ -155,12 +155,15 @@ const Index = () => {
   };
 
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={false}>
       <div className="min-h-screen flex w-full">
         <AppSidebar activeSection={activeSection} onSectionChange={setActiveSection} />
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col min-w-0">
           <Header fontClass={headerFont} />
-          <Navigation activeSection={activeSection} onSectionChange={setActiveSection} />
+          {/* Hide horizontal navigation on mobile since we have sidebar */}
+          <div className="hidden lg:block">
+            <Navigation activeSection={activeSection} onSectionChange={setActiveSection} />
+          </div>
           <main className="container px-4 py-8 flex-1">
             {renderSection()}
           </main>
