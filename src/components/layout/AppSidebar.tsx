@@ -84,18 +84,17 @@ export function AppSidebar({ activeSection, onSectionChange }: AppSidebarProps) 
                         className={cn(
                           "w-full justify-start gap-3 px-3 py-2.5 rounded-lg transition-all",
                           "hover:bg-primary/10 hover:scale-[1.02]",
-                          isActive && "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground font-semibold"
+                          isActive && "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground font-semibold",
+                          !isActive && "text-foreground"
                         )}
                         tooltip={!open ? item.label : undefined}
                       >
                         <Icon className="h-5 w-5 flex-shrink-0" />
-                        <span className={cn(
-                          "text-sm whitespace-nowrap overflow-hidden transition-all duration-200",
-                          !open && "w-0 opacity-0",
-                          open && "w-auto opacity-100"
-                        )}>
-                          {item.label}
-                        </span>
+                        {open && (
+                          <span className="text-sm font-medium">
+                            {item.label}
+                          </span>
+                        )}
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   );
@@ -117,18 +116,17 @@ export function AppSidebar({ activeSection, onSectionChange }: AppSidebarProps) 
                   onClick={() => navigate('/settings')}
                   className={cn(
                     "w-full justify-start gap-3 px-3 py-2.5 rounded-lg transition-all",
-                    "hover:bg-primary/10 hover:scale-[1.02]"
+                    "hover:bg-primary/10 hover:scale-[1.02]",
+                    "text-foreground"
                   )}
                   tooltip={!open ? "Configurações / Settings" : undefined}
                 >
                   <Settings className="h-5 w-5 flex-shrink-0" />
-                  <span className={cn(
-                    "text-sm whitespace-nowrap overflow-hidden transition-all duration-200",
-                    !open && "w-0 opacity-0",
-                    open && "w-auto opacity-100"
-                  )}>
-                    Configurações / Settings
-                  </span>
+                  {open && (
+                    <span className="text-sm font-medium">
+                      Configurações / Settings
+                    </span>
+                  )}
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
