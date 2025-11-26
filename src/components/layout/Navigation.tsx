@@ -1,5 +1,5 @@
-import { Home, Mic, BookText, BookA, GraduationCap, TrendingUp, BookOpen, Hash, Radio, Zap, Bot, Lightbulb, Flag, BookMarked } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { navigationItems } from "@/data/navigationItems";
 
 interface NavigationProps {
   activeSection: string;
@@ -7,28 +7,12 @@ interface NavigationProps {
 }
 
 export const Navigation = ({ activeSection, onSectionChange }: NavigationProps) => {
-  const navItems = [
-    { id: "dashboard", label: "Início / Home", icon: Home },
-    { id: "leveling-test", label: "⚡ Teste de Nível / Level Test", icon: Zap },
-    { id: "pronunciation", label: "Pronúncia / Pronunciation", icon: Mic },
-    { id: "vocabulary", label: "Vocabulário / Vocabulary", icon: BookText },
-    { id: "dictionary", label: "📖 Dicionário / Dictionary", icon: BookMarked },
-    { id: "verbs", label: "Verbos / Verbs", icon: BookOpen },
-    { id: "alphabet", label: "Alfabeto / Alphabet", icon: BookA },
-    { id: "numbers", label: "Números / Numbers", icon: Hash },
-    { id: "lessons", label: "Lições / Lessons", icon: GraduationCap },
-    { id: "citizenship", label: "🇺🇸 Teste Cidadania / Citizenship Test", icon: Flag },
-    { id: "radio", label: "Rádio 24h / Radio 24/7", icon: Radio },
-    { id: "progress", label: "Progresso / Progress", icon: TrendingUp },
-    { id: "survivalEnglish", label: "📚 Survival English", icon: Lightbulb },
-    { id: "virtualCoach", label: "🤖 Coach Virtual / Virtual Coach", icon: Bot },
-  ];
 
   return (
     <nav className="sticky top-16 z-40 w-full border-b border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60">
       <div className="container px-4">
         <div className="flex gap-1 overflow-x-auto py-2">
-          {navItems.map((item) => {
+          {navigationItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeSection === item.id;
             

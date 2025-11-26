@@ -1,4 +1,4 @@
-import { Home, Mic, BookText, BookA, GraduationCap, TrendingUp, BookOpen, Hash, Radio, Zap, Bot, Lightbulb, Flag, Settings, BookMarked } from "lucide-react";
+import { Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
   Sidebar,
@@ -12,28 +12,12 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
+import { navigationItems } from "@/data/navigationItems";
 
 interface AppSidebarProps {
   activeSection: string;
   onSectionChange: (section: string) => void;
 }
-
-const navItems = [
-  { id: "dashboard", label: "Início", icon: Home },
-  { id: "leveling-test", label: "Teste de Nível", icon: Zap },
-  { id: "pronunciation", label: "Pronúncia", icon: Mic },
-  { id: "dictionary", label: "Dicionário", icon: BookMarked },
-  { id: "vocabulary", label: "Vocabulário", icon: BookText },
-  { id: "verbs", label: "Verbos", icon: BookOpen },
-  { id: "alphabet", label: "Alfabeto", icon: BookA },
-  { id: "numbers", label: "Números", icon: Hash },
-  { id: "lessons", label: "Lições", icon: GraduationCap },
-  { id: "citizenship", label: "Cidadania", icon: Flag },
-  { id: "radio", label: "Rádio 24h", icon: Radio },
-  { id: "progress", label: "Progresso", icon: TrendingUp },
-  { id: "survivalEnglish", label: "Survival English", icon: Lightbulb },
-  { id: "virtualCoach", label: "Coach Virtual", icon: Bot },
-];
 
 export function AppSidebar({ activeSection, onSectionChange }: AppSidebarProps) {
   const { open } = useSidebar();
@@ -51,7 +35,7 @@ export function AppSidebar({ activeSection, onSectionChange }: AppSidebarProps) 
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {navItems.map((item) => {
+              {navigationItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = activeSection === item.id;
                 
