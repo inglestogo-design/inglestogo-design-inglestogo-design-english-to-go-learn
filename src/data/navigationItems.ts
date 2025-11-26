@@ -6,14 +6,14 @@ export interface NavigationItem {
   icon: LucideIcon;
 }
 
-// Lista de navegação em ordem alfabética
+// Lista de navegação: Início primeiro, depois ordem alfabética
 export const navigationItems: NavigationItem[] = [
+  { id: "dashboard", label: "Início / Home", icon: Home },
   { id: "alphabet", label: "Alfabeto / Alphabet", icon: BookA },
   { id: "auPairCourse", label: "Au Pair / Au Pair", icon: Plane },
   { id: "citizenship", label: "Cidadania / Citizenship", icon: Flag },
   { id: "virtualCoach", label: "Coach Virtual / Virtual Coach", icon: Bot },
   { id: "dictionary", label: "Dicionário / Dictionary", icon: BookMarked },
-  { id: "dashboard", label: "Início / Home", icon: Home },
   { id: "lessons", label: "Lições / Lessons", icon: GraduationCap },
   { id: "numbers", label: "Números / Numbers", icon: Hash },
   { id: "pronunciation", label: "Pronúncia / Pronunciation", icon: Mic },
