@@ -34,7 +34,7 @@ export const Header = ({ fontClass = "font-baloo" }: HeaderProps) => {
             className="h-14 w-auto drop-shadow-xl animate-fade-in hover:scale-105 transition-transform duration-300"
           />
           <div className="flex flex-col">
-            <h1 className={`text-3xl md:text-5xl font-black ${fontClass} bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent tracking-tight leading-tight`}>
+            <h1 className={`text-xl sm:text-3xl md:text-5xl font-black ${fontClass} bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent tracking-tight leading-tight`}>
               INGLÊS TO GO
             </h1>
             <p className="text-xs md:text-sm text-muted-foreground font-fredoka font-medium tracking-wide italic">

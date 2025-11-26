@@ -267,7 +267,7 @@ export const QuoteOfTheDay = () => {
             setShowMiniPopup(false);
           }}
         >
-          <Card className="w-[420px] shadow-2xl border-0 bg-gradient-to-br from-amber-50 via-white to-emerald-50 dark:from-slate-900 dark:via-slate-800 dark:to-emerald-950 hover:scale-[1.02] transition-all duration-500 overflow-hidden">
+          <Card className="w-full max-w-[420px] mx-auto shadow-2xl border-0 bg-gradient-to-br from-amber-50 via-white to-emerald-50 dark:from-slate-900 dark:via-slate-800 dark:to-emerald-950 hover:scale-[1.02] transition-all duration-500 overflow-hidden">
             <CardContent className="p-8 relative">
               {/* Modern Sun Background */}
               <div className="absolute -top-8 -right-8 w-32 h-32 bg-gradient-to-br from-amber-400 to-orange-400 rounded-full blur-3xl opacity-30 animate-pulse" />
