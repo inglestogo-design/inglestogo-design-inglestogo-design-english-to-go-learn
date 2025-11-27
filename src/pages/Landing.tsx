@@ -197,19 +197,91 @@ const Landing = () => {
           <h2 className="text-4xl font-fredoka font-bold text-center text-primary-dark mb-12">
             O Que Nossos Alunos Dizem
           </h2>
-          <div className="grid md:grid-cols-2 gap-8">
-            {[1, 2, 3, 4].map((num) => (
-              <div key={num} className="space-y-3">
-                <div className="aspect-video bg-muted rounded-lg flex items-center justify-center border-2 border-dashed border-primary/30">
-                  <div className="text-center space-y-2">
-                    <Play className="h-12 w-12 mx-auto text-primary" />
-                    <p className="text-muted-foreground">Depoimento {num}</p>
-                    <p className="text-sm text-muted-foreground">(YouTube embed)</p>
-                  </div>
-                </div>
-                <p className="text-center font-medium">Aluno {num}</p>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* Depoimento Odriane */}
+            <div className="space-y-3">
+              <div className="aspect-video rounded-lg overflow-hidden shadow-lg">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src="https://www.youtube.com/embed/r2dbhvATSwc"
+                  title="Depoimento Odriane"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full h-full"
+                ></iframe>
               </div>
-            ))}
+              <p className="text-center font-medium">Odriane</p>
+            </div>
+
+            {/* Depoimento Nayara */}
+            <div className="space-y-3">
+              <div className="aspect-video rounded-lg overflow-hidden shadow-lg">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src="https://www.youtube.com/embed/jTRvms4cGkw"
+                  title="Depoimento Nayara"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full h-full"
+                ></iframe>
+              </div>
+              <p className="text-center font-medium">Nayara</p>
+            </div>
+
+            {/* Depoimento Mel */}
+            <div className="space-y-3">
+              <div className="aspect-video rounded-lg overflow-hidden shadow-lg">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src="https://www.youtube.com/embed/Z2jnOTKUdl8"
+                  title="Depoimento Mel"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full h-full"
+                ></iframe>
+              </div>
+              <p className="text-center font-medium">Mel</p>
+            </div>
+
+            {/* Depoimento Zé */}
+            <div className="space-y-3">
+              <div className="aspect-video rounded-lg overflow-hidden shadow-lg">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src="https://www.youtube.com/embed/td9C8JUnDvs"
+                  title="Depoimento Zé"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full h-full"
+                ></iframe>
+              </div>
+              <p className="text-center font-medium">Zé</p>
+            </div>
+
+            {/* Depoimento Ana */}
+            <div className="space-y-3">
+              <div className="aspect-video rounded-lg overflow-hidden shadow-lg">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src="https://www.youtube.com/embed/7ovPoFMmNRQ"
+                  title="Depoimento Ana"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full h-full"
+                ></iframe>
+              </div>
+              <p className="text-center font-medium">Ana</p>
+            </div>
           </div>
         </div>
       </section>
