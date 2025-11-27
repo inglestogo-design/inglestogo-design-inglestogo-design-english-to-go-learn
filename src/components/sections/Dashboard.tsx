@@ -295,42 +295,53 @@ export const Dashboard = ({ onNavigate, onStartOnboarding }: DashboardProps) => 
       </div>
 
       {/* Comece Aqui / Start Here Section */}
-      <Card className="bg-gradient-to-br from-primary/15 via-secondary/10 to-accent/15 border-2 border-primary/40 shadow-xl">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-3xl font-bold text-primary">
+      <Card className="bg-gradient-to-br from-primary/15 via-secondary/10 to-accent/15 border-2 border-primary/40 shadow-xl overflow-hidden">
+        <CardHeader className="bg-gradient-to-r from-primary/20 to-secondary/20">
+          <CardTitle className="flex items-center gap-3 text-3xl font-bold text-primary">
             🚀 Comece Aqui! / Start Here!
           </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <p className="text-foreground/90 text-lg font-medium">
-            Monte seu plano de estudos personalizado e alcance seus objetivos! / Create your personalized study plan and achieve your goals!
+          <p className="text-foreground/80 text-lg mt-2">
+            Não sabe por onde começar? Responda um quiz rápido e receba seu plano personalizado! / Don't know where to start? Take a quick quiz and get your personalized plan!
           </p>
-          <Card className="bg-gradient-to-br from-accent/20 via-primary/10 to-secondary/20 border-2 border-accent/40 shadow-lg hover:shadow-xl transition-all">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-2xl">
-                📋 Plano de Estudo / Study Plan
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-foreground/90 text-lg leading-relaxed">
-                <strong>Conheça seu plano de estudos!</strong> Responda um quiz rápido com suas preferências e receba um plano feito sob medida para você. / <strong>Discover your study plan!</strong> Answer a quick quiz about your preferences and receive a plan tailored just for you.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3">
-                {onStartOnboarding && (
-                  <Button 
-                    onClick={onStartOnboarding}
-                    size="lg"
-                    className="flex-1 text-lg h-14 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-lg hover:shadow-xl transition-all"
-                  >
-                    🎯 Começar Agora / Start Now
-                  </Button>
-                )}
+        </CardHeader>
+        <CardContent className="space-y-6 pt-6">
+          <div className="space-y-4">
+            <div className="flex items-start gap-4">
+              <div className="flex-shrink-0 w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center text-2xl">
+                📋
               </div>
-              <p className="text-sm text-muted-foreground text-center">
-                ⏱️ Leva apenas 2 minutos! / Takes only 2 minutes!
+              <div className="flex-1">
+                <h3 className="text-xl font-bold text-foreground mb-2">
+                  Monte Seu Plano de Estudo / Create Your Study Plan
+                </h3>
+                <p className="text-foreground/90 leading-relaxed">
+                  Responda perguntas sobre seu nível atual, objetivos e preferências. Em 2 minutos você terá um caminho claro para aprender inglês! / Answer questions about your current level, goals and preferences. In 2 minutes you'll have a clear path to learn English!
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-accent/10 border-l-4 border-accent p-4 rounded-r-lg">
+              <p className="text-foreground/90 font-medium">
+                ✨ <strong>Plano personalizado</strong> de acordo com suas necessidades<br/>
+                🎯 <strong>Recomendações</strong> de por onde começar<br/>
+                📊 <strong>Acompanhamento</strong> do seu progresso
               </p>
-            </CardContent>
-          </Card>
+            </div>
+
+            {onStartOnboarding && (
+              <Button 
+                onClick={onStartOnboarding}
+                size="lg"
+                className="w-full text-xl h-16 bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02]"
+              >
+                🎯 Começar Quiz Agora / Start Quiz Now
+              </Button>
+            )}
+
+            <p className="text-center text-sm text-muted-foreground">
+              ⏱️ <strong>Rápido:</strong> leva apenas 2 minutos! / <strong>Quick:</strong> takes only 2 minutes!
+            </p>
+          </div>
         </CardContent>
       </Card>
 
