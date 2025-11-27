@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { RefreshCw, Save, Languages, Bell, ArrowLeft } from "lucide-react";
+import { RefreshCw, Save, Bell, ArrowLeft } from "lucide-react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/layout/AppSidebar";
 
@@ -22,7 +22,6 @@ export default function Settings() {
   const [resetting, setResetting] = useState(false);
 
   // Settings state
-  const [languagePreference, setLanguagePreference] = useState("pt-BR");
   const [notificationSettings, setNotificationSettings] = useState({
     email: true,
     push: true,
@@ -43,7 +42,7 @@ export default function Settings() {
 
       const { data, error } = await supabase
         .from('profiles')
-        .select('language_preference, notification_settings')
+        .select('notification_settings')
         .eq('id', user.id)
         .single();
 
@@ -52,13 +51,8 @@ export default function Settings() {
         return;
       }
 
-      if (data) {
-        if (data.language_preference) {
-          setLanguagePreference(data.language_preference);
-        }
-        if (data.notification_settings) {
-          setNotificationSettings(data.notification_settings as any);
-        }
+      if (data && data.notification_settings) {
+        setNotificationSettings(data.notification_settings as any);
       }
     };
 
@@ -73,7 +67,6 @@ export default function Settings() {
       const { error } = await supabase
         .from('profiles')
         .update({
-          language_preference: languagePreference,
           notification_settings: notificationSettings,
         })
         .eq('id', user.id);
@@ -171,36 +164,6 @@ export default function Settings() {
               Personalize sua experiência de aprendizado / Customize your learning experience
             </p>
           </div>
-
-          {/* Language Preferences */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Languages className="h-5 w-5 text-primary" />
-                Idioma / Language
-              </CardTitle>
-              <CardDescription>
-                Escolha o idioma da interface / Choose the interface language
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="language">
-                  Idioma preferido / Preferred Language
-                </Label>
-                <Select value={languagePreference} onValueChange={setLanguagePreference}>
-                  <SelectTrigger id="language" className="bg-background">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="bg-background z-50">
-                    <SelectItem value="pt-BR">Português (Brasil)</SelectItem>
-                    <SelectItem value="en-US">English (US)</SelectItem>
-                    <SelectItem value="es-ES">Español</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </CardContent>
-          </Card>
 
           {/* Notification Settings */}
           <Card>
