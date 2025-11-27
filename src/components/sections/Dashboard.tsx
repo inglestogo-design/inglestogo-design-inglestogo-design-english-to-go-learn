@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { QuoteOfTheDay } from "./QuoteOfTheDay";
 import { useState, useEffect } from "react";
 import { speakText } from "@/utils/speechUtils";
+import { useUserProgress } from "@/hooks/useUserProgress";
 
 interface DailyQuote {
   english: string;
@@ -212,11 +213,12 @@ export const Dashboard = ({ onNavigate, onStartOnboarding }: DashboardProps) => 
   const [todayQuote, setTodayQuote] = useState<DailyQuote>(quotes[0]);
   const [loadingAudio, setLoadingAudio] = useState(false);
   const [currentTemp, setCurrentTemp] = useState(72); // Default temperature
+  const { stats, weeklyActivity, loading } = useUserProgress();
   
   const progressData = [
-    { label: "Pronúncia / Pronunciation", value: 75, color: "primary" as const },
-    { label: "Vocabulário / Vocabulary", value: 60, color: "secondary" as const },
-    { label: "Fluência / Fluency", value: 45, color: "accent" as const },
+    { label: "Pronúncia / Pronunciation", value: stats?.pronunciation_skill || 0, color: "primary" as const },
+    { label: "Vocabulário / Vocabulary", value: stats?.vocabulary_skill || 0, color: "secondary" as const },
+    { label: "Fluência / Fluency", value: stats?.fluency_skill || 0, color: "accent" as const },
   ];
 
   useEffect(() => {
@@ -254,6 +256,37 @@ export const Dashboard = ({ onNavigate, onStartOnboarding }: DashboardProps) => 
     });
   };
 
+  // Calculate total practice time from weekly activity
+  const totalMinutes = weeklyActivity.reduce((sum, day) => sum + (day.minutes_studied || 0), 0);
+  const totalHours = Math.floor(totalMinutes / 60);
+  const remainingMinutes = totalMinutes % 60;
+  const timeDisplay = totalHours > 0 ? `${totalHours}h ${remainingMinutes}m` : `${remainingMinutes}m`;
+
+  // Calculate level based on average skills
+  const avgSkill = stats ? Math.round((stats.pronunciation_skill + stats.vocabulary_skill + stats.grammar_skill + stats.fluency_skill) / 4) : 0;
+  const getLevel = (skill: number) => {
+    if (skill < 20) return { name: "Iniciante / Beginner", level: "1 de 5" };
+    if (skill < 40) return { name: "Básico / Basic", level: "2 de 5" };
+    if (skill < 60) return { name: "Intermediário / Intermediate", level: "3 de 5" };
+    if (skill < 80) return { name: "Avançado / Advanced", level: "4 de 5" };
+    return { name: "Fluente / Fluent", level: "5 de 5" };
+  };
+  const currentLevel = getLevel(avgSkill);
+
+  // Calculate this week's new words
+  const thisWeekWords = weeklyActivity.reduce((sum, day) => sum + (day.vocabulary_count || 0), 0);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-muted-foreground">Carregando dados...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6 animate-fade-in">
       <div>
@@ -264,29 +297,29 @@ export const Dashboard = ({ onNavigate, onStartOnboarding }: DashboardProps) => 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatsCard
           title="Nível Atual / Current Level"
-          value="Intermediário / Intermediate"
+          value={currentLevel.name}
           icon={Award}
-          trend="Nível 2 de 5 / Level 2 of 5"
+          trend={`Nível ${currentLevel.level} / Level ${currentLevel.level}`}
           variant="primary"
         />
         <StatsCard
           title="Palavras Aprendidas / Words Learned"
-          value="847"
+          value={stats?.total_words_learned?.toString() || "0"}
           icon={BookOpen}
-          trend="+23 esta semana / this week"
+          trend={`+${thisWeekWords} esta semana / this week`}
           variant="secondary"
         />
         <StatsCard
           title="Tempo de Prática / Practice Time"
-          value="12h"
+          value={timeDisplay}
           icon={Clock}
-          trend="Este mês / This month"
+          trend="Esta semana / This week"
         />
         <StatsCard
           title="Sequência Diária / Daily Streak"
-          value="7 dias / days"
+          value={`${stats?.current_streak || 0} dias / days`}
           icon={TrendingUp}
-          trend="Continue assim! / Keep it up!"
+          trend={`Melhor: ${stats?.best_streak || 0} dias / Best: ${stats?.best_streak || 0} days`}
         />
       </div>
 
@@ -356,21 +389,43 @@ export const Dashboard = ({ onNavigate, onStartOnboarding }: DashboardProps) => 
             <CardTitle>Prática Diária / Daily Practice</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="text-white/90">
-              Você já praticou por <span className="font-bold">15 minutos</span> hoje! / You've practiced for <span className="font-bold">15 minutes</span> today!
-            </p>
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span>Meta diária: 30 minutos / Daily goal: 30 minutes</span>
-                <span>50%</span>
-              </div>
-              <div className="h-2 rounded-full bg-white/20">
-                <div className="h-full w-1/2 rounded-full bg-white"></div>
-              </div>
-            </div>
-            <Button variant="secondary" className="w-full bg-white text-secondary hover:bg-white/90">
-              Continuar Praticando / Continue Practicing
-            </Button>
+            {(() => {
+              const today = new Date().toISOString().split('T')[0];
+              const todayActivity = weeklyActivity.find(day => day.activity_date === today);
+              const todayMinutes = todayActivity?.minutes_studied || 0;
+              const todayActivities = (todayActivity?.pronunciation_count || 0) + 
+                                      (todayActivity?.vocabulary_count || 0) + 
+                                      (todayActivity?.lessons_completed || 0);
+              const dailyGoal = 30;
+              const progress = Math.min(100, Math.round((todayMinutes / dailyGoal) * 100));
+              
+              return (
+                <>
+                  <p className="text-white/90">
+                    {todayMinutes > 0 ? (
+                      <>Você praticou <span className="font-bold">{todayMinutes} minutos</span> hoje! / You practiced <span className="font-bold">{todayMinutes} minutes</span> today!</>
+                    ) : (
+                      <>Comece a praticar hoje! / Start practicing today!</>
+                    )}
+                  </p>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Meta diária: {dailyGoal} minutos / Daily goal: {dailyGoal} minutes</span>
+                      <span>{progress}%</span>
+                    </div>
+                    <div className="h-2 rounded-full bg-white/20">
+                      <div className="h-full rounded-full bg-white transition-all" style={{ width: `${progress}%` }}></div>
+                    </div>
+                    <p className="text-xs text-white/80 mt-2">
+                      {todayActivities} {todayActivities === 1 ? 'atividade / activity' : 'atividades / activities'} completadas / completed
+                    </p>
+                  </div>
+                  <Button variant="secondary" className="w-full bg-white text-secondary hover:bg-white/90">
+                    Continuar Praticando / Continue Practicing
+                  </Button>
+                </>
+              );
+            })()}
           </CardContent>
         </Card>
       </div>
