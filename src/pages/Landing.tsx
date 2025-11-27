@@ -108,19 +108,40 @@ const Landing = () => {
 
       {/* Quem Sou Eu */}
       <section className="py-20 px-4 bg-accent/5">
-        <div className="container mx-auto max-w-4xl">
-          <div className="flex flex-col md:flex-row items-center gap-8">
+        <div className="container mx-auto max-w-5xl">
+          <h2 className="text-4xl font-fredoka font-bold text-center text-primary-dark mb-8">
+            Quem é a Teacher Lilli
+          </h2>
+          <div className="flex flex-col md:flex-row items-start gap-8">
             <img 
               src={profilePhoto} 
-              alt="Professora" 
-              className="w-48 h-48 rounded-full object-cover border-4 border-primary shadow-lg"
+              alt="Teacher Lilli - Lillian Barretto" 
+              className="w-48 h-48 md:w-56 md:h-56 rounded-full object-cover border-4 border-primary shadow-lg mx-auto md:mx-0 flex-shrink-0"
             />
             <div className="space-y-4 text-center md:text-left">
-              <h2 className="text-3xl font-fredoka font-bold text-primary-dark">Quem Sou Eu</h2>
+              <p className="text-2xl font-fredoka font-bold text-primary-dark">
+                Muito prazer, eu sou sua última professora de inglês! 👋
+              </p>
               <p className="text-lg text-muted-foreground leading-relaxed">
-                Olá! Sou professora de inglês com anos de experiência ensinando brasileiros. 
-                Criei o Inglês to Go porque acredito que todo mundo pode aprender inglês de forma 
-                acessível, prática e no seu próprio ritmo. 🎓
+                Me chamo <span className="font-semibold text-primary">Lillian Barretto</span>, sou natural de São Paulo, SP Brasil, 
+                e há <span className="font-semibold">17 anos resido fora do Brasil</span>. Iniciei minha carreira como professora 
+                e coordenadora em uma Escola de Idiomas, onde pude desenvolver habilidades de ensino e gestão pedagógica.
+              </p>
+              <p className="text-lg text-muted-foreground leading-relaxed">
+                Minha primeira temporada nos Estados Unidos foi marcada por desafios e aprendizados. Ao conviver com uma 
+                família americana, deparei-me com a dificuldade de compreender o inglês da vida real, com fala conectada 
+                e repleto de gírias. <span className="font-semibold text-primary-dark">Isso me fez questionar as metodologias de ensino tradicionais.</span>
+              </p>
+              <p className="text-lg text-muted-foreground leading-relaxed">
+                Na minha segunda temporada, após casar e ter uma filha, senti um forte desejo ardente de garantir que 
+                ela também dominasse o português, minha língua materna. Embora desafiador no início, isso me levou a 
+                realizar extensivas pesquisas sobre os melhores métodos para ensiná-la. Adaptei, experimentei diversas 
+                abordagens e observei atentamente sua evolução na língua.
+              </p>
+              <p className="text-lg font-semibold text-primary-dark leading-relaxed">
+                Foi a partir dessa jornada que desenvolvi minha própria metodologia, uma abordagem revolucionária e 
+                inovadora que acelera significativamente o processo de aprendizagem. Ao aplicar as mesmas técnicas que 
+                usei com minha filha em português aos meus alunos, percebi resultados extraordinários. 🚀
               </p>
             </div>
           </div>
