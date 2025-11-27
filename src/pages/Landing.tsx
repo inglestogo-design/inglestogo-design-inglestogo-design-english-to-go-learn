@@ -32,7 +32,7 @@ const Landing = () => {
 
   const problems = [
     { problem: "Vergonha de falar?", solution: "Pratique sozinho com IA" },
-    { problem: "Cursos caros?", solution: "Apenas R$9,90/mês" },
+    { problem: "Cursos caros?", solution: "Apenas R$19,90 reais/mês" },
     { problem: "Sem tempo?", solution: "Lições de 5 minutos" },
   ];
 
@@ -79,7 +79,7 @@ const Landing = () => {
                   className="bg-primary hover:bg-primary/90 text-lg px-8 py-6"
                   onClick={() => navigate('/auth')}
                 >
-                  Começar Agora - R$9,90/mês
+                  Adquira Direto no App - R$19,90 reais/mês
                 </Button>
                 <Button 
                   size="lg" 
@@ -480,12 +480,12 @@ const Landing = () => {
           <Card className="border-4 border-primary shadow-2xl">
             <CardContent className="p-12 space-y-6">
               <div className="space-y-2">
-                <div className="inline-block bg-destructive text-white px-4 py-2 rounded-full font-bold mb-4">
-                  50% OFF - BLACK FRIDAY
+                <div className="inline-block bg-primary text-white px-4 py-2 rounded-full font-bold mb-4">
+                  🚀 PREÇO DE LANÇAMENTO
                 </div>
-                <p className="text-6xl font-fredoka font-bold text-primary">R$ 9,90</p>
+                <p className="text-6xl font-fredoka font-bold text-primary">R$ 19,90 reais</p>
                 <p className="text-xl text-muted-foreground">/mês</p>
-                <p className="text-sm text-muted-foreground line-through">De R$ 19,90</p>
+                <p className="text-sm font-medium text-primary">Adquira por aqui direto no app</p>
               </div>
               <ul className="space-y-3 text-left max-w-md mx-auto">
                 {["Acesso ilimitado a todos os recursos", "Coach Virtual 24/7", "3 cursos especializados", "Certificados digitais", "Suporte prioritário", "Cancele quando quiser"].map((item, idx) => (
@@ -500,7 +500,7 @@ const Landing = () => {
                 className="w-full bg-primary hover:bg-primary/90 text-lg py-6"
                 onClick={() => navigate('/auth')}
               >
-                Assinar Agora - R$9,90/mês
+                Assinar Agora - R$19,90 reais/mês
               </Button>
             </CardContent>
           </Card>
@@ -538,7 +538,7 @@ const Landing = () => {
             className="bg-white text-primary hover:bg-white/90 text-lg px-12 py-6"
             onClick={() => navigate('/auth')}
           >
-            Começar Agora - R$9,90/mês
+            Adquira Agora - R$19,90 reais/mês
           </Button>
           <p className="text-sm opacity-75">
             Junte-se a centenas de alunos que já estão aprendendo
