@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Check, X, Play, Star, Users, Clock, TrendingUp, Shield, Zap, HeadphonesIcon, Globe, BookOpen, Mic, Award, Heart } from "lucide-react";
+import { Check, X, Play, Star, Users, Clock, TrendingUp, Shield, Zap, HeadphonesIcon, Globe, BookOpen, Mic, Award, Heart, Brain, Target, Volume2, Lightbulb, Rocket, Eye } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import profilePhoto from "@/assets/profile-photo.jpg";
 import logo from "@/assets/logo-final.png";
@@ -145,6 +145,137 @@ const Landing = () => {
               </p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Metodologia */}
+      <section className="py-20 px-4 bg-gradient-to-br from-primary/5 to-accent/10">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-fredoka font-bold text-primary-dark mb-4">
+              A Metodologia Revolucionária
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Uma abordagem única criada na prática, testada nos Estados Unidos, e comprovada com centenas de alunos
+            </p>
+          </div>
+
+          {/* Descoberta Principal */}
+          <Card className="border-2 border-primary/30 mb-12 bg-white/80 backdrop-blur">
+            <CardContent className="p-8 text-center">
+              <h3 className="text-3xl font-fredoka font-bold text-primary-dark mb-4">
+                A Verdade Que Muda Tudo
+              </h3>
+              <p className="text-2xl font-semibold text-primary mb-4">
+                "O inglês não é uma língua. São DUAS."
+              </p>
+              <div className="grid md:grid-cols-2 gap-6 mt-6">
+                <div className="p-6 bg-destructive/10 rounded-lg border-2 border-destructive/20">
+                  <BookOpen className="h-12 w-12 mx-auto mb-3 text-destructive" />
+                  <h4 className="font-bold text-lg mb-2">Inglês Escrito</h4>
+                  <p className="text-muted-foreground">Gramática, regras, livros didáticos - o que você aprende na escola</p>
+                </div>
+                <div className="p-6 bg-primary/10 rounded-lg border-2 border-primary/20">
+                  <Volume2 className="h-12 w-12 mx-auto mb-3 text-primary" />
+                  <h4 className="font-bold text-lg mb-2">Inglês Falado</h4>
+                  <p className="text-muted-foreground">Sons reais, fala conectada, gírias - o que você PRECISA no mundo real</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Pilares da Metodologia */}
+          <h3 className="text-3xl font-fredoka font-bold text-center text-primary-dark mb-8">
+            Os 6 Pilares da Metodologia
+          </h3>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <Card className="border-2 hover:border-primary transition-all hover:shadow-lg">
+              <CardContent className="p-6 text-center space-y-3">
+                <Brain className="h-12 w-12 mx-auto text-primary" />
+                <h4 className="text-xl font-bold text-primary-dark">Neurociência Aplicada</h4>
+                <p className="text-muted-foreground">
+                  Baseada em como o cérebro realmente aprende - 4 a 7 itens por vez, com contexto e emoção
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-2 hover:border-primary transition-all hover:shadow-lg">
+              <CardContent className="p-6 text-center space-y-3">
+                <Target className="h-12 w-12 mx-auto text-primary" />
+                <h4 className="text-xl font-bold text-primary-dark">Imersão Simulada</h4>
+                <p className="text-muted-foreground">
+                  Situações reais, diálogos reais, problemas reais - você treina como se estivesse vivendo a cena
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-2 hover:border-primary transition-all hover:shadow-lg">
+              <CardContent className="p-6 text-center space-y-3">
+                <Volume2 className="h-12 w-12 mx-auto text-primary" />
+                <h4 className="text-xl font-bold text-primary-dark">Fonemas e Sons</h4>
+                <p className="text-muted-foreground">
+                  Os sons do inglês são a base de tudo - sem dominar os fonemas, você trava
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-2 hover:border-primary transition-all hover:shadow-lg">
+              <CardContent className="p-6 text-center space-y-3">
+                <Zap className="h-12 w-12 mx-auto text-primary" />
+                <h4 className="text-xl font-bold text-primary-dark">Memória Muscular</h4>
+                <p className="text-muted-foreground">
+                  Inglês no automático - como andar ou dirigir, sem pensar, só fluindo naturalmente
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-2 hover:border-primary transition-all hover:shadow-lg">
+              <CardContent className="p-6 text-center space-y-3">
+                <Eye className="h-12 w-12 mx-auto text-primary" />
+                <h4 className="text-xl font-bold text-primary-dark">Os 5 Sentidos</h4>
+                <p className="text-muted-foreground">
+                  Aprendizagem multissensorial - quanto mais sentidos, mais profunda a fixação
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-2 hover:border-primary transition-all hover:shadow-lg">
+              <CardContent className="p-6 text-center space-y-3">
+                <Lightbulb className="h-12 w-12 mx-auto text-primary" />
+                <h4 className="text-xl font-bold text-primary-dark">Prática em Microdoses</h4>
+                <p className="text-muted-foreground">
+                  Lições de 5 minutos - informação calibrada para o estado ideal de aprendizagem
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Resultado Final */}
+          <Card className="border-2 border-primary mt-12 bg-gradient-to-br from-primary/10 to-accent/10">
+            <CardContent className="p-8 text-center">
+              <Rocket className="h-16 w-16 mx-auto mb-4 text-primary" />
+              <h3 className="text-2xl font-fredoka font-bold text-primary-dark mb-4">
+                O Resultado: Inglês que Funciona na Hora H
+              </h3>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-6">
+                Na hora que você está diante de alguém falando inglês, na hora que vai viajar, na hora que te fazem 
+                uma pergunta inesperada - você não tem tempo de lembrar gramática. Você precisa acessar o inglês REAL. AGORA.
+              </p>
+              <ul className="space-y-3 text-left max-w-2xl mx-auto">
+                {[
+                  "O inglês que eu não tive e criei",
+                  "O inglês que finalmente faz sentido",
+                  "O inglês que te devolve confiança",
+                  "O inglês que muda a sua vida"
+                ].map((item, idx) => (
+                  <li key={idx} className="flex items-center gap-3">
+                    <Check className="h-6 w-6 text-primary flex-shrink-0" />
+                    <span className="text-lg font-medium">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
