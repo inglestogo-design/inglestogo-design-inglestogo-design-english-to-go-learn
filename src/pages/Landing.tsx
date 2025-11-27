@@ -54,9 +54,7 @@ const Landing = () => {
   const faqs = [
     { q: "Funciona offline?", a: "Sim! Após o primeiro acesso, você pode usar várias funcionalidades sem internet." },
     { q: "Posso cancelar a qualquer momento?", a: "Sim, sem burocracia. Cancele quando quiser pelo app." },
-    { q: "Tem certificado?", a: "Sim! Ao completar os cursos, você recebe certificados digitais." },
     { q: "Funciona no celular?", a: "Perfeitamente! Disponível para Android e iOS." },
-    { q: "Quanto tempo para ficar fluente?", a: "Depende da dedicação, mas com 15min/dia, resultados em 3-6 meses." },
   ];
 
   return (
@@ -488,7 +486,7 @@ const Landing = () => {
                 <p className="text-sm font-medium text-primary">Adquira por aqui direto no app</p>
               </div>
               <ul className="space-y-3 text-left max-w-md mx-auto">
-                {["Acesso ilimitado a todos os recursos", "Coach Virtual 24/7", "3 cursos especializados", "Certificados digitais", "Suporte prioritário", "Cancele quando quiser"].map((item, idx) => (
+                {["Acesso ilimitado a todos os recursos", "Coach Virtual 24/7", "3 cursos especializados", "Suporte prioritário", "Cancele quando quiser"].map((item, idx) => (
                   <li key={idx} className="flex items-center gap-2">
                     <Check className="h-5 w-5 text-primary flex-shrink-0" />
                     <span>{item}</span>
