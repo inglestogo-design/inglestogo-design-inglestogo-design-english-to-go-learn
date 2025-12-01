@@ -34,7 +34,7 @@ const Auth = () => {
 
   // Redirect if already logged in
   if (user) {
-    navigate("/");
+    navigate("/app");
     return null;
   }
 
@@ -84,7 +84,7 @@ const Auth = () => {
         } else {
           toast.success("Login realizado com sucesso! / Login successful!");
           setLoginAttempts(0); // Reset on successful login
-          navigate("/");
+          navigate("/app");
         }
       } else {
         const { error } = await signUp(email, password);
@@ -92,7 +92,7 @@ const Auth = () => {
           toast.error("Erro ao criar conta. Tente novamente / Error creating account. Please try again.");
         } else {
           toast.success("Conta criada com sucesso! / Account created successfully!");
-          navigate("/");
+          navigate("/app");
         }
       }
     } catch (error: any) {
