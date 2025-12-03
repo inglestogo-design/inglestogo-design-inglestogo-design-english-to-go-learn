@@ -57,6 +57,7 @@ const Index = () => {
   };
 
   const handleStartApp = () => {
+    setShowOnboarding(false);
     setShowStudyPlan(false);
     setActiveSection("dashboard");
   };

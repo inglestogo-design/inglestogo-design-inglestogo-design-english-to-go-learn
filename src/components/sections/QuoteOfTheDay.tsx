@@ -395,11 +395,17 @@ export const QuoteOfTheDay = () => {
               </div>
             </div>
 
-            <div className="text-center pt-4">
+            <div className="text-center pt-4 space-y-4">
               <p className="text-sm text-slate-600 dark:text-slate-400 flex items-center justify-center gap-2">
                 <span className="text-2xl">🌅</span> 
                 <span>A new inspiration will appear tomorrow</span>
               </p>
+              <Button
+                onClick={() => setIsOpen(false)}
+                className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-semibold px-8 py-2"
+              >
+                Fechar / Close
+              </Button>
             </div>
           </div>
         </DialogContent>
