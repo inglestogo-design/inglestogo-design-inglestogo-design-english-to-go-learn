@@ -29,11 +29,26 @@ export const useUserProgress = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+    let isMounted = true;
+
     if (user) {
       fetchUserProgress();
+      // Safety timeout: force loading to false after 5 seconds
+      timeoutId = setTimeout(() => {
+        if (isMounted) {
+          console.warn('⚠️ useUserProgress timeout - forcing loading to false');
+          setLoading(false);
+        }
+      }, 5000);
     } else {
       setLoading(false);
     }
+
+    return () => {
+      isMounted = false;
+      if (timeoutId) clearTimeout(timeoutId);
+    };
   }, [user]);
 
   const fetchUserProgress = async () => {
