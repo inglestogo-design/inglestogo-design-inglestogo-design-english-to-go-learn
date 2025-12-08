@@ -8,6 +8,8 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   isPremium: boolean;
+  isInTrialPeriod: boolean;
+  trialDaysRemaining: number;
   onboardingCompleted: boolean;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signUp: (email: string, password: string) => Promise<{ error: any }>;
@@ -16,11 +18,29 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Helper function to check if user is in 3-day trial period
+const checkTrialStatus = (createdAt: string | null): { isInTrial: boolean; daysRemaining: number } => {
+  if (!createdAt) return { isInTrial: false, daysRemaining: 0 };
+  
+  const accountCreated = new Date(createdAt);
+  const now = new Date();
+  const diffTime = now.getTime() - accountCreated.getTime();
+  const diffDays = diffTime / (1000 * 60 * 60 * 24);
+  
+  const TRIAL_DAYS = 3;
+  const isInTrial = diffDays < TRIAL_DAYS;
+  const daysRemaining = Math.max(0, Math.ceil(TRIAL_DAYS - diffDays));
+  
+  return { isInTrial, daysRemaining };
+};
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [isPremium, setIsPremium] = useState(false);
+  const [isInTrialPeriod, setIsInTrialPeriod] = useState(false);
+  const [trialDaysRemaining, setTrialDaysRemaining] = useState(0);
   const [onboardingCompleted, setOnboardingCompleted] = useState(false);
   const navigate = useNavigate();
 
@@ -53,17 +73,31 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             
             if (profileError) {
               console.error('❌ Error loading profile:', profileError);
-              setIsPremium(false);
+              // Check trial based on user created_at
+              const trialStatus = checkTrialStatus(session.user.created_at);
+              setIsInTrialPeriod(trialStatus.isInTrial);
+              setTrialDaysRemaining(trialStatus.daysRemaining);
+              setIsPremium(trialStatus.isInTrial); // Trial = Premium access
               setOnboardingCompleted(false);
             } else if (data) {
               console.log('📊 Initial profile load:', { onboarding_completed: data.onboarding_completed });
-              const isActive = data.is_premium && 
+              const hasPaidSubscription = data.is_premium && 
                 (!data.premium_until || new Date(data.premium_until) > new Date());
-              setIsPremium(isActive);
+              
+              // Check trial status
+              const trialStatus = checkTrialStatus(session.user.created_at);
+              setIsInTrialPeriod(trialStatus.isInTrial);
+              setTrialDaysRemaining(trialStatus.daysRemaining);
+              
+              // User has premium if: paid subscription OR in trial period
+              setIsPremium(hasPaidSubscription || trialStatus.isInTrial);
               setOnboardingCompleted(data.onboarding_completed || false);
             } else {
-              // No profile found
-              setIsPremium(false);
+              // No profile found - check trial
+              const trialStatus = checkTrialStatus(session.user.created_at);
+              setIsInTrialPeriod(trialStatus.isInTrial);
+              setTrialDaysRemaining(trialStatus.daysRemaining);
+              setIsPremium(trialStatus.isInTrial);
               setOnboardingCompleted(false);
             }
           } catch (error) {
@@ -117,18 +151,28 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             
             if (profileError) {
               console.error('❌ Error loading profile after sign in:', profileError);
+              const trialStatus = checkTrialStatus(session.user.created_at);
+              setIsInTrialPeriod(trialStatus.isInTrial);
+              setTrialDaysRemaining(trialStatus.daysRemaining);
+              setIsPremium(trialStatus.isInTrial);
             } else if (data) {
               console.log('✅ Profile loaded:', { onboarding_completed: data.onboarding_completed });
-              const isActive = data.is_premium && 
+              const hasPaidSubscription = data.is_premium && 
                 (!data.premium_until || new Date(data.premium_until) > new Date());
-              setIsPremium(isActive);
+              
+              const trialStatus = checkTrialStatus(session.user.created_at);
+              setIsInTrialPeriod(trialStatus.isInTrial);
+              setTrialDaysRemaining(trialStatus.daysRemaining);
+              setIsPremium(hasPaidSubscription || trialStatus.isInTrial);
               setOnboardingCompleted(data.onboarding_completed || false);
             }
           } catch (error) {
             console.error('❌ Error in SIGNED_IN handler:', error);
           }
-        } else if (!session?.user) {
+          } else if (!session?.user) {
           setIsPremium(false);
+          setIsInTrialPeriod(false);
+          setTrialDaysRemaining(0);
           setOnboardingCompleted(false);
         }
       }
@@ -164,7 +208,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, isPremium, onboardingCompleted, signIn, signUp, signOut }}>
+    <AuthContext.Provider value={{ user, session, loading, isPremium, isInTrialPeriod, trialDaysRemaining, onboardingCompleted, signIn, signUp, signOut }}>
       {children}
     </AuthContext.Provider>
   );
