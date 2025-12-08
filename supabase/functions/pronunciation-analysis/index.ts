@@ -1,9 +1,14 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
+
+const logStep = (step: string, details?: any) => {
+  console.log(`[PRONUNCIATION-ANALYSIS] ${step}`, details ? JSON.stringify(details) : '');
 };
 
 serve(async (req) => {
@@ -12,6 +17,33 @@ serve(async (req) => {
   }
 
   try {
+    // Security Fix: Validate user authentication
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      logStep('ERROR: No authorization header');
+      return new Response(
+        JSON.stringify({ error: 'Authentication required' }), 
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseAnonKey);
+    
+    const token = authHeader.replace('Bearer ', '');
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+
+    if (authError || !user) {
+      logStep('ERROR: Invalid user token', { error: authError?.message });
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }), 
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    logStep('User authenticated', { userId: user.id.substring(0, 8) + '...' });
+
     // Zod validation schema for input security
     const RequestSchema = z.object({
       spokenText: z.string().min(1, "Spoken text is required").max(500, "Spoken text must be less than 500 characters"),
@@ -23,7 +55,7 @@ serve(async (req) => {
     const validationResult = RequestSchema.safeParse(body);
     
     if (!validationResult.success) {
-      console.error('Input validation failed:', validationResult.error.errors);
+      logStep('Input validation failed', { errors: validationResult.error.errors });
       return new Response(
         JSON.stringify({ 
           error: 'Invalid input',
@@ -34,7 +66,7 @@ serve(async (req) => {
     }
 
     const { spokenText, expectedWord, expectedPronunciation } = validationResult.data;
-    console.log('Pronunciation analysis request:', { spokenText, expectedWord, expectedPronunciation });
+    logStep('Processing pronunciation analysis', { expectedWord });
 
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     if (!LOVABLE_API_KEY) {
@@ -89,7 +121,7 @@ Responda APENAS com o JSON, sem texto adicional.`;
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Lovable AI error:', response.status, errorText);
+      logStep('AI Gateway error', { status: response.status, error: errorText });
       
       if (response.status === 429) {
         return new Response(
@@ -115,7 +147,7 @@ Responda APENAS com o JSON, sem texto adicional.`;
       throw new Error('No content in AI response');
     }
 
-    console.log('AI response content:', content);
+    logStep('AI response received');
 
     // Parse JSON response from AI
     let analysisResult;
@@ -124,7 +156,7 @@ Responda APENAS com o JSON, sem texto adicional.`;
       const jsonText = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
       analysisResult = JSON.parse(jsonText);
     } catch (parseError) {
-      console.error('Failed to parse AI response as JSON:', content);
+      logStep('Failed to parse AI response', { content });
       throw new Error('Invalid JSON response from AI');
     }
 
@@ -137,7 +169,7 @@ Responda APENAS com o JSON, sem texto adicional.`;
     );
 
   } catch (error) {
-    console.error('Error in pronunciation-analysis:', error);
+    logStep('Error in pronunciation-analysis', { error: error instanceof Error ? error.message : 'Unknown error' });
     return new Response(
       JSON.stringify({ 
         error: error instanceof Error ? error.message : 'Unknown error occurred',
