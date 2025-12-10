@@ -17,7 +17,6 @@ import {
   Heart
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { LockedContent } from "@/components/premium/LockedContent";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -315,9 +314,9 @@ export const Vocabulary = () => {
   const [openSections, setOpenSections] = useState<string[]>(["home"]);
   const [loadingAudio, setLoadingAudio] = useState<string | null>(null);
   const { toast } = useToast();
-  const { isPremium } = useAuth();
+  const { isPremium, isInTrialPeriod } = useAuth();
   const { trackActivity } = useUserProgress();
-  const FREE_THEMES = ['home', 'school'];
+  const hasFullAccess = isPremium || isInTrialPeriod;
 
   // Load voices when component mounts
   useEffect(() => {
@@ -448,17 +447,15 @@ export const Vocabulary = () => {
         {themes.map((theme) => {
           const ThemeIcon = theme.icon;
           const isOpen = openSections.includes(theme.id);
-          const isLocked = !isPremium && !FREE_THEMES.includes(theme.id);
           
           return (
-            <Collapsible key={theme.id} open={isOpen && !isLocked} onOpenChange={() => !isLocked && toggleSection(theme.id)}>
-              <Card className={`transition-smooth hover:shadow-md border-2 ${theme.borderColor} ${isLocked ? 'opacity-60' : ''}`}>
-                <CollapsibleTrigger className="w-full" disabled={isLocked}>
-                  <CardHeader className={isLocked ? 'cursor-not-allowed' : 'cursor-pointer'}>
+            <Collapsible key={theme.id} open={isOpen} onOpenChange={() => toggleSection(theme.id)}>
+              <Card className={`transition-smooth hover:shadow-md border-2 ${theme.borderColor}`}>
+                <CollapsibleTrigger className="w-full">
+                  <CardHeader className="cursor-pointer">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
                         <div className={`flex h-12 w-12 items-center justify-center rounded-lg ${theme.bgColor}`}>
-                          {isLocked && <Lock className="absolute h-5 w-5 text-muted-foreground" />}
                           <ThemeIcon className={`h-6 w-6 ${theme.color}`} />
                         </div>
                         <div className="text-left">
@@ -466,20 +463,19 @@ export const Vocabulary = () => {
                             {theme.title} / {theme.titleEn}
                           </CardTitle>
                           <p className="text-sm text-muted-foreground mt-1">
-                            {theme.words.length} palavras {isLocked && '🔒'}
+                            {theme.words.length} palavras
                           </p>
                         </div>
                       </div>
-                      {!isLocked && (isOpen ? (
+                      {isOpen ? (
                         <ChevronUp className="h-5 w-5 text-muted-foreground" />
                       ) : (
                         <ChevronDown className="h-5 w-5 text-muted-foreground" />
-                      ))}
+                      )}
                     </div>
                   </CardHeader>
                 </CollapsibleTrigger>
                 
-                {!isLocked && (
                 <CollapsibleContent>
                   <CardContent className="pt-0">
                     <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
@@ -525,16 +521,10 @@ export const Vocabulary = () => {
                     </div>
                   </CardContent>
                 </CollapsibleContent>
-                )}
               </Card>
             </Collapsible>
           );
         })}
-        {!isPremium && (
-          <LockedContent 
-            message="🔒 Desbloqueie todos os 12 temas de vocabulário (240 palavras) com áudio e tradução"
-          />
-        )}
       </div>
 
       <Card>

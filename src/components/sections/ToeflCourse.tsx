@@ -8,15 +8,14 @@ import { toeflLessons } from "@/data/toeflLessonsData";
 import { ToeflLesson } from "@/components/toefl/ToeflLesson";
 import { ToeflGlossary } from "@/components/toefl/ToeflGlossary";
 import { useAuth } from "@/contexts/AuthContext";
-import { LockedContent } from "@/components/premium/LockedContent";
 import { useUserProgress } from "@/hooks/useUserProgress";
 
 export const ToeflCourse = () => {
   const [selectedLesson, setSelectedLesson] = useState<number | null>(null);
   const [showGlossary, setShowGlossary] = useState(false);
   const [completedLessons, setCompletedLessons] = useState<number[]>([]);
-  const { isPremium } = useAuth();
-  const { trackActivity } = useUserProgress();
+  const { isPremium, isInTrialPeriod } = useAuth();
+  const hasFullAccess = isPremium || isInTrialPeriod;
 
   useEffect(() => {
     const saved = localStorage.getItem("toeflCompletedLessons");

@@ -7,7 +7,6 @@ import { LessonCard } from "@/components/lessons/LessonCard";
 import { LessonContent } from "@/components/lessons/LessonContent";
 import { lessons } from "@/data/lessonsData";
 import { useAuth } from "@/contexts/AuthContext";
-import { LockedContent } from "@/components/premium/LockedContent";
 import { useUserProgress } from "@/hooks/useUserProgress";
 
 interface LessonProgress {
@@ -19,9 +18,9 @@ interface LessonProgress {
 export const Lessons = () => {
   const [selectedLesson, setSelectedLesson] = useState<number | null>(null);
   const [progress, setProgress] = useState<Record<number, LessonProgress>>({});
-  const { isPremium } = useAuth();
+  const { isPremium, isInTrialPeriod } = useAuth();
   const { trackActivity } = useUserProgress();
-  const FREE_LESSONS_COUNT = 1;
+  const hasFullAccess = isPremium || isInTrialPeriod;
 
   const handleLessonComplete = (lessonNumber: number, score: number, stars: number) => {
     setProgress(prev => ({
@@ -42,12 +41,12 @@ export const Lessons = () => {
   const totalStars = Object.values(progress).reduce((sum, p) => sum + (p.stars || 0), 0);
   const progressPercentage = (completedLessons / totalLessons) * 100;
 
-  // Check if lesson is locked (previous lesson not completed OR premium required)
+  // Check if lesson is locked (previous lesson not completed)
   const isLessonLocked = (lessonNumber: number) => {
-    // Non-premium users can only access first lesson
-    if (!isPremium && lessonNumber > FREE_LESSONS_COUNT) return true;
     if (lessonNumber === 1) return false;
-    return !progress[lessonNumber - 1]?.completed;
+    // During trial/premium, only check progression
+    if (hasFullAccess) return !progress[lessonNumber - 1]?.completed;
+    return true;
   };
 
   if (selectedLesson !== null) {
@@ -131,13 +130,6 @@ export const Lessons = () => {
           );
         })}
       </div>
-
-      {!isPremium && (
-        <LockedContent 
-          message="🔒 Desbloqueie todas as 30 lições dos Níveis 1, 2 e 3 com exercícios interativos"
-          size="lg"
-        />
-      )}
 
       {/* Coming Soon Badge */}
       <Card className="border-dashed border-2 border-muted-foreground/30">

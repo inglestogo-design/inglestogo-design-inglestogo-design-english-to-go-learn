@@ -67,8 +67,8 @@ const medicines: MedicineItem[] = [
 ];
 
 export const SurvivalEnglish = () => {
-  const { isPremium } = useAuth();
-  const [activeTab, setActiveTab] = useState("idioms");
+  const { isPremium, isInTrialPeriod } = useAuth();
+  const hasFullAccess = isPremium || isInTrialPeriod;
 
   const playAudio = (text: string) => {
     speakText(text, { gender: 'female', rate: 0.85 });

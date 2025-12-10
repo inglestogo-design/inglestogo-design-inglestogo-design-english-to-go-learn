@@ -9,11 +9,11 @@ import { N400Glossary } from "@/components/citizenship/N400Glossary";
 import { InterviewSimulation } from "@/components/citizenship/InterviewSimulation";
 import { Lock, CheckCircle2, Flag, BookOpen, GraduationCap, MessageSquare, PlayCircle } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { LockedContent } from "@/components/premium/LockedContent";
 import { Progress } from "@/components/ui/progress";
 
 export const CitizenshipPrep = () => {
-  const { isPremium } = useAuth();
+  const { isPremium, isInTrialPeriod } = useAuth();
+  const hasFullAccess = isPremium || isInTrialPeriod;
   const [selectedLesson, setSelectedLesson] = useState<number | null>(null);
   const [completedLessons, setCompletedLessons] = useState<number[]>([]);
   const [currentLevel, setCurrentLevel] = useState(1);

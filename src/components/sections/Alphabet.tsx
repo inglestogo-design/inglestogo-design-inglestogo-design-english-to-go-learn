@@ -7,7 +7,6 @@ import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { speakText } from "@/utils/speechUtils";
 import { useAuth } from "@/contexts/AuthContext";
-import { LockedContent } from "@/components/premium/LockedContent";
 
 interface LetterSound {
   sound: string;
@@ -26,8 +25,8 @@ interface Letter {
 export const Alphabet = () => {
   const [loadingAudio, setLoadingAudio] = useState<string | null>(null);
   const { toast } = useToast();
-  const { isPremium } = useAuth();
-  const FREE_LETTERS_COUNT = 10;
+  const { isPremium, isInTrialPeriod } = useAuth();
+  const hasFullAccess = isPremium || isInTrialPeriod;
 
   // Load voices when component mounts
   useEffect(() => {
@@ -308,18 +307,9 @@ export const Alphabet = () => {
         <TabsContent value="alphabet" className="space-y-4 mt-6">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {alphabet.map((item, index) => {
-              const isLocked = !isPremium && index >= FREE_LETTERS_COUNT;
               return (
-              <Card key={index} className={`transition-smooth hover:shadow-md border-2 hover:border-primary/50 ${isLocked ? 'opacity-60' : ''}`}>
+              <Card key={index} className="transition-smooth hover:shadow-md border-2 hover:border-primary/50">
                 <CardContent className="p-6 relative">
-                  {isLocked && (
-                    <div className="absolute inset-0 bg-background/80 backdrop-blur-sm rounded-lg flex items-center justify-center z-10">
-                      <div className="text-center">
-                        <Lock className="h-8 w-8 text-primary mx-auto mb-2" />
-                        <p className="text-sm font-semibold text-foreground">Premium</p>
-                      </div>
-                    </div>
-                  )}
                   <div className="space-y-4">
                     {/* Letter Header */}
                     <div className="flex items-center justify-between">
@@ -382,11 +372,6 @@ export const Alphabet = () => {
             );
             })}
           </div>
-          {!isPremium && (
-            <LockedContent 
-              message="🔒 Desbloqueie todas as 26 letras do alfabeto com pronúncia e exemplos"
-            />
-          )}
         </TabsContent>
 
         <TabsContent value="digraphs" className="space-y-4 mt-6">
