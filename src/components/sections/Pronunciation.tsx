@@ -266,12 +266,12 @@ export const Pronunciation = () => {
           <TabsTrigger value="basic">
             <strong>Básico</strong> / Basic
           </TabsTrigger>
-          <TabsTrigger value="intermediate" disabled={!isLevelUnlocked('intermediate')}>
-            {!isLevelUnlocked('intermediate') && <Lock className="h-4 w-4 mr-2" />}
+          <TabsTrigger value="intermediate" disabled={!hasFullAccess && !isLevelUnlocked('intermediate')}>
+            {!hasFullAccess && !isLevelUnlocked('intermediate') && <Lock className="h-4 w-4 mr-2" />}
             <strong>Intermediário</strong> / Intermediate
           </TabsTrigger>
-          <TabsTrigger value="advanced" disabled={!isLevelUnlocked('advanced')}>
-            {!isLevelUnlocked('advanced') && <Lock className="h-4 w-4 mr-2" />}
+          <TabsTrigger value="advanced" disabled={!hasFullAccess && !isLevelUnlocked('advanced')}>
+            {!hasFullAccess && !isLevelUnlocked('advanced') && <Lock className="h-4 w-4 mr-2" />}
             <strong>Avançado</strong> / Advanced
           </TabsTrigger>
         </TabsList>

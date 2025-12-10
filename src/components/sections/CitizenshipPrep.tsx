@@ -162,7 +162,7 @@ export const CitizenshipPrep = () => {
               <div className="grid gap-3">
                 {level2Lessons.map((lesson) => {
                   const isCompleted = completedLessons.includes(lesson.id);
-                  const isLocked = !isPremium && lesson.id > 4;
+                  const isLocked = !hasFullAccess && lesson.id > 4;
                   
                   return (
                     <Card

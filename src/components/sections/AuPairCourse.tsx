@@ -29,14 +29,14 @@ export const AuPairCourse = () => {
   };
 
   const handleLessonSelect = (lessonId: number) => {
-    if (lessonId === 1 || isPremium) {
+    if (lessonId === 1 || hasFullAccess) {
       setSelectedLesson(lessonId);
       setShowGlossary(false);
     }
   };
 
   const handleGlossaryOpen = () => {
-    if (isPremium) {
+    if (hasFullAccess) {
       setShowGlossary(true);
       setSelectedLesson(null);
     }
@@ -104,7 +104,7 @@ export const AuPairCourse = () => {
               <p className="font-medium text-sm">Glossário / Glossary</p>
               <p className="text-xs text-muted-foreground">50+ termos essenciais</p>
             </div>
-            {isPremium ? (
+            {hasFullAccess ? (
               <Button onClick={handleGlossaryOpen} size="sm">
                 Acessar
               </Button>
@@ -121,7 +121,7 @@ export const AuPairCourse = () => {
         
         {auPairLessons.map((lesson) => {
           const isCompleted = completedLessons.includes(lesson.id);
-          const isLocked = lesson.id > 1 && !isPremium;
+          const isLocked = lesson.id > 1 && !hasFullAccess;
 
           return (
             <Card 

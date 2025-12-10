@@ -46,13 +46,13 @@ interface Verb {
 }
 
 export const ImportantVerbs = () => {
+  const { isPremium, isInTrialPeriod } = useAuth();
+  const hasFullAccess = isPremium || isInTrialPeriod;
   const [loadingAudio, setLoadingAudio] = useState<string | null>(null);
   const [openPresent, setOpenPresent] = useState(true);
   const [openPast, setOpenPast] = useState(false);
   const [openFuture, setOpenFuture] = useState(false);
   const { toast } = useToast();
-  const { isPremium, isInTrialPeriod } = useAuth();
-  const hasFullAccess = isPremium || isInTrialPeriod;
 
   useEffect(() => {
     if ('speechSynthesis' in window) {
@@ -426,7 +426,7 @@ export const ImportantVerbs = () => {
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {verbs.map((verb, idx) => {
-                      const isLocked = !isPremium && idx >= 1;
+                      const isLocked = !hasFullAccess && idx >= 1;
                       return (
                       <Card key={`past-${verb.infinitive}`} className={`overflow-hidden hover:shadow-lg transition-smooth ${isLocked ? 'opacity-60' : ''}`}>
                         <CardContent className="p-4 relative">
@@ -497,7 +497,7 @@ export const ImportantVerbs = () => {
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {verbs.map((verb, idx) => {
-                      const isLocked = !isPremium && idx >= 1;
+                      const isLocked = !hasFullAccess && idx >= 1;
                       return (
                       <Card key={`future-${verb.infinitive}`} className={`overflow-hidden hover:shadow-lg transition-smooth ${isLocked ? 'opacity-60' : ''}`}>
                         <CardContent className="p-4 relative">
