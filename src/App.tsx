@@ -8,7 +8,6 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Premium from "./pages/Premium";
 import Settings from "./pages/Settings";
-import Landing from "./pages/Landing";
 import NotFound from "./pages/NotFound";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import LogoOptions from "./pages/LogoOptions";
@@ -25,7 +24,6 @@ const App = () => (
           <Routes>
             {/* SEMPRE redireciona para /auth - app vai direto para login */}
             <Route path="/" element={<Navigate to="/auth" replace />} />
-            <Route path="/landing" element={<Navigate to="/auth" replace />} />
             <Route path="/app" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/premium" element={<Premium />} />
