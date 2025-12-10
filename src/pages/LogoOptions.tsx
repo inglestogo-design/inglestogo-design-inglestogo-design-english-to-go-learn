@@ -6,6 +6,7 @@ import compassLogo5 from "@/assets/logo-options/compass-logo-5.png";
 import compassLogo6 from "@/assets/logo-options/compass-logo-6.png";
 import compassLogo8 from "@/assets/logo-options/compass-logo-8.png";
 import compassLogo10 from "@/assets/logo-options/compass-logo-10.png";
+import compassLogo11 from "@/assets/logo-options/compass-logo-11.png";
 
 const LogoOptions = () => {
   const logos = [
@@ -16,7 +17,8 @@ const LogoOptions = () => {
     { id: 5, src: compassLogo5, name: "Opção 5", desc: "Bolinha com pontas (moicano)" },
     { id: 6, src: compassLogo6, name: "Opção 6", desc: "Bolinha com Rosa dos Ventos" },
     { id: 8, src: compassLogo8, name: "Opção 8", desc: "Bússola sem boca" },
-    { id: 10, src: compassLogo10, name: "⭐ Opção 10 - NOVA", desc: "Bússola com BOCA sorrindo + Mic" },
+    { id: 10, src: compassLogo10, name: "Opção 10", desc: "Bússola com BOCA sorrindo + Mic" },
+    { id: 11, src: compassLogo11, name: "⭐ Opção 11 - NOVA", desc: "Bússola com Rosa dos Ventos especial ✡️" },
   ];
 
   return (
