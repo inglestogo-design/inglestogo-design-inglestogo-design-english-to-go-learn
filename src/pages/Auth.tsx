@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { toast } from "sonner";
 import { ArrowLeft } from "lucide-react";
 import logo from "@/assets/logo-final.png";
+import logoSmile from "@/assets/logo-smile.png";
 import { z } from "zod";
 import { SidebarProvider } from "@/components/ui/sidebar";
 
@@ -118,9 +119,9 @@ const Auth = () => {
           </Button>
           
           <img 
-            src={logo} 
+            src={logoSmile} 
             alt="Inglês To Go" 
-            className="h-16 w-auto mx-auto"
+            className="h-24 w-auto mx-auto mb-2"
           />
           
           <CardTitle className="text-2xl font-fredoka">
