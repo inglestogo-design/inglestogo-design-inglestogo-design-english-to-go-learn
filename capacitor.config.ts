@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'app.lovable.92502ef92118477cbe2cb77e93aff393',
+  appId: 'com.inglestogo.app',
   appName: 'Ingles to Go',
   webDir: 'dist',
   
