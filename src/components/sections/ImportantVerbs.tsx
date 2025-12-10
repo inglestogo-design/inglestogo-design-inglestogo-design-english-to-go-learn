@@ -474,11 +474,6 @@ export const ImportantVerbs = () => {
                     );
                     })}
                   </div>
-                  {!isPremium && (
-                    <LockedContent 
-                      message="🔒 Desbloqueie todos os 24 verbos no passado com Premium"
-                    />
-                  )}
                 </CardContent>
               </CollapsibleContent>
             </Card>
@@ -550,11 +545,6 @@ export const ImportantVerbs = () => {
                     );
                     })}
                   </div>
-                  {!isPremium && (
-                    <LockedContent 
-                      message="🔒 Desbloqueie todos os 24 verbos no futuro com Premium"
-                    />
-                  )}
                 </CardContent>
               </CollapsibleContent>
             </Card>
