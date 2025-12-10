@@ -25,7 +25,7 @@ const App = () => (
           <Routes>
             {/* SEMPRE redireciona para /auth - app vai direto para login */}
             <Route path="/" element={<Navigate to="/auth" replace />} />
-            <Route path="/landing" element={<Landing />} />
+            <Route path="/landing" element={<Navigate to="/auth" replace />} />
             <Route path="/app" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/premium" element={<Premium />} />
