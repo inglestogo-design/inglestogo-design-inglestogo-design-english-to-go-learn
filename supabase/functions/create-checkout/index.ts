@@ -40,7 +40,7 @@ serve(async (req) => {
     if (userError) throw new Error(`Authentication error: ${userError.message}`);
     const user = userData.user;
     if (!user?.email) throw new Error("User not authenticated or email not available");
-    logStep("User authenticated", { userId: user.id, email: user.email });
+    logStep("User authenticated", { userId: user.id.substring(0, 8) + '...' });
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
     
