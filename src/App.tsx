@@ -4,7 +4,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
-import { Capacitor } from "@capacitor/core";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Premium from "./pages/Premium";
@@ -16,12 +15,6 @@ import LogoOptions from "./pages/LogoOptions";
 
 const queryClient = new QueryClient();
 
-// Detecta se está rodando como app nativo (iOS/Android)
-// Para builds nativos reais, Capacitor.isNativePlatform() retorna true
-// Para testes no simulador web, adicione ?native=true na URL
-const isNativeApp = Capacitor.isNativePlatform() || 
-  (typeof window !== 'undefined' && window.location.search.includes('native=true'));
-
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -30,8 +23,9 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <Routes>
-            {/* No app nativo, "/" redireciona para /auth. No web, mostra Landing */}
-            <Route path="/" element={isNativeApp ? <Navigate to="/auth" replace /> : <Landing />} />
+            {/* SEMPRE redireciona para /auth - app vai direto para login */}
+            <Route path="/" element={<Navigate to="/auth" replace />} />
+            <Route path="/landing" element={<Landing />} />
             <Route path="/app" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/premium" element={<Premium />} />
