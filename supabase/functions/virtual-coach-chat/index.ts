@@ -25,11 +25,14 @@ serve(async (req) => {
     // Authenticate user
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
-      throw new Error("Authentication required");
+      return new Response(
+        JSON.stringify({ error: "Authentication required" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     const { data: { user }, error: authError } = await supabase.auth.getUser(
@@ -37,7 +40,35 @@ serve(async (req) => {
     );
 
     if (authError || !user) {
-      throw new Error("Invalid authentication");
+      return new Response(
+        JSON.stringify({ error: "Invalid authentication" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Server-side premium verification
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('is_premium, trial_ends_at')
+      .eq('id', user.id)
+      .single();
+
+    if (profileError) {
+      console.error("Profile fetch failed:", profileError.message);
+      return new Response(
+        JSON.stringify({ error: "Failed to verify subscription status" }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const hasAccess = profile?.is_premium || 
+      (profile?.trial_ends_at && new Date(profile.trial_ends_at) > new Date());
+
+    if (!hasAccess) {
+      return new Response(
+        JSON.stringify({ error: "Premium subscription required" }),
+        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
     const body = await req.json();

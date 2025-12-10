@@ -28,8 +28,8 @@ serve(async (req) => {
     }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseAnonKey);
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
     
     const token = authHeader.replace('Bearer ', '');
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
@@ -43,6 +43,34 @@ serve(async (req) => {
     }
 
     logStep('User authenticated', { userId: user.id.substring(0, 8) + '...' });
+
+    // Server-side premium verification
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('is_premium, trial_ends_at')
+      .eq('id', user.id)
+      .single();
+
+    if (profileError) {
+      logStep('Profile fetch failed', { error: profileError.message });
+      return new Response(
+        JSON.stringify({ error: 'Failed to verify subscription status' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const hasAccess = profile?.is_premium || 
+      (profile?.trial_ends_at && new Date(profile.trial_ends_at) > new Date());
+
+    if (!hasAccess) {
+      logStep('Premium access denied', { userId: user.id.substring(0, 8) + '...' });
+      return new Response(
+        JSON.stringify({ error: 'Premium subscription required' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    logStep('Premium access verified');
 
     // Zod validation schema for input security
     const RequestSchema = z.object({

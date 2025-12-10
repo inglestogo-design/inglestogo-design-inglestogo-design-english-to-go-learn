@@ -27,7 +27,35 @@ serve(async (req) => {
     );
 
     if (userError || !user) {
-      throw new Error('Unauthorized');
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Server-side premium verification
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('is_premium, trial_ends_at')
+      .eq('id', user.id)
+      .single();
+
+    if (profileError) {
+      console.error('Profile fetch failed:', profileError.message);
+      return new Response(
+        JSON.stringify({ error: 'Failed to verify subscription status' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const hasAccess = profile?.is_premium || 
+      (profile?.trial_ends_at && new Date(profile.trial_ends_at) > new Date());
+
+    if (!hasAccess) {
+      return new Response(
+        JSON.stringify({ error: 'Premium subscription required' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     // Zod validation schema for input security
