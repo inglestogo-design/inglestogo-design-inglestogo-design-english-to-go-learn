@@ -17,7 +17,10 @@ import LogoOptions from "./pages/LogoOptions";
 const queryClient = new QueryClient();
 
 // Detecta se está rodando como app nativo (iOS/Android)
-const isNativeApp = Capacitor.isNativePlatform();
+// Para builds nativos reais, Capacitor.isNativePlatform() retorna true
+// Para testes no simulador web, adicione ?native=true na URL
+const isNativeApp = Capacitor.isNativePlatform() || 
+  (typeof window !== 'undefined' && window.location.search.includes('native=true'));
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
