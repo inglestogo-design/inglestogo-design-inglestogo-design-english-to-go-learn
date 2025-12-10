@@ -7,8 +7,6 @@ import { auPairLessons } from "@/data/auPairLessonsData";
 import { AuPairLesson } from "@/components/aupair/AuPairLesson";
 import { AuPairGlossary } from "@/components/aupair/AuPairGlossary";
 import { useAuth } from "@/contexts/AuthContext";
-import { useUserProgress } from "@/hooks/useUserProgress";
-
 export const AuPairCourse = () => {
   const [selectedLesson, setSelectedLesson] = useState<number | null>(null);
   const [showGlossary, setShowGlossary] = useState(false);
@@ -27,7 +25,6 @@ export const AuPairCourse = () => {
     const newCompleted = [...completedLessons, lessonId];
     setCompletedLessons(newCompleted);
     localStorage.setItem("auPairCompletedLessons", JSON.stringify(newCompleted));
-    trackActivity("lesson", 1);
     setSelectedLesson(null);
   };
 

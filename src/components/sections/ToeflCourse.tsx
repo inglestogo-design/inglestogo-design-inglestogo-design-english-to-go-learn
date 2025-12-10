@@ -8,8 +8,6 @@ import { toeflLessons } from "@/data/toeflLessonsData";
 import { ToeflLesson } from "@/components/toefl/ToeflLesson";
 import { ToeflGlossary } from "@/components/toefl/ToeflGlossary";
 import { useAuth } from "@/contexts/AuthContext";
-import { useUserProgress } from "@/hooks/useUserProgress";
-
 export const ToeflCourse = () => {
   const [selectedLesson, setSelectedLesson] = useState<number | null>(null);
   const [showGlossary, setShowGlossary] = useState(false);
@@ -28,7 +26,6 @@ export const ToeflCourse = () => {
     const newCompleted = [...completedLessons, lessonId];
     setCompletedLessons(newCompleted);
     localStorage.setItem("toeflCompletedLessons", JSON.stringify(newCompleted));
-    trackActivity("lesson", 1);
     setSelectedLesson(null);
   };
 

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Volume2, Lock } from "lucide-react";
+import { Volume2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { speakText } from "@/utils/speechUtils";
 
@@ -66,7 +66,12 @@ const medicines: MedicineItem[] = [
   { emoji: "🥤", english: "Antacid", portuguese: "Antiácido", pronunciation: "êntésid" },
 ];
 
+function cn(...classes: any[]) {
+  return classes.filter(Boolean).join(" ");
+}
+
 export const SurvivalEnglish = () => {
+  const [activeTab, setActiveTab] = useState("idioms");
   const { isPremium, isInTrialPeriod } = useAuth();
   const hasFullAccess = isPremium || isInTrialPeriod;
 
@@ -97,59 +102,45 @@ export const SurvivalEnglish = () => {
 
         <TabsContent value="idioms" className="space-y-4 mt-6">
           <div className="grid gap-4">
-            {idioms.map((idiom, index) => {
-              const isLocked = !isPremium && index >= 5;
-              
-              return (
-                <Card
-                  key={index}
-                  className={cn(
-                    "p-4 hover:shadow-lg transition-smooth border-2",
-                    isLocked && "opacity-60 relative"
-                  )}
-                >
-                  {isLocked && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm rounded-lg z-10">
-                      <Lock className="h-8 w-8 text-muted-foreground" />
-                    </div>
-                  )}
+            {idioms.map((idiom, index) => (
+              <Card
+                key={index}
+                className="p-4 hover:shadow-lg transition-smooth border-2"
+              >
+                <div className="flex items-start gap-4">
+                  <span className="text-4xl flex-shrink-0">{idiom.emoji}</span>
                   
-                  <div className="flex items-start gap-4">
-                    <span className="text-4xl flex-shrink-0">{idiom.emoji}</span>
+                  <div className="flex-1 space-y-2">
+                    <div className="flex items-center justify-between gap-2">
+                      <h3 className="text-xl font-bold text-foreground">
+                        {idiom.english}
+                      </h3>
+                      <button
+                        onClick={() => playAudio(idiom.english)}
+                        className="p-2 rounded-full hover:bg-muted transition-smooth"
+                        title="Ouvir Pronúncia / Listen"
+                      >
+                        <Volume2 className="h-5 w-5 text-primary" />
+                      </button>
+                    </div>
                     
-                    <div className="flex-1 space-y-2">
-                      <div className="flex items-center justify-between gap-2">
-                        <h3 className="text-xl font-bold text-foreground">
-                          {idiom.english}
-                        </h3>
-                        <button
-                          onClick={() => !isLocked && playAudio(idiom.english)}
-                          disabled={isLocked}
-                          className="p-2 rounded-full hover:bg-muted transition-smooth disabled:opacity-50"
-                          title="Ouvir Pronúncia / Listen"
-                        >
-                          <Volume2 className="h-5 w-5 text-primary" />
-                        </button>
-                      </div>
-                      
-                      <p className="text-sm text-muted-foreground italic">
-                        🗣️ {idiom.pronunciation}
+                    <p className="text-sm text-muted-foreground italic">
+                      🗣️ {idiom.pronunciation}
+                    </p>
+                    
+                    <p className="text-base font-medium text-foreground">
+                      🇧🇷 {idiom.portuguese}
+                    </p>
+                    
+                    <div className="pt-2 border-t border-border">
+                      <p className="text-sm text-muted-foreground">
+                        <span className="font-medium">Exemplo / Example:</span> "{idiom.example}"
                       </p>
-                      
-                      <p className="text-base font-medium text-foreground">
-                        🇧🇷 {idiom.portuguese}
-                      </p>
-                      
-                      <div className="pt-2 border-t border-border">
-                        <p className="text-sm text-muted-foreground">
-                          <span className="font-medium">Exemplo / Example:</span> "{idiom.example}"
-                        </p>
-                      </div>
                     </div>
                   </div>
-                </Card>
-              );
-            })}
+                </div>
+              </Card>
+            ))}
           </div>
         </TabsContent>
 
@@ -164,75 +155,42 @@ export const SurvivalEnglish = () => {
           </div>
           
           <div className="grid gap-4">
-            {medicines.map((medicine, index) => {
-              const isLocked = !isPremium && index >= 5;
-              
-              return (
-                <Card
-                  key={index}
-                  className={cn(
-                    "p-4 hover:shadow-lg transition-smooth border-2",
-                    isLocked && "opacity-60 relative"
-                  )}
-                >
-                  {isLocked && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm rounded-lg z-10">
-                      <Lock className="h-8 w-8 text-muted-foreground" />
-                    </div>
-                  )}
+            {medicines.map((medicine, index) => (
+              <Card
+                key={index}
+                className="p-4 hover:shadow-lg transition-smooth border-2"
+              >
+                <div className="flex items-start gap-4">
+                  <span className="text-4xl flex-shrink-0">{medicine.emoji}</span>
                   
-                  <div className="flex items-start gap-4">
-                    <span className="text-4xl flex-shrink-0">{medicine.emoji}</span>
-                    
-                    <div className="flex-1 space-y-2">
-                      <div className="flex items-center justify-between gap-2">
-                        <h3 className="text-xl font-bold text-foreground">
-                          {medicine.english}
-                        </h3>
-                        <button
-                          onClick={() => !isLocked && playAudio(medicine.english)}
-                          disabled={isLocked}
-                          className="p-2 rounded-full hover:bg-muted transition-smooth disabled:opacity-50"
-                          title="Ouvir Pronúncia / Listen"
-                        >
-                          <Volume2 className="h-5 w-5 text-primary" />
-                        </button>
-                      </div>
-                      
-                      <p className="text-sm text-muted-foreground italic">
-                        🗣️ {medicine.pronunciation}
-                      </p>
-                      
-                      <p className="text-base font-medium text-foreground">
-                        🇧🇷 {medicine.portuguese}
-                      </p>
+                  <div className="flex-1 space-y-2">
+                    <div className="flex items-center justify-between gap-2">
+                      <h3 className="text-xl font-bold text-foreground">
+                        {medicine.english}
+                      </h3>
+                      <button
+                        onClick={() => playAudio(medicine.english)}
+                        className="p-2 rounded-full hover:bg-muted transition-smooth"
+                        title="Ouvir Pronúncia / Listen"
+                      >
+                        <Volume2 className="h-5 w-5 text-primary" />
+                      </button>
                     </div>
+                    
+                    <p className="text-sm text-muted-foreground italic">
+                      🗣️ {medicine.pronunciation}
+                    </p>
+                    
+                    <p className="text-base font-medium text-foreground">
+                      🇧🇷 {medicine.portuguese}
+                    </p>
                   </div>
-                </Card>
-              );
-            })}
+                </div>
+              </Card>
+            ))}
           </div>
         </TabsContent>
       </Tabs>
-
-      {!isPremium && (
-        <Card className="p-6 bg-gradient-to-r from-primary/10 to-secondary/10 border-2 border-primary/20">
-          <div className="text-center space-y-3">
-            <h3 className="text-xl font-bold text-foreground">
-              🔓 Desbloqueie Todo o Conteúdo / Unlock All Content
-            </h3>
-            <p className="text-muted-foreground">
-              Acesse todas as 30 expressões idiomáticas e 10 palavras essenciais com o Premium!
-              <br />
-              Access all 30 idioms and 10 essential words with Premium!
-            </p>
-          </div>
-        </Card>
-      )}
     </div>
   );
 };
-
-function cn(...classes: any[]) {
-  return classes.filter(Boolean).join(" ");
-}
