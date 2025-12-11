@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { PremiumBadge } from "@/components/premium/PremiumBadge";
 import { VoiceSettingsDialog } from "@/components/settings/VoiceSettingsDialog";
 import { useState } from "react";
-import logo from "@/assets/logo-final.png";
+import logo from "@/assets/english-to-go-logo.png";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 
 interface HeaderProps {
@@ -35,15 +35,15 @@ export const Header = ({ fontClass = "font-baloo" }: HeaderProps) => {
           </SidebarTrigger>
           <img 
             src={logo} 
-            alt="Inglês To Go - Inglês que se move com você" 
+            alt="English To Go - English that moves with you" 
             className="h-12 md:h-14 w-auto drop-shadow-xl animate-fade-in hover:scale-105 transition-transform duration-300"
           />
           <div className="flex flex-col">
             <h1 className={`text-lg sm:text-2xl md:text-4xl lg:text-5xl font-black ${fontClass} bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent tracking-tight leading-tight`}>
-              INGLÊS TO GO
+              ENGLISH TO GO
             </h1>
             <p className="text-[10px] sm:text-xs md:text-sm text-muted-foreground font-fredoka font-medium tracking-wide italic">
-              Inglês que se move com você
+              English that moves with you
             </p>
           </div>
         </div>

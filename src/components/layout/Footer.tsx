@@ -1,4 +1,4 @@
-import logo from "@/assets/logo-final.png";
+import logo from "@/assets/english-to-go-logo.png";
 
 export const Footer = () => {
   return (
@@ -7,15 +7,15 @@ export const Footer = () => {
         <div className="flex flex-col items-center justify-center gap-4">
           <img 
             src={logo} 
-            alt="Inglês To Go - Inglês que se move com você" 
+            alt="English To Go - English that moves with you" 
             className="h-20 w-auto opacity-40 hover:opacity-60 transition-opacity duration-300"
           />
           <div className="text-center space-y-1">
             <p className="text-sm font-fredoka font-medium text-muted-foreground italic">
-              "Inglês que se move com você"
+              "English that moves with you"
             </p>
             <p className="text-xs text-muted-foreground">
-              © 2025 Inglês To Go. Todos os direitos reservados.
+              © 2025 English To Go. All rights reserved.
             </p>
           </div>
         </div>
