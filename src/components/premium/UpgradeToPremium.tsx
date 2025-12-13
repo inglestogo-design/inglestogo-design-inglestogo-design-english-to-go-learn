@@ -111,7 +111,7 @@ export const UpgradeToPremium = () => {
               className="w-full bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-white font-bold text-lg"
             >
               <Crown className="w-5 h-5 mr-2" />
-              Assinar Agora por R$ 9,90/mês
+              Assinar Agora / Subscribe Now
             </Button>
           </div>
 
@@ -129,11 +129,6 @@ export const UpgradeToPremium = () => {
         <div className="flex justify-center mb-2">
           <Crown className="w-16 h-16 text-yellow-500" />
         </div>
-        <div className="inline-flex items-center justify-center gap-2 mb-3">
-          <span className="bg-gradient-to-r from-red-500 to-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full animate-pulse">
-            🔥 PROMOÇÃO ATÉ NOVEMBRO
-          </span>
-        </div>
         <CardTitle className="text-3xl font-fredoka">
           Upgrade para Premium
         </CardTitle>
@@ -145,24 +140,6 @@ export const UpgradeToPremium = () => {
       </CardHeader>
       
       <CardContent className="space-y-6">
-        <div className="bg-white/80 dark:bg-black/20 p-6 rounded-lg text-center">
-          <div className="text-5xl font-black text-primary mb-2">
-            R$ 9,90
-          </div>
-          <div className="text-muted-foreground mb-3">
-            por mês / per month
-          </div>
-          <div className="text-sm text-muted-foreground/80 border-t border-muted-foreground/20 pt-3">
-            <span className="line-through text-muted-foreground/60">R$ 19,90</span>
-            <span className="ml-2 text-green-600 font-semibold">50% OFF</span>
-            <div className="mt-1 text-xs">
-              Preço regular a partir de dezembro
-              <br />
-              Regular price from December
-            </div>
-          </div>
-        </div>
-
         <div className="space-y-3">
           {features.map((feature, index) => (
             <div key={index} className="flex items-start gap-3">

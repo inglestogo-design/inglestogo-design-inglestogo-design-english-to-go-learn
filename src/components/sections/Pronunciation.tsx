@@ -47,22 +47,7 @@ export const Pronunciation = () => {
 
   const handleLevelChange = (newLevel: string) => {
     const level = newLevel as 'basic' | 'intermediate' | 'advanced';
-    
-    // Allow all levels during trial or premium
-    if (!hasFullAccess && level !== 'basic') {
-      return;
-    }
-    
-    if (!hasFullAccess && !isLevelUnlocked(level)) {
-      toast({
-        title: "Nível Bloqueado / Level Locked",
-        description: level === 'intermediate' 
-          ? "Complete todas as 30 frases do nível Básico primeiro / Complete all 30 Basic phrases first"
-          : "Complete todas as 30 frases do nível Intermediário primeiro / Complete all 30 Intermediate phrases first",
-        variant: "destructive",
-      });
-      return;
-    }
+    // All levels are now unlocked for everyone
     setSelectedLevel(level);
   };
 
@@ -266,12 +251,10 @@ export const Pronunciation = () => {
           <TabsTrigger value="basic">
             <strong>Básico</strong> / Basic
           </TabsTrigger>
-          <TabsTrigger value="intermediate" disabled={!hasFullAccess && !isLevelUnlocked('intermediate')}>
-            {!hasFullAccess && !isLevelUnlocked('intermediate') && <Lock className="h-4 w-4 mr-2" />}
+          <TabsTrigger value="intermediate">
             <strong>Intermediário</strong> / Intermediate
           </TabsTrigger>
-          <TabsTrigger value="advanced" disabled={!hasFullAccess && !isLevelUnlocked('advanced')}>
-            {!hasFullAccess && !isLevelUnlocked('advanced') && <Lock className="h-4 w-4 mr-2" />}
+          <TabsTrigger value="advanced">
             <strong>Avançado</strong> / Advanced
           </TabsTrigger>
         </TabsList>

@@ -8,18 +8,29 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { RefreshCw, Save, Bell, ArrowLeft } from "lucide-react";
+import { RefreshCw, Save, Bell, ArrowLeft, Trash2, AlertTriangle } from "lucide-react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/layout/AppSidebar";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function Settings() {
-  const { user, loading } = useAuth();
+  const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [saving, setSaving] = useState(false);
   const [resetting, setResetting] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   // Settings state
   const [notificationSettings, setNotificationSettings] = useState({
@@ -119,6 +130,44 @@ export default function Settings() {
       });
     } finally {
       setResetting(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (!user) return;
+
+    setDeleting(true);
+    try {
+      // Delete profile first (this will cascade delete related data due to RLS)
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .delete()
+        .eq('id', user.id);
+
+      if (profileError) {
+        console.error('Error deleting profile:', profileError);
+        throw profileError;
+      }
+
+      // Sign out the user
+      await signOut();
+
+      toast({
+        title: "Conta excluída / Account deleted",
+        description: "Sua conta foi excluída com sucesso. / Your account has been successfully deleted.",
+      });
+
+      // Redirect to auth page
+      navigate('/auth');
+    } catch (error) {
+      console.error('Error deleting account:', error);
+      toast({
+        title: "Erro / Error",
+        description: "Não foi possível excluir sua conta. Tente novamente. / Could not delete your account. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -263,6 +312,84 @@ export default function Settings() {
                   </>
                 )}
               </Button>
+            </CardContent>
+          </Card>
+
+          {/* Delete Account - Apple Requirement 5.1.1(v) */}
+          <Card className="border-destructive/50">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-destructive">
+                <Trash2 className="h-5 w-5" />
+                Excluir Conta / Delete Account
+              </CardTitle>
+              <CardDescription>
+                Exclua permanentemente sua conta e todos os dados / Permanently delete your account and all data
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4 mb-4">
+                <div className="flex gap-3">
+                  <AlertTriangle className="h-5 w-5 text-destructive flex-shrink-0 mt-0.5" />
+                  <div className="text-sm text-destructive">
+                    <p className="font-semibold mb-1">Atenção! Esta ação é irreversível.</p>
+                    <p>Warning! This action cannot be undone.</p>
+                  </div>
+                </div>
+              </div>
+              
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="destructive"
+                    className="w-full sm:w-auto"
+                    disabled={deleting}
+                  >
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Excluir Minha Conta / Delete My Account
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle className="flex items-center gap-2">
+                      <AlertTriangle className="h-5 w-5 text-destructive" />
+                      Confirmar Exclusão / Confirm Deletion
+                    </AlertDialogTitle>
+                    <AlertDialogDescription className="space-y-2">
+                      <p>
+                        Tem certeza que deseja excluir sua conta? Esta ação é permanente e não pode ser desfeita.
+                      </p>
+                      <p>
+                        Are you sure you want to delete your account? This action is permanent and cannot be undone.
+                      </p>
+                      <p className="font-semibold text-destructive">
+                        Todos os seus dados, progresso e configurações serão perdidos.
+                        <br />
+                        All your data, progress, and settings will be lost.
+                      </p>
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancelar / Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleDeleteAccount}
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      disabled={deleting}
+                    >
+                      {deleting ? (
+                        <>
+                          <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                          Excluindo... / Deleting...
+                        </>
+                      ) : (
+                        <>
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Sim, Excluir / Yes, Delete
+                        </>
+                      )}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </CardContent>
           </Card>
 

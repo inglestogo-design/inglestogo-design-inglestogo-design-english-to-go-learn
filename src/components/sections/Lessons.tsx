@@ -41,12 +41,11 @@ export const Lessons = () => {
   const totalStars = Object.values(progress).reduce((sum, p) => sum + (p.stars || 0), 0);
   const progressPercentage = (completedLessons / totalLessons) * 100;
 
-  // Check if lesson is locked (previous lesson not completed)
+  // Check if lesson is locked (only by progression, not by premium)
   const isLessonLocked = (lessonNumber: number) => {
     if (lessonNumber === 1) return false;
-    // During trial/premium, only check progression
-    if (hasFullAccess) return !progress[lessonNumber - 1]?.completed;
-    return true;
+    // Only check if previous lesson is completed
+    return !progress[lessonNumber - 1]?.completed;
   };
 
   if (selectedLesson !== null) {

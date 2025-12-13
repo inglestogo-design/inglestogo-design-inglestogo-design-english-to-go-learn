@@ -1,4 +1,4 @@
-import { Home, Mic, BookText, BookA, GraduationCap, TrendingUp, BookOpen, Hash, Radio, Zap, Bot, Lightbulb, Flag, BookMarked, Plane, FileText, LucideIcon } from "lucide-react";
+import { Home, Mic, BookText, BookA, GraduationCap, TrendingUp, BookOpen, Hash, Zap, Bot, Lightbulb, Flag, BookMarked, Plane, FileText, LucideIcon } from "lucide-react";
 
 export interface NavigationItem {
   id: string;
@@ -7,6 +7,7 @@ export interface NavigationItem {
 }
 
 // Lista de navegação: Início primeiro, depois ordem alfabética
+// REMOVED: Radio section (Apple rejection - unauthorized third-party content)
 export const navigationItems: NavigationItem[] = [
   { id: "dashboard", label: "Início / Home", icon: Home },
   { id: "alphabet", label: "Alfabeto / Alphabet", icon: BookA },
@@ -18,7 +19,6 @@ export const navigationItems: NavigationItem[] = [
   { id: "numbers", label: "Números / Numbers", icon: Hash },
   { id: "pronunciation", label: "Pronúncia / Pronunciation", icon: Mic },
   { id: "progress", label: "Progresso / Progress", icon: TrendingUp },
-  { id: "radio", label: "Rádio 24h / Radio 24/7", icon: Radio },
   { id: "survivalEnglish", label: "Survival English", icon: Lightbulb },
   { id: "leveling-test", label: "Teste de Nível / Level Test", icon: Zap },
   { id: "toeflCourse", label: "TOEFL 360° / TOEFL 360°", icon: FileText },

@@ -89,7 +89,18 @@ const Auth = () => {
       } else {
         const { error } = await signUp(email, password);
         if (error) {
-          toast.error("Erro ao criar conta. Tente novamente / Error creating account. Please try again.");
+          // Handle specific signup errors
+          let errorMessage = "Erro ao criar conta. Tente novamente / Error creating account. Please try again.";
+          
+          if (error.message?.includes("already registered") || error.message?.includes("User already registered")) {
+            errorMessage = "Este email já está cadastrado. Tente fazer login. / This email is already registered. Try logging in.";
+          } else if (error.message?.includes("Password")) {
+            errorMessage = "Senha inválida. Verifique os requisitos. / Invalid password. Check the requirements.";
+          } else if (error.message?.includes("Email")) {
+            errorMessage = "Email inválido. Verifique o formato. / Invalid email. Check the format.";
+          }
+          
+          toast.error(errorMessage);
         } else {
           toast.success("Conta criada com sucesso! / Account created successfully!");
           navigate("/app");

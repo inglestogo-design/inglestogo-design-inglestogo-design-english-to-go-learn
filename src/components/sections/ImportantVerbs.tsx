@@ -1,5 +1,4 @@
-import { Volume2, BookOpen, ChevronDown, ChevronUp, Lock } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
+import { Volume2, BookOpen, ChevronDown, ChevronUp } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -46,8 +45,6 @@ interface Verb {
 }
 
 export const ImportantVerbs = () => {
-  const { isPremium, isInTrialPeriod } = useAuth();
-  const hasFullAccess = isPremium || isInTrialPeriod;
   const [loadingAudio, setLoadingAudio] = useState<string | null>(null);
   const [openPresent, setOpenPresent] = useState(true);
   const [openPast, setOpenPast] = useState(false);
@@ -426,18 +423,9 @@ export const ImportantVerbs = () => {
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {verbs.map((verb, idx) => {
-                      const isLocked = !hasFullAccess && idx >= 1;
                       return (
-                      <Card key={`past-${verb.infinitive}`} className={`overflow-hidden hover:shadow-lg transition-smooth ${isLocked ? 'opacity-60' : ''}`}>
+                      <Card key={`past-${verb.infinitive}`} className="overflow-hidden hover:shadow-lg transition-smooth">
                         <CardContent className="p-4 relative">
-                          {isLocked && (
-                            <div className="absolute inset-0 bg-background/80 backdrop-blur-sm rounded-lg flex items-center justify-center z-10">
-                              <div className="text-center">
-                                <Lock className="h-8 w-8 text-secondary mx-auto mb-2" />
-                                <p className="text-sm font-semibold text-foreground">Premium</p>
-                              </div>
-                            </div>
-                          )}
                           <div className="flex items-start gap-4">
                             <img 
                               src={verb.image} 
@@ -497,18 +485,9 @@ export const ImportantVerbs = () => {
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {verbs.map((verb, idx) => {
-                      const isLocked = !hasFullAccess && idx >= 1;
                       return (
-                      <Card key={`future-${verb.infinitive}`} className={`overflow-hidden hover:shadow-lg transition-smooth ${isLocked ? 'opacity-60' : ''}`}>
+                      <Card key={`future-${verb.infinitive}`} className="overflow-hidden hover:shadow-lg transition-smooth">
                         <CardContent className="p-4 relative">
-                          {isLocked && (
-                            <div className="absolute inset-0 bg-background/80 backdrop-blur-sm rounded-lg flex items-center justify-center z-10">
-                              <div className="text-center">
-                                <Lock className="h-8 w-8 text-accent mx-auto mb-2" />
-                                <p className="text-sm font-semibold text-foreground">Premium</p>
-                              </div>
-                            </div>
-                          )}
                           <div className="flex items-start gap-4">
                             <img 
                               src={verb.image} 

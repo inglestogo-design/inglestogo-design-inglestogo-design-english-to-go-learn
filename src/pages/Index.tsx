@@ -14,7 +14,6 @@ import { Alphabet } from "@/components/sections/Alphabet";
 import { Lessons } from "@/components/sections/Lessons";
 import { ProgressSection } from "@/components/sections/Progress";
 import { Numbers } from "@/components/sections/Numbers";
-import { Radio } from "@/components/sections/Radio";
 import { CitizenshipPrep } from "@/components/sections/CitizenshipPrep";
 import { QuoteOfTheDay } from "@/components/sections/QuoteOfTheDay";
 import { LevelingTest } from "@/components/leveling-test/LevelingTest";
@@ -127,8 +126,6 @@ const Index = () => {
         return <CitizenshipPrep />;
       case "progress":
         return <ProgressSection />;
-      case "radio":
-        return <Radio />;
       case "virtualCoach":
         return <VirtualCoach />;
       case "survivalEnglish":
