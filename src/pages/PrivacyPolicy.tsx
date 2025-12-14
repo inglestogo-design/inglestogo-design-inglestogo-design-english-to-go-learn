@@ -58,22 +58,21 @@ const PrivacyPolicy = () => {
             <ul className="list-disc pl-6 space-y-2">
               <li>Fornecer e manter nosso serviço</li>
               <li>Personalizar sua experiência de aprendizado</li>
-              <li>Processar pagamentos de assinatura</li>
               <li>Enviar atualizações importantes sobre o aplicativo</li>
               <li>Melhorar nossos serviços</li>
             </ul>
             <p className="mt-2 text-muted-foreground italic">
-              We use collected information to: provide and maintain our service, personalize your learning experience, process subscription payments, send important app updates, and improve our services.
+              We use collected information to: provide and maintain our service, personalize your learning experience, send important app updates, and improve our services.
             </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-semibold mb-4">4. Armazenamento e Segurança / Storage and Security</h2>
             <p>
-              Seus dados são armazenados de forma segura usando criptografia padrão da indústria. Utilizamos provedores de serviços terceirizados confiáveis (Supabase para banco de dados e Stripe para processamento de pagamentos) que seguem práticas rigorosas de segurança.
+              Seus dados são armazenados de forma segura usando criptografia padrão da indústria. Utilizamos provedores de serviços terceirizados confiáveis (Supabase para banco de dados) que seguem práticas rigorosas de segurança.
             </p>
             <p className="mt-2 text-muted-foreground italic">
-              Your data is securely stored using industry-standard encryption. We use trusted third-party service providers (Supabase for database and Stripe for payment processing) that follow strict security practices.
+              Your data is securely stored using industry-standard encryption. We use trusted third-party service providers (Supabase for database) that follow strict security practices.
             </p>
           </section>
 
@@ -84,10 +83,9 @@ const PrivacyPolicy = () => {
               <li>Acessar seus dados pessoais</li>
               <li>Corrigir informações incorretas</li>
               <li>Solicitar a exclusão de sua conta e dados</li>
-              <li>Cancelar sua assinatura a qualquer momento</li>
             </ul>
             <p className="mt-2 text-muted-foreground italic">
-              You have the right to: access your personal data, correct inaccurate information, request deletion of your account and data, and cancel your subscription at any time.
+              You have the right to: access your personal data, correct inaccurate information, and request deletion of your account and data.
             </p>
           </section>
 
@@ -98,7 +96,6 @@ const PrivacyPolicy = () => {
             </p>
             <ul className="list-disc pl-6 space-y-2">
               <li>Supabase (autenticação e banco de dados)</li>
-              <li>Stripe (processamento de pagamentos)</li>
               <li>Google/Apple (login social, se utilizado)</li>
             </ul>
           </section>
