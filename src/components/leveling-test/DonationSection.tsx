@@ -1,14 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Heart } from "lucide-react";
 
-const STRIPE_LINK = "https://buy.stripe.com/dRm4gBckBcWKfTPh2R7ss04";
-
 export const DonationSection = () => {
-  const handleDonation = () => {
-    window.open(STRIPE_LINK, '_blank');
-  };
-
   return (
     <Card className="border-2 border-pink-500/50 bg-gradient-to-br from-pink-50 to-purple-50 dark:from-pink-950/20 dark:to-purple-950/20">
       <CardHeader className="text-center pb-4">
@@ -25,13 +18,13 @@ export const DonationSection = () => {
       <CardContent className="space-y-4">
         <div className="bg-white/80 dark:bg-black/20 p-4 rounded-lg text-center space-y-2">
           <p className="text-base leading-relaxed">
-            <strong>Doe apenas R$1, R$2 ou R$5</strong> e ajude uma mãe solo a pagar aulas de inglês para uma criança que sonha em aprender.
+            <strong>Sua participação faz a diferença!</strong> Ajude mães solo a pagar aulas de inglês para crianças que sonham em aprender.
           </p>
           <p className="text-sm text-muted-foreground">
-            Cada contribuição faz a diferença! 💝
+            Cada contribuição transforma vidas! 💝
           </p>
           <p className="text-sm italic">
-            Donate just R$1, R$2, or R$5 and help a single mother pay for English classes for a child who dreams of learning.
+            Your participation makes a difference! Help single mothers pay for English classes for children who dream of learning.
           </p>
         </div>
 
@@ -41,19 +34,19 @@ export const DonationSection = () => {
           <span className="text-4xl">❤️</span>
         </div>
 
-        <Button 
-          onClick={handleDonation}
-          size="lg" 
-          className="w-full bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white font-semibold"
-        >
-          <Heart className="w-5 h-5 mr-2" />
-          Doar Agora / Donate Now
-        </Button>
+        <div className="bg-pink-100/50 dark:bg-pink-900/20 p-4 rounded-lg text-center">
+          <p className="text-sm font-medium text-pink-700 dark:text-pink-300">
+            🌟 Obrigado por fazer parte desta comunidade!
+          </p>
+          <p className="text-xs text-pink-600 dark:text-pink-400 mt-1">
+            Thank you for being part of this community!
+          </p>
+        </div>
 
         <p className="text-xs text-center text-muted-foreground">
-          Clique e contribua — você transforma a vida de uma criança! ✨
+          Juntos transformamos vidas através da educação! ✨
           <br />
-          Click and contribute — you transform a child's life!
+          Together we transform lives through education!
         </p>
       </CardContent>
     </Card>
