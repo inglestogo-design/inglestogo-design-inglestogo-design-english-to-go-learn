@@ -1,4 +1,4 @@
-import { User, LogOut, Crown, Settings, Menu } from "lucide-react";
+import { User, LogOut, Settings, Menu, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -74,12 +74,11 @@ export const Header = ({ fontClass = "font-baloo" }: HeaderProps) => {
                   <Settings className="mr-2 h-4 w-4" />
                   Configurar Voz / Voice Settings
                 </DropdownMenuItem>
-                {!isPremium && (
-                  <DropdownMenuItem onClick={() => navigate("/premium")}>
-                    <Crown className="mr-2 h-4 w-4 text-yellow-500" />
-                    Upgrade Premium
-                  </DropdownMenuItem>
-                )}
+                <DropdownMenuItem onClick={() => navigate("/support")}>
+                  <HelpCircle className="mr-2 h-4 w-4" />
+                  Suporte / Support
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => signOut()}>
                   <LogOut className="mr-2 h-4 w-4" />
                   Sair / Logout
