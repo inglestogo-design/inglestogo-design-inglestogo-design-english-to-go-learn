@@ -25,10 +25,13 @@ import { OnboardingQuiz } from "@/components/onboarding/OnboardingQuiz";
 import { StudyPlan } from "@/components/onboarding/StudyPlan";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { useDesktopBlock } from "@/hooks/useDesktopBlock";
+import { DesktopBlockScreen } from "@/components/DesktopBlockScreen";
 
 const Index = () => {
   const { user, loading, onboardingCompleted } = useAuth();
   const navigate = useNavigate();
+  const { shouldBlock } = useDesktopBlock();
   const [activeSection, setActiveSection] = useState("dashboard");
   const [headerFont, setHeaderFont] = useState("font-fredoka");
   const [showStudyPlan, setShowStudyPlan] = useState(false);
@@ -83,6 +86,11 @@ const Index = () => {
   // Don't render if not authenticated
   if (!user) {
     return null;
+  }
+
+  // Block desktop access (unless ?dev=true is in URL)
+  if (shouldBlock) {
+    return <DesktopBlockScreen />;
   }
 
   // Show onboarding quiz if user explicitly chooses to start it
