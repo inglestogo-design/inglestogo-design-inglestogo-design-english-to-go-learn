@@ -10,17 +10,31 @@ export const useVoicePreference = () => {
   const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
 
   useEffect(() => {
+    const synthesis = typeof window !== "undefined" ? window.speechSynthesis : undefined;
+    if (!synthesis) return;
+
     const loadVoices = () => {
-      const voices = speechSynthesis.getVoices();
-      const englishVoices = voices.filter(v => v.lang.startsWith('en'));
+      const voices = synthesis.getVoices();
+      const englishVoices = voices.filter((v) => v.lang.startsWith("en"));
       setAvailableVoices(englishVoices);
     };
 
     loadVoices();
-    speechSynthesis.addEventListener('voiceschanged', loadVoices);
+
+    // iOS Safari: `speechSynthesis.addEventListener` may be undefined.
+    if (typeof (synthesis as any).addEventListener === "function") {
+      (synthesis as any).addEventListener("voiceschanged", loadVoices);
+      return () => (synthesis as any).removeEventListener("voiceschanged", loadVoices);
+    }
+
+    const prev = synthesis.onvoiceschanged;
+    synthesis.onvoiceschanged = (e) => {
+      loadVoices();
+      prev?.call(synthesis, e);
+    };
 
     return () => {
-      speechSynthesis.removeEventListener('voiceschanged', loadVoices);
+      synthesis.onvoiceschanged = prev ?? null;
     };
   }, []);
 
