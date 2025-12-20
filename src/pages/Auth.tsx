@@ -123,111 +123,114 @@ const Auth = () => {
 
   return (
     <SidebarProvider defaultOpen={false}>
-      <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-secondary/10 flex items-center justify-center p-4">
-        <Card className="w-full max-w-md">
-        <CardHeader className="text-center space-y-4">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate("/")}
-            className="absolute top-4 left-4"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Voltar / Back
-          </Button>
-          
-          <img 
-            src={logo} 
-            alt="English To Go" 
-            className="h-24 w-auto mx-auto mb-2"
-          />
-          
-          <CardTitle className="text-2xl font-fredoka">
-            {isLogin ? "Entrar / Login" : "Criar Conta / Sign Up"}
-          </CardTitle>
-          <CardDescription>
-            {isLogin 
-              ? "Entre para acessar seu conteúdo / Sign in to access your content"
-              : "Crie sua conta gratuitamente / Create your free account"
-            }
-          </CardDescription>
-        </CardHeader>
-        
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium">
-                Email
-              </label>
-              <Input
-                type="email"
-                placeholder="seu@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
+      <div className="min-h-screen w-full bg-gradient-to-br from-primary/10 via-background to-secondary/10 flex items-center justify-center p-4 md:p-8">
+        {/* Back button - positioned fixed for iPad */}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => navigate("/")}
+          className="fixed top-4 left-4 z-50"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Voltar / Back
+        </Button>
+
+        <Card className="w-full max-w-md mx-auto shadow-lg">
+          <CardHeader className="text-center space-y-4 pt-8">
+            <img 
+              src={logo} 
+              alt="English To Go" 
+              className="h-20 md:h-24 w-auto mx-auto mb-2"
+            />
             
-            <div className="space-y-2">
-              <label className="text-sm font-medium">
-                Senha / Password
-              </label>
-              <Input
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={8}
-              />
-              {!isLogin && (
-                <p className="text-xs text-muted-foreground">
-                  Mínimo 8 caracteres, com maiúscula, minúscula e número / 
-                  Min 8 characters with uppercase, lowercase and number
-                </p>
+            <CardTitle className="text-xl md:text-2xl font-fredoka">
+              {isLogin ? "Entrar / Login" : "Criar Conta / Sign Up"}
+            </CardTitle>
+            <CardDescription className="text-sm md:text-base">
+              {isLogin 
+                ? "Entre para acessar seu conteúdo / Sign in to access your content"
+                : "Crie sua conta gratuitamente / Create your free account"
+              }
+            </CardDescription>
+          </CardHeader>
+          
+          <CardContent className="px-6 md:px-8 pb-8">
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">
+                  Email
+                </label>
+                <Input
+                  type="email"
+                  placeholder="seu@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="h-11 md:h-12 text-base"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <label className="text-sm font-medium">
+                  Senha / Password
+                </label>
+                <Input
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  minLength={8}
+                  className="h-11 md:h-12 text-base"
+                />
+                {!isLogin && (
+                  <p className="text-xs text-muted-foreground">
+                    Mínimo 8 caracteres, com maiúscula, minúscula e número / 
+                    Min 8 characters with uppercase, lowercase and number
+                  </p>
+                )}
+              </div>
+
+              <Button 
+                type="submit" 
+                className="w-full h-11 md:h-12 text-base mt-6" 
+                disabled={loading || (lockoutUntil !== null && new Date() < lockoutUntil)}
+              >
+                {loading 
+                  ? "Aguarde... / Wait..." 
+                  : isLogin 
+                    ? "Entrar / Login" 
+                    : "Criar Conta / Sign Up"
+                }
+              </Button>
+            </form>
+
+            <div className="mt-6 text-center text-sm md:text-base">
+              {isLogin ? (
+                <>
+                  Não tem conta? /{" "}
+                  <button
+                    onClick={() => setIsLogin(false)}
+                    className="text-primary hover:underline font-medium"
+                  >
+                    Criar agora / Sign up
+                  </button>
+                </>
+              ) : (
+                <>
+                  Já tem conta? /{" "}
+                  <button
+                    onClick={() => setIsLogin(true)}
+                    className="text-primary hover:underline font-medium"
+                  >
+                    Fazer login / Login
+                  </button>
+                </>
               )}
             </div>
-
-            <Button 
-              type="submit" 
-              className="w-full" 
-              disabled={loading || (lockoutUntil !== null && new Date() < lockoutUntil)}
-            >
-              {loading 
-                ? "Aguarde... / Wait..." 
-                : isLogin 
-                  ? "Entrar / Login" 
-                  : "Criar Conta / Sign Up"
-              }
-            </Button>
-          </form>
-
-          <div className="mt-4 text-center text-sm">
-            {isLogin ? (
-              <>
-                Não tem conta? /{" "}
-                <button
-                  onClick={() => setIsLogin(false)}
-                  className="text-primary hover:underline font-medium"
-                >
-                  Criar agora / Sign up
-                </button>
-              </>
-            ) : (
-              <>
-                Já tem conta? /{" "}
-                <button
-                  onClick={() => setIsLogin(true)}
-                  className="text-primary hover:underline font-medium"
-                >
-                  Fazer login / Login
-                </button>
-              </>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+          </CardContent>
+        </Card>
+      </div>
     </SidebarProvider>
   );
 };
