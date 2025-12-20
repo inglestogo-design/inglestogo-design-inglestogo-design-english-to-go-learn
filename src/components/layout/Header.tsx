@@ -49,7 +49,6 @@ export const Header = ({ fontClass = "font-baloo" }: HeaderProps) => {
         </div>
         
         <div className="flex items-center gap-2">
-          {isPremium && <PremiumBadge />}
           
           {user ? (
             <DropdownMenu>
