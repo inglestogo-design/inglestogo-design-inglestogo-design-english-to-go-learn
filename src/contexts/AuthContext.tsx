@@ -12,7 +12,7 @@ interface AuthContextType {
   trialDaysRemaining: number;
   onboardingCompleted: boolean;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
-  signUp: (email: string, password: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string) => Promise<{ data: any; error: any }>;
   signOut: () => Promise<void>;
 }
 
@@ -192,14 +192,41 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const signUp = async (email: string, password: string) => {
     const redirectUrl = `${window.location.origin}/`;
     
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: redirectUrl
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: redirectUrl
+        }
+      });
+      
+      if (error) {
+        console.error("SignUp error:", error);
+        return { data: null, error };
       }
-    });
-    return { error };
+      
+      // Create profile for new user
+      if (data?.user) {
+        const { error: profileError } = await supabase
+          .from("profiles")
+          .upsert({
+            id: data.user.id,
+            email: email,
+            onboarding_completed: false,
+            is_premium: false
+          }, { onConflict: 'id' });
+        
+        if (profileError) {
+          console.error("Profile creation error:", profileError);
+        }
+      }
+      
+      return { data, error: null };
+    } catch (err: any) {
+      console.error("SignUp catch error:", err);
+      return { data: null, error: err };
+    }
   };
 
   const signOut = async () => {

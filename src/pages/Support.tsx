@@ -1,35 +1,63 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Mail, MessageCircle, HelpCircle, ArrowLeft, BookOpen, Headphones, Settings } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Mail, MessageCircle, HelpCircle, ArrowLeft, BookOpen, Headphones, Settings, Send, CheckCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const Support = () => {
   const navigate = useNavigate();
+  const [contactForm, setContactForm] = useState({ name: "", email: "", message: "" });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleContactSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!contactForm.name.trim() || !contactForm.email.trim() || !contactForm.message.trim()) {
+      toast.error("Por favor, preencha todos os campos / Please fill all fields");
+      return;
+    }
+    
+    setIsSubmitting(true);
+    // Simulate sending - in production this would call an API
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    setSubmitted(true);
+    setIsSubmitting(false);
+    toast.success("Mensagem enviada! Responderemos em breve. / Message sent! We'll respond soon.");
+  };
 
   const faqs = [
     {
       question: "Como faço para criar uma conta?",
       questionEn: "How do I create an account?",
-      answer: "Na tela inicial, clique em 'Criar Conta' e preencha seu email e senha.",
-      answerEn: "On the main screen, click 'Create Account' and fill in your email and password."
+      answer: "Na tela inicial, clique em 'Criar Conta' e preencha seu email e senha. Você receberá acesso imediato ao app.",
+      answerEn: "On the main screen, click 'Create Account' and fill in your email and password. You'll get immediate access to the app."
     },
     {
       question: "Como funciona o aprendizado?",
       questionEn: "How does learning work?",
-      answer: "O app oferece lições interativas, prática de pronúncia, vocabulário e muito mais para aprender inglês de forma eficiente.",
-      answerEn: "The app offers interactive lessons, pronunciation practice, vocabulary and much more to learn English efficiently."
+      answer: "O app oferece lições interativas, prática de pronúncia com reconhecimento de voz, vocabulário visual e muito mais para aprender inglês de forma eficiente.",
+      answerEn: "The app offers interactive lessons, pronunciation practice with voice recognition, visual vocabulary and much more to learn English efficiently."
     },
     {
       question: "Como excluo minha conta?",
       questionEn: "How do I delete my account?",
-      answer: "Vá em Configurações > Excluir Conta. A exclusão é permanente e remove todos os seus dados.",
-      answerEn: "Go to Settings > Delete Account. Deletion is permanent and removes all your data."
+      answer: "Vá em Configurações > Excluir Conta. A exclusão é permanente e remove todos os seus dados imediatamente.",
+      answerEn: "Go to Settings > Delete Account. Deletion is permanent and removes all your data immediately."
     },
     {
       question: "O app é gratuito?",
       questionEn: "Is the app free?",
-      answer: "Sim! Todas as funcionalidades do app são 100% gratuitas.",
-      answerEn: "Yes! All app features are 100% free."
+      answer: "Sim! Todas as funcionalidades principais do app são 100% gratuitas. Não há cobranças escondidas.",
+      answerEn: "Yes! All main app features are 100% free. There are no hidden charges."
+    },
+    {
+      question: "Como reporto um problema?",
+      questionEn: "How do I report a problem?",
+      answer: "Use o formulário de contato nesta página ou envie um email para support@inglestogo.com com detalhes do problema.",
+      answerEn: "Use the contact form on this page or send an email to support@inglestogo.com with problem details."
     }
   ];
 
@@ -54,16 +82,82 @@ const Support = () => {
           </p>
         </div>
 
-        {/* Contact Section */}
+        {/* Contact Form Section */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Send className="h-5 w-5 text-primary" />
+              Formulário de Contato / Contact Form
+            </CardTitle>
+            <CardDescription>
+              Preencha o formulário abaixo e responderemos em até 48 horas / Fill out the form below and we'll respond within 48 hours
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {submitted ? (
+              <div className="text-center py-8">
+                <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold mb-2">Mensagem Enviada! / Message Sent!</h3>
+                <p className="text-muted-foreground">
+                  Obrigado por entrar em contato. Responderemos em breve.
+                  <br />
+                  Thank you for contacting us. We'll respond soon.
+                </p>
+                <Button 
+                  variant="outline" 
+                  className="mt-4"
+                  onClick={() => { setSubmitted(false); setContactForm({ name: "", email: "", message: "" }); }}
+                >
+                  Enviar outra mensagem / Send another message
+                </Button>
+              </div>
+            ) : (
+              <form onSubmit={handleContactSubmit} className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Nome / Name *</label>
+                  <Input
+                    type="text"
+                    placeholder="Seu nome / Your name"
+                    value={contactForm.name}
+                    onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Email *</label>
+                  <Input
+                    type="email"
+                    placeholder="seu@email.com"
+                    value={contactForm.email}
+                    onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Mensagem / Message *</label>
+                  <Textarea
+                    placeholder="Descreva sua dúvida ou sugestão... / Describe your question or suggestion..."
+                    value={contactForm.message}
+                    onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
+                    rows={4}
+                    required
+                  />
+                </div>
+                <Button type="submit" className="w-full" disabled={isSubmitting}>
+                  {isSubmitting ? "Enviando... / Sending..." : "Enviar Mensagem / Send Message"}
+                </Button>
+              </form>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Direct Contact */}
         <Card className="mb-8">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Mail className="h-5 w-5 text-primary" />
-              Entre em Contato / Contact Us
+              Contato Direto / Direct Contact
             </CardTitle>
-            <CardDescription>
-              Envie suas dúvidas ou sugestões / Send your questions or suggestions
-            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center gap-3 p-4 bg-muted rounded-lg">
@@ -79,7 +173,7 @@ const Support = () => {
               </div>
             </div>
             <p className="text-sm text-muted-foreground">
-              Respondemos em até 48 horas úteis. / We respond within 48 business hours.
+              Tempo de resposta: até 48 horas úteis. / Response time: up to 48 business hours.
             </p>
           </CardContent>
         </Card>

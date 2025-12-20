@@ -87,23 +87,31 @@ const Auth = () => {
           navigate("/app");
         }
       } else {
-        const { error } = await signUp(email, password);
+        const { data, error } = await signUp(email, password);
         if (error) {
-          // Handle specific signup errors
+          // Handle specific signup errors with detailed messages
           let errorMessage = "Erro ao criar conta. Tente novamente / Error creating account. Please try again.";
           
           if (error.message?.includes("already registered") || error.message?.includes("User already registered")) {
             errorMessage = "Este email já está cadastrado. Tente fazer login. / This email is already registered. Try logging in.";
-          } else if (error.message?.includes("Password")) {
-            errorMessage = "Senha inválida. Verifique os requisitos. / Invalid password. Check the requirements.";
-          } else if (error.message?.includes("Email")) {
+          } else if (error.message?.includes("Password") || error.message?.includes("password")) {
+            errorMessage = "Senha inválida. Use no mínimo 8 caracteres com maiúscula, minúscula e número. / Invalid password. Use at least 8 characters with uppercase, lowercase and number.";
+          } else if (error.message?.includes("Email") || error.message?.includes("email")) {
             errorMessage = "Email inválido. Verifique o formato. / Invalid email. Check the format.";
+          } else if (error.message?.includes("network") || error.message?.includes("Network")) {
+            errorMessage = "Erro de conexão. Verifique sua internet. / Connection error. Check your internet.";
+          } else if (error.message?.includes("rate limit") || error.message?.includes("too many")) {
+            errorMessage = "Muitas tentativas. Aguarde alguns minutos. / Too many attempts. Wait a few minutes.";
           }
           
+          console.error("Signup error:", error.message);
           toast.error(errorMessage);
-        } else {
-          toast.success("Conta criada com sucesso! / Account created successfully!");
+        } else if (data?.user) {
+          toast.success("Conta criada com sucesso! Bem-vindo! / Account created successfully! Welcome!");
           navigate("/app");
+        } else {
+          // Handle edge case where no error but also no user
+          toast.error("Erro inesperado ao criar conta. Tente novamente. / Unexpected error creating account. Please try again.");
         }
       }
     } catch (error: any) {
