@@ -148,15 +148,6 @@ export const speakWithAlternatingVoices = async (
   }
 };
 
-// Ensure voices are loaded
-if (typeof window !== 'undefined') {
-  speechSynthesis.addEventListener('voiceschanged', () => {
-    const voices = getAvailableVoices();
-    console.log('=== VOZES DISPONÍVEIS ===');
-    console.log('Total de vozes inglesas:', voices.length);
-    voices.forEach((v, i) => {
-      console.log(`${i + 1}. ${v.name} (${v.lang}) - ${v.localService ? 'Local' : 'Network'}`);
-    });
-    console.log('Voz feminina selecionada:', getFemaleVoice()?.name);
-  });
-}
+// Note: we intentionally avoid `speechSynthesis.addEventListener('voiceschanged', ...)` here.
+// Some iPad/iOS Safari versions don't implement it and can crash the whole app.
+
