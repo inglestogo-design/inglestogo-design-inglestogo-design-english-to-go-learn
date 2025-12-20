@@ -62,8 +62,8 @@ const Support = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <div className="min-h-screen min-h-dvh bg-background" style={{ backgroundColor: '#f2f2f2' }}>
+      <div className="container mx-auto px-4 py-8 max-w-4xl" style={{ minHeight: '100vh' }}>
         <Button
           variant="ghost"
           onClick={() => navigate(-1)}
