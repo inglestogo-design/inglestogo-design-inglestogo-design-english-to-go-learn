@@ -85,13 +85,20 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     <script>
-      // Hide initial loader once React renders
+      // Hide initial loader once React renders (with longer timeout for mobile)
       window.addEventListener('load', function() {
         setTimeout(function() {
           var loader = document.getElementById('app-loader');
           if (loader) loader.classList.add('hidden');
         }, 100);
       });
+      // Fallback: force hide loader after 10 seconds no matter what
+      setTimeout(function() {
+        var loader = document.getElementById('app-loader');
+        if (loader) loader.classList.add('hidden');
+      }, 10000);
+      // Log for debugging on mobile
+      console.log('📱 HTML loaded, waiting for React...');
     </script>
   </body>
 </html>

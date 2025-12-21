@@ -50,15 +50,33 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // Check for existing session FIRST with timeout fallback
     const loadSession = async () => {
       try {
-        const { data: { session }, error } = await supabase.auth.getSession();
+        console.log('🚀 Starting session load...');
         
-        if (error) {
-          console.error('❌ Error getting session:', error);
-          setLoading(false);
-          return;
+        // Wrap getSession in a Promise.race with timeout for mobile apps
+        const sessionPromise = supabase.auth.getSession();
+        const timeoutPromise = new Promise<{ data: { session: null }, error: Error }>((_, reject) => 
+          setTimeout(() => reject(new Error('Session timeout')), 5000)
+        );
+        
+        let session: Session | null = null;
+        let sessionError: any = null;
+        
+        try {
+          const result = await Promise.race([sessionPromise, timeoutPromise]);
+          session = result.data.session;
+          sessionError = result.error;
+        } catch (timeoutErr) {
+          console.warn('⚠️ Session fetch timeout - continuing without session');
+          session = null;
+          sessionError = null;
         }
         
-        console.log('🚀 Initial session load:', session?.user?.id);
+        if (sessionError) {
+          console.error('❌ Error getting session:', sessionError);
+          // Don't block the app - just continue without session
+        }
+        
+        console.log('🚀 Initial session load:', session?.user?.id || 'no user');
         setSession(session);
         setUser(session?.user ?? null);
         
@@ -111,16 +129,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         isInitialLoad = false;
       } catch (error) {
         console.error('❌ Fatal error loading session:', error);
+        // Always ensure loading completes even on error
         setLoading(false);
+        isInitialLoad = false;
       }
     };
     
-    // Set a timeout to ensure loading always completes
+    // Set a timeout to ensure loading always completes (increased for mobile)
     const timeoutId = setTimeout(() => {
       console.warn('⚠️ Session load timeout - forcing loading to false');
       setLoading(false);
       isInitialLoad = false;
-    }, 2000);
+    }, 8000);
     
     loadSession().finally(() => {
       clearTimeout(timeoutId);

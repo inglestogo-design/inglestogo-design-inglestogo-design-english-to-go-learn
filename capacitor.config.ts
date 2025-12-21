@@ -16,9 +16,9 @@ const config: CapacitorConfig = {
   
   android: {
     backgroundColor: '#ffffff',
-    allowMixedContent: false,
+    allowMixedContent: true,
     captureInput: true,
-    webContentsDebuggingEnabled: false,
+    webContentsDebuggingEnabled: true,
     appendUserAgent: 'Ingles to Go App',
     buildOptions: {
       keystorePath: undefined,
