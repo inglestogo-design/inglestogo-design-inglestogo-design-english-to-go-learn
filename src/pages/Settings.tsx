@@ -11,6 +11,7 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { RefreshCw, Save, Bell, ArrowLeft, Trash2, AlertTriangle } from "lucide-react";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { AppSidebar } from "@/components/layout/AppSidebar";
 import {
   AlertDialog,
@@ -28,6 +29,7 @@ export default function Settings() {
   const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const isMobile = useIsMobile();
   const [saving, setSaving] = useState(false);
   const [resetting, setResetting] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -187,7 +189,7 @@ export default function Settings() {
   }
 
   return (
-    <SidebarProvider defaultOpen={true}>
+    <SidebarProvider defaultOpen={!isMobile}>
       <div className="min-h-screen flex w-full">
         <AppSidebar activeSection="settings" onSectionChange={() => navigate('/')} />
         <div className="flex-1 flex flex-col min-w-0">

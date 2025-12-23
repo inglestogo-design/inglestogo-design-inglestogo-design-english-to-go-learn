@@ -5,13 +5,15 @@ import { UpgradeToPremium } from "@/components/premium/UpgradeToPremium";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { AppSidebar } from "@/components/layout/AppSidebar";
 
 const Premium = () => {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   return (
-    <SidebarProvider defaultOpen={true}>
+    <SidebarProvider defaultOpen={!isMobile}>
       <div className="min-h-screen flex w-full">
         <AppSidebar activeSection="premium" onSectionChange={() => navigate('/')} />
         <div className="flex-1 flex flex-col min-w-0">

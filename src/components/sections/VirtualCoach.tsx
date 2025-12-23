@@ -4,8 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { MessageCircle, Send, Volume2, RefreshCw, CheckCircle, XCircle, Bot } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
-import { getRandomPhrase, coachPhrases, getFreePhrases, getPremiumPhrases, type CoachPhrase } from "@/data/coachPhrases";
+import { getRandomPhrase, coachPhrases, type CoachPhrase } from "@/data/coachPhrases";
 import { speakText } from "@/utils/speechUtils";
 import { Badge } from "@/components/ui/badge";
 
@@ -20,20 +19,14 @@ export const VirtualCoach = () => {
   const [userAnswer, setUserAnswer] = useState("");
   const [feedback, setFeedback] = useState<Message | null>(null);
   const [attemptCount, setAttemptCount] = useState(0);
-  const [freeAttemptsLeft, setFreeAttemptsLeft] = useState(5);
-  const { isPremium } = useAuth();
   const { toast } = useToast();
 
   useEffect(() => {
-    const savedAttempts = localStorage.getItem('coachFreeAttempts');
-    if (savedAttempts) {
-      setFreeAttemptsLeft(parseInt(savedAttempts));
-    }
     loadNewPhrase();
   }, []);
 
   const loadNewPhrase = () => {
-    const phrase = getRandomPhrase(isPremium);
+    const phrase = getRandomPhrase(true);
     setCurrentPhrase(phrase);
     setUserAnswer("");
     setFeedback(null);
@@ -50,15 +43,6 @@ export const VirtualCoach = () => {
   const checkAnswer = () => {
     if (!currentPhrase || !userAnswer.trim()) return;
 
-    if (!isPremium && freeAttemptsLeft <= 0) {
-      toast({
-        title: "Limite atingido / Limit reached",
-        description: "Você usou suas 5 tentativas grátis. Assine Premium para praticar ilimitado! / You've used your 5 free attempts. Subscribe to Premium for unlimited practice!",
-        variant: "destructive",
-      });
-      return;
-    }
-
     const normalizedUser = normalizeText(userAnswer);
     const normalizedCorrect = normalizeText(currentPhrase.english);
     const isCorrect = normalizedUser === normalizedCorrect;
@@ -74,12 +58,6 @@ export const VirtualCoach = () => {
 
     setFeedback({ role: "assistant", content: feedbackContent, isCorrect });
     setAttemptCount(prev => prev + 1);
-
-    if (!isPremium) {
-      const newCount = freeAttemptsLeft - 1;
-      setFreeAttemptsLeft(newCount);
-      localStorage.setItem('coachFreeAttempts', newCount.toString());
-    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -114,19 +92,6 @@ export const VirtualCoach = () => {
             🎯 <strong>Como funciona:</strong> Traduza a frase do português para o inglês e receba correção instantânea com pronúncia!<br/>
             🎯 <strong>How it works:</strong> Translate the phrase from Portuguese to English and get instant correction with pronunciation!
           </p>
-          {!isPremium && (
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 text-sm">
-                <MessageCircle className="w-4 h-4 text-accent" />
-                <span className="font-semibold">
-                  Tentativas grátis restantes / Free attempts left: {freeAttemptsLeft}/5
-                </span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <span>📝 {getFreePhrases().length} frases grátis | 🔒 {getPremiumPhrases().length} frases premium</span>
-              </div>
-            </div>
-          )}
         </CardContent>
       </Card>
 
@@ -201,12 +166,10 @@ export const VirtualCoach = () => {
             </div>
             <div className="text-center p-3 bg-accent/10 rounded-lg">
               <p className="text-2xl font-bold text-accent">
-                {isPremium ? coachPhrases.length : getFreePhrases().length}
+                {coachPhrases.length}
               </p>
               <p className="text-muted-foreground">
-                {isPremium 
-                  ? 'Frases disponíveis / Available phrases' 
-                  : 'Frases grátis / Free phrases'}
+                Frases disponíveis / Available phrases
               </p>
             </div>
           </div>
