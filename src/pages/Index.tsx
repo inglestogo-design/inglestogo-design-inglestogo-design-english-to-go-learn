@@ -26,12 +26,14 @@ import { StudyPlan } from "@/components/onboarding/StudyPlan";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useDesktopBlock } from "@/hooks/useDesktopBlock";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { DesktopBlockScreen } from "@/components/DesktopBlockScreen";
 
 const Index = () => {
   const { user, loading, onboardingCompleted } = useAuth();
   const navigate = useNavigate();
   const { shouldBlock } = useDesktopBlock();
+  const isMobile = useIsMobile();
   const [activeSection, setActiveSection] = useState("dashboard");
   const [headerFont, setHeaderFont] = useState("font-fredoka");
   const [showStudyPlan, setShowStudyPlan] = useState(false);
@@ -148,7 +150,7 @@ const Index = () => {
   };
 
   return (
-    <SidebarProvider defaultOpen={true}>
+    <SidebarProvider defaultOpen={!isMobile}>
       <div className="min-h-screen flex w-full">
         <AppSidebar activeSection={activeSection} onSectionChange={setActiveSection} />
         <div className="flex-1 flex flex-col min-w-0">
