@@ -314,9 +314,7 @@ export const Vocabulary = () => {
   const [openSections, setOpenSections] = useState<string[]>(["home"]);
   const [loadingAudio, setLoadingAudio] = useState<string | null>(null);
   const { toast } = useToast();
-  const { isPremium, isInTrialPeriod } = useAuth();
   const { trackActivity } = useUserProgress();
-  const hasFullAccess = isPremium || isInTrialPeriod;
 
   // Load voices when component mounts
   useEffect(() => {

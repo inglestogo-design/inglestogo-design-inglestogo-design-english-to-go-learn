@@ -7,13 +7,10 @@ import { CheckCircle2, PlayCircle, BookOpen } from "lucide-react";
 import { toeflLessons } from "@/data/toeflLessonsData";
 import { ToeflLesson } from "@/components/toefl/ToeflLesson";
 import { ToeflGlossary } from "@/components/toefl/ToeflGlossary";
-import { useAuth } from "@/contexts/AuthContext";
 export const ToeflCourse = () => {
   const [selectedLesson, setSelectedLesson] = useState<number | null>(null);
   const [showGlossary, setShowGlossary] = useState(false);
   const [completedLessons, setCompletedLessons] = useState<number[]>([]);
-  const { isPremium, isInTrialPeriod } = useAuth();
-  const hasFullAccess = isPremium || isInTrialPeriod;
 
   useEffect(() => {
     const saved = localStorage.getItem("toeflCompletedLessons");

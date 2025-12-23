@@ -56,30 +56,9 @@ serve(async (req) => {
       );
     }
 
-    // Server-side premium verification
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('is_premium, trial_ends_at')
-      .eq('id', user.id)
-      .single();
+    // All authenticated users have full access - no premium check
+    console.log("User authenticated:", user.id);
 
-    if (profileError) {
-      console.error("Profile fetch failed:", profileError.message);
-      return new Response(
-        JSON.stringify({ error: "Failed to verify subscription status" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
-    const hasAccess = profile?.is_premium || 
-      (profile?.trial_ends_at && new Date(profile.trial_ends_at) > new Date());
-
-    if (!hasAccess) {
-      return new Response(
-        JSON.stringify({ error: "Premium subscription required" }),
-        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
     const body = await req.json();
     const { word, theme } = RequestSchema.parse(body);
     

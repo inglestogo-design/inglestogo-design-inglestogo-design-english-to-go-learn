@@ -357,10 +357,9 @@ export const coachPhrases: CoachPhrase[] = [
   { id: 294, portuguese: "Eu gosto de música pop.", english: "I like pop music.", pronunciation: "ai laik póp miúzik", category: "Música" },
 ];
 
-export const getRandomPhrase = (isPremium: boolean = false): CoachPhrase => {
-  const availablePhrases = isPremium 
-    ? coachPhrases 
-    : coachPhrases.filter(phrase => phrase.isFree);
+export const getRandomPhrase = (): CoachPhrase => {
+  // All phrases are now available for free
+  const availablePhrases = coachPhrases;
   
   const randomIndex = Math.floor(Math.random() * availablePhrases.length);
   return availablePhrases[randomIndex];

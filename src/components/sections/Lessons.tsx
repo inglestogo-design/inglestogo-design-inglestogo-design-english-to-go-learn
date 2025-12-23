@@ -18,9 +18,7 @@ interface LessonProgress {
 export const Lessons = () => {
   const [selectedLesson, setSelectedLesson] = useState<number | null>(null);
   const [progress, setProgress] = useState<Record<number, LessonProgress>>({});
-  const { isPremium, isInTrialPeriod } = useAuth();
   const { trackActivity } = useUserProgress();
-  const hasFullAccess = isPremium || isInTrialPeriod;
 
   const handleLessonComplete = (lessonNumber: number, score: number, stars: number) => {
     setProgress(prev => ({

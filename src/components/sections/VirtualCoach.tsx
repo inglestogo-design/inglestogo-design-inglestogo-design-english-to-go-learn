@@ -26,7 +26,7 @@ export const VirtualCoach = () => {
   }, []);
 
   const loadNewPhrase = () => {
-    const phrase = getRandomPhrase(true);
+    const phrase = getRandomPhrase();
     setCurrentPhrase(phrase);
     setUserAnswer("");
     setFeedback(null);
