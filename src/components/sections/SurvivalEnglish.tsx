@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Volume2 } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
 import { speakText } from "@/utils/speechUtils";
 
 interface IdiomItem {
@@ -72,8 +71,6 @@ function cn(...classes: any[]) {
 
 export const SurvivalEnglish = () => {
   const [activeTab, setActiveTab] = useState("idioms");
-  const { isPremium, isInTrialPeriod } = useAuth();
-  const hasFullAccess = isPremium || isInTrialPeriod;
 
   const playAudio = (text: string) => {
     speakText(text, { gender: 'female', rate: 0.85 });

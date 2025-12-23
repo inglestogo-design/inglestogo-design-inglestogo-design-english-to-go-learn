@@ -23,9 +23,7 @@ export const Pronunciation = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const { isRecording, transcript, startRecording, stopRecording, isSupported } = useSpeechRecognition();
   const { toast } = useToast();
-  const { isPremium, isInTrialPeriod } = useAuth();
-  const hasFullAccess = isPremium || isInTrialPeriod;
-  const { 
+  const {
     saveProgress, 
     isLevelUnlocked, 
     getLevelProgress, 

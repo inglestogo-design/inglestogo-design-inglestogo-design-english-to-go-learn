@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { PremiumBadge } from "@/components/premium/PremiumBadge";
+
 import { VoiceSettingsDialog } from "@/components/settings/VoiceSettingsDialog";
 import { useState } from "react";
 import logo from "@/assets/english-to-go-logo.png";
@@ -21,7 +21,7 @@ interface HeaderProps {
 }
 
 export const Header = ({ fontClass = "font-baloo" }: HeaderProps) => {
-  const { user, signOut, isPremium } = useAuth();
+  const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const [voiceSettingsOpen, setVoiceSettingsOpen] = useState(false);
 

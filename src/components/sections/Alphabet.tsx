@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { speakText } from "@/utils/speechUtils";
-import { useAuth } from "@/contexts/AuthContext";
+
 
 interface LetterSound {
   sound: string;
@@ -25,8 +25,6 @@ interface Letter {
 export const Alphabet = () => {
   const [loadingAudio, setLoadingAudio] = useState<string | null>(null);
   const { toast } = useToast();
-  const { isPremium, isInTrialPeriod } = useAuth();
-  const hasFullAccess = isPremium || isInTrialPeriod;
 
   // Load voices when component mounts
   useEffect(() => {
