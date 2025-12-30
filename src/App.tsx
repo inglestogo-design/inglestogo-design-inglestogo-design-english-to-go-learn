@@ -10,7 +10,6 @@ import { AppLoading } from "@/components/system/AppFallback";
 
 const Index = lazy(() => import("./pages/Index"));
 const Auth = lazy(() => import("./pages/Auth"));
-const Premium = lazy(() => import("./pages/Premium"));
 const Settings = lazy(() => import("./pages/Settings"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
@@ -33,7 +32,6 @@ const App = () => (
                 <Route path="/" element={<Navigate to="/auth" replace />} />
                 <Route path="/app" element={<Index />} />
                 <Route path="/auth" element={<Auth />} />
-                <Route path="/premium" element={<Premium />} />
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/support" element={<Support />} />

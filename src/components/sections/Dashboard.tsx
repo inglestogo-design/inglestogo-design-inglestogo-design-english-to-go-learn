@@ -239,7 +239,7 @@ export const Dashboard = ({ onNavigate, onStartOnboarding }: DashboardProps) => 
         
         <Card 
           className="cursor-pointer hover:shadow-md transition-shadow"
-          onClick={() => onNavigate?.("coach")}
+          onClick={() => onNavigate?.("virtualCoach")}
         >
           <CardContent className="p-4 text-center">
             <div className="text-3xl mb-2">💬</div>
