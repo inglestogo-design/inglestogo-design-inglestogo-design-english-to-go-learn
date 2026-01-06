@@ -178,11 +178,29 @@ const Auth = () => {
           </CardHeader>
           
           <CardContent className="px-6 md:px-8 pb-8">
+            {/* Primary mode switch (more visible) */}
+            <div className="grid grid-cols-2 gap-2 mb-5">
+              <Button
+                type="button"
+                variant={isLogin ? "default" : "outline"}
+                className="h-11"
+                onClick={() => setIsLogin(true)}
+              >
+                Entrar / Login
+              </Button>
+              <Button
+                type="button"
+                variant={!isLogin ? "default" : "outline"}
+                className="h-11"
+                onClick={() => setIsLogin(false)}
+              >
+                Criar conta / Sign up
+              </Button>
+            </div>
+
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  Email
-                </label>
+                <label className="text-sm font-medium">Email</label>
                 <Input
                   type="email"
                   placeholder="seu@email.com"
@@ -190,13 +208,14 @@ const Auth = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   className="h-11 md:h-12 text-base"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  inputMode="email"
                 />
               </div>
-              
+
               <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  Senha / Password
-                </label>
+                <label className="text-sm font-medium">Senha / Password</label>
                 <Input
                   type="password"
                   placeholder="••••••••"
@@ -205,50 +224,41 @@ const Auth = () => {
                   required
                   minLength={8}
                   className="h-11 md:h-12 text-base"
+                  autoCapitalize="none"
+                  autoCorrect="off"
                 />
                 {!isLogin && (
                   <p className="text-xs text-muted-foreground">
-                    Mínimo 8 caracteres, com maiúscula, minúscula e número / 
-                    Min 8 characters with uppercase, lowercase and number
+                    Mínimo 8 caracteres, com maiúscula, minúscula e número / Min 8 characters with uppercase, lowercase and number
                   </p>
                 )}
               </div>
 
-              <Button 
-                type="submit" 
-                className="w-full h-11 md:h-12 text-base mt-6" 
+              <Button
+                type="submit"
+                className="w-full h-11 md:h-12 text-base mt-2"
                 disabled={loading || (lockoutUntil !== null && new Date() < lockoutUntil)}
               >
-                {loading 
-                  ? "Aguarde... / Wait..." 
-                  : isLogin 
-                    ? "Entrar / Login" 
-                    : "Criar Conta / Sign Up"
-                }
+                {loading ? "Aguarde... / Wait..." : isLogin ? "Entrar / Login" : "Criar Conta / Sign Up"}
               </Button>
             </form>
 
-            <div className="mt-6 text-center text-sm md:text-base">
+            {/* Secondary text (kept, but larger and clearer) */}
+            <div className="mt-6 text-center text-base">
               {isLogin ? (
-                <>
-                  Não tem conta? /{" "}
-                  <button
-                    onClick={() => setIsLogin(false)}
-                    className="text-primary hover:underline font-medium"
-                  >
+                <span>
+                  Não tem conta? / {" "}
+                  <button onClick={() => setIsLogin(false)} className="text-primary hover:underline font-semibold">
                     Criar agora / Sign up
                   </button>
-                </>
+                </span>
               ) : (
-                <>
-                  Já tem conta? /{" "}
-                  <button
-                    onClick={() => setIsLogin(true)}
-                    className="text-primary hover:underline font-medium"
-                  >
+                <span>
+                  Já tem conta? / {" "}
+                  <button onClick={() => setIsLogin(true)} className="text-primary hover:underline font-semibold">
                     Fazer login / Login
                   </button>
-                </>
+                </span>
               )}
             </div>
           </CardContent>
