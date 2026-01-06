@@ -23,116 +23,96 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    let isInitialLoad = true;
-    
+    let cancelled = false;
+
     const loadSession = async () => {
+      setLoading(true);
+
       try {
-        console.log('🚀 Starting session load...');
-        
-        const sessionPromise = supabase.auth.getSession();
-        const timeoutPromise = new Promise<{ data: { session: null }, error: Error }>((_, reject) => 
-          setTimeout(() => reject(new Error('Session timeout')), 5000)
-        );
-        
-        let session: Session | null = null;
-        let sessionError: any = null;
-        
-        try {
-          const result = await Promise.race([sessionPromise, timeoutPromise]);
-          session = result.data.session;
-          sessionError = result.error;
-        } catch (timeoutErr) {
-          console.warn('⚠️ Session fetch timeout - continuing without session');
-          session = null;
-          sessionError = null;
+        console.log("🚀 Starting session load...");
+        const { data, error } = await supabase.auth.getSession();
+
+        if (error) {
+          console.error("❌ Error getting session:", error);
         }
-        
-        if (sessionError) {
-          console.error('❌ Error getting session:', sessionError);
-        }
-        
-        console.log('🚀 Initial session load:', session?.user?.id || 'no user');
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        if (session?.user) {
+
+        const nextSession = data.session ?? null;
+        console.log("🚀 Initial session load:", nextSession?.user?.id || "no user");
+
+        if (cancelled) return;
+
+        setSession(nextSession);
+        setUser(nextSession?.user ?? null);
+
+        if (nextSession?.user) {
           try {
-            const { data, error: profileError } = await supabase
+            const { data: profile, error: profileError } = await supabase
               .from("profiles")
               .select("onboarding_completed")
-              .eq("id", session.user.id)
+              .eq("id", nextSession.user.id)
               .maybeSingle();
-            
+
             if (profileError) {
-              console.error('❌ Error loading profile:', profileError);
+              console.error("❌ Error loading profile:", profileError);
               setOnboardingCompleted(false);
-            } else if (data) {
-              console.log('📊 Initial profile load:', { onboarding_completed: data.onboarding_completed });
-              setOnboardingCompleted(data.onboarding_completed || false);
             } else {
-              setOnboardingCompleted(false);
+              setOnboardingCompleted(Boolean(profile?.onboarding_completed));
             }
-          } catch (error) {
-            console.error('❌ Error loading profile:', error);
+          } catch (profileErr) {
+            console.error("❌ Error loading profile:", profileErr);
             setOnboardingCompleted(false);
           }
-        }
-        
-        setLoading(false);
-        isInitialLoad = false;
-      } catch (error) {
-        console.error('❌ Fatal error loading session:', error);
-        setLoading(false);
-        isInitialLoad = false;
-      }
-    };
-    
-    const timeoutId = setTimeout(() => {
-      console.warn('⚠️ Session load timeout - forcing loading to false');
-      setLoading(false);
-      isInitialLoad = false;
-    }, 8000);
-    
-    loadSession().finally(() => {
-      clearTimeout(timeoutId);
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        console.log('🔐 Auth state changed:', event, 'User:', session?.user?.id, 'isInitialLoad:', isInitialLoad);
-        
-        if (event === 'INITIAL_SESSION') {
-          return;
-        }
-        
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        if (session?.user && event === 'SIGNED_IN') {
-          console.log('🔄 Loading profile after SIGNED_IN event');
-          try {
-            const { data, error: profileError } = await supabase
-              .from("profiles")
-              .select("onboarding_completed")
-              .eq("id", session.user.id)
-              .maybeSingle();
-            
-            if (profileError) {
-              console.error('❌ Error loading profile after sign in:', profileError);
-            } else if (data) {
-              console.log('✅ Profile loaded:', { onboarding_completed: data.onboarding_completed });
-              setOnboardingCompleted(data.onboarding_completed || false);
-            }
-          } catch (error) {
-            console.error('❌ Error in SIGNED_IN handler:', error);
-          }
-        } else if (!session?.user) {
+        } else {
           setOnboardingCompleted(false);
         }
+      } catch (err) {
+        console.error("❌ Fatal error loading session:", err);
+      } finally {
+        if (!cancelled) setLoading(false);
       }
-    );
+    };
 
-    return () => subscription.unsubscribe();
+    loadSession();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, nextSession) => {
+      console.log("🔐 Auth state changed:", event, "User:", nextSession?.user?.id);
+
+      if (cancelled) return;
+
+      setSession(nextSession);
+      setUser(nextSession?.user ?? null);
+
+      if (!nextSession?.user) {
+        setOnboardingCompleted(false);
+        return;
+      }
+
+      // Keep profile state up to date (especially after sign-in)
+      if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED" || event === "INITIAL_SESSION") {
+        try {
+          const { data: profile, error: profileError } = await supabase
+            .from("profiles")
+            .select("onboarding_completed")
+            .eq("id", nextSession.user.id)
+            .maybeSingle();
+
+          if (profileError) {
+            console.error("❌ Error loading profile after auth change:", profileError);
+          } else {
+            setOnboardingCompleted(Boolean(profile?.onboarding_completed));
+          }
+        } catch (profileErr) {
+          console.error("❌ Error in auth change profile load:", profileErr);
+        }
+      }
+    });
+
+    return () => {
+      cancelled = true;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signIn = async (email: string, password: string) => {

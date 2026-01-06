@@ -22,30 +22,33 @@ interface AppSidebarProps {
 }
 
 export function AppSidebar({ activeSection, onSectionChange }: AppSidebarProps) {
-  const { open } = useSidebar();
+  const { open, isMobile, openMobile, setOpenMobile } = useSidebar();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
+
+  // On mobile, the sidebar renders inside a Sheet; we always want labels/search visible.
+  const showExpandedUI = isMobile ? openMobile : open;
 
   // Filter navigation items based on search query
   const filteredItems = useMemo(() => {
     if (!searchQuery.trim()) return navigationItems;
-    
+
     const query = searchQuery.toLowerCase();
-    return navigationItems.filter(item => 
-      item.label.toLowerCase().includes(query) ||
-      item.id.toLowerCase().includes(query)
+    return navigationItems.filter(
+      (item) => item.label.toLowerCase().includes(query) || item.id.toLowerCase().includes(query)
     );
   }, [searchQuery]);
 
+  const closeMobileSidebar = () => {
+    if (isMobile) setOpenMobile(false);
+  };
+
   return (
-    <Sidebar 
-      className="border-r bg-sidebar shadow-xl"
-      collapsible="icon"
-    >
+    <Sidebar className="border-r bg-sidebar shadow-xl" collapsible="icon">
       <SidebarContent className="pt-4">
         <SidebarGroup>
-          {/* Search Input - Only visible when sidebar is open */}
-          {open && (
+          {/* Search Input - visible when expanded (desktop) or when open in mobile Sheet */}
+          {showExpandedUI && (
             <div className="px-3 pb-3">
               <div className="relative">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -59,74 +62,71 @@ export function AppSidebar({ activeSection, onSectionChange }: AppSidebarProps) 
               </div>
             </div>
           )}
-          
-          <SidebarGroupLabel className={cn(
-            "text-sm font-semibold px-4 mb-2 transition-opacity duration-200",
-            !open && "sr-only"
-          )}>
+
+          <SidebarGroupLabel
+            className={cn(
+              "text-sm font-semibold px-4 mb-2 transition-opacity duration-200",
+              !showExpandedUI && "sr-only"
+            )}
+          >
             Menu Principal / Main Menu
           </SidebarGroupLabel>
+
           <SidebarGroupContent>
             <SidebarMenu className="space-y-1">
               {filteredItems.length > 0 ? (
                 filteredItems.map((item) => {
                   const Icon = item.icon;
                   const isActive = activeSection === item.id;
-                
+
                   return (
                     <SidebarMenuItem key={item.id}>
                       <SidebarMenuButton
                         onClick={() => {
                           onSectionChange(item.id);
-                          setSearchQuery(""); // Clear search after selection
+                          setSearchQuery("");
+                          closeMobileSidebar();
                         }}
                         isActive={isActive}
                         className={cn(
                           "w-full justify-start gap-3 px-4 py-3 rounded-lg transition-all text-base",
                           "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:scale-[1.02]",
-                          isActive && "bg-primary text-white hover:bg-primary/90 shadow-lg scale-[1.03] font-bold",
+                          isActive &&
+                            "bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg scale-[1.03] font-bold",
                           !isActive && "text-sidebar-foreground font-semibold"
                         )}
-                        tooltip={!open ? item.label : undefined}
+                        tooltip={!showExpandedUI ? item.label : undefined}
                       >
                         <Icon className="h-6 w-6 flex-shrink-0" />
-                        {open && (
-                          <span className="text-base font-bold">
-                            {item.label}
-                          </span>
-                        )}
+                        {showExpandedUI && <span className="text-base font-bold">{item.label}</span>}
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   );
                 })
               ) : (
-                // Show "no results" message when search has no matches
-                open && (
+                showExpandedUI && (
                   <div className="px-3 py-6 text-center">
-                    <p className="text-sm text-muted-foreground">
-                      Nenhum resultado / No results
-                    </p>
+                    <p className="text-sm text-muted-foreground">Nenhum resultado / No results</p>
                   </div>
                 )
               )}
-              
+
               {/* Settings Link - Always at bottom */}
               <SidebarMenuItem className="mt-6 pt-4 border-t">
                 <SidebarMenuButton
-                  onClick={() => navigate('/settings')}
+                  onClick={() => {
+                    navigate("/settings");
+                    closeMobileSidebar();
+                  }}
                   className={cn(
                     "w-full justify-start gap-3 px-4 py-3 rounded-lg transition-all text-base",
                     "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:scale-[1.02]",
                     "text-sidebar-foreground font-semibold"
                   )}
-                  tooltip={!open ? "Configurações / Settings" : undefined}
+                  tooltip={!showExpandedUI ? "Configurações / Settings" : undefined}
                 >
                   <Settings className="h-6 w-6 flex-shrink-0" />
-                  {open && (
-                    <span className="text-base font-bold">
-                      Configurações / Settings
-                    </span>
-                  )}
+                  {showExpandedUI && <span className="text-base font-bold">Configurações / Settings</span>}
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
