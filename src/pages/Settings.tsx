@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { RefreshCw, Save, Bell, ArrowLeft, Trash2, AlertTriangle } from "lucide-react";
+import { RefreshCw, Save, Bell, ArrowLeft, Trash2, AlertTriangle, Mic } from "lucide-react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { AppSidebar } from "@/components/layout/AppSidebar";
@@ -33,6 +33,9 @@ export default function Settings() {
   const [saving, setSaving] = useState(false);
   const [resetting, setResetting] = useState(false);
   const [deleting, setDeleting] = useState(false);
+
+  const [micTesting, setMicTesting] = useState(false);
+  const [micResult, setMicResult] = useState<string | null>(null);
 
   // Settings state
   const [notificationSettings, setNotificationSettings] = useState({
@@ -170,6 +173,44 @@ export default function Settings() {
       });
     } finally {
       setDeleting(false);
+    }
+  };
+
+  const handleRequestMicrophone = async () => {
+    setMicTesting(true);
+    setMicResult(null);
+
+    try {
+      if (!navigator.mediaDevices?.getUserMedia) {
+        setMicResult("getUserMedia não disponível neste dispositivo.");
+        toast({
+          title: "Não suportado / Not supported",
+          description: "Seu dispositivo não suporta acesso ao microfone pelo app.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      stream.getTracks().forEach((t) => t.stop());
+
+      setMicResult("✅ Permissão OK. Microfone liberado.");
+      toast({
+        title: "Microfone liberado! / Microphone enabled!",
+        description: "Agora o iPhone deve mostrar o app em Ajustes > Privacidade > Microfone.",
+      });
+    } catch (err: any) {
+      const name = err?.name || "Unknown";
+      const msg = err?.message || "";
+
+      setMicResult(`❌ Falhou (${name}) ${msg ? `- ${msg}` : ""}`);
+      toast({
+        title: "Microfone bloqueado / Microphone blocked",
+        description: `Erro: ${name}. Se for iPhone/iPad: Ajustes > Privacidade e Segurança > Microfone.`,
+        variant: "destructive",
+      });
+    } finally {
+      setMicTesting(false);
     }
   };
 
@@ -314,6 +355,56 @@ export default function Settings() {
                   </>
                 )}
               </Button>
+            </CardContent>
+          </Card>
+
+          {/* Microphone Diagnostics */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Mic className="h-5 w-5 text-primary" />
+                Microfone / Microphone
+              </CardTitle>
+              <CardDescription>
+                Use isto para forçar o pedido de permissão e ver o erro real. / Use this to force the permission prompt and see the real error.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="text-sm text-muted-foreground space-y-1">
+                <p>
+                  getUserMedia: <span className="font-medium text-foreground">{navigator.mediaDevices?.getUserMedia ? "OK" : "N/A"}</span>
+                </p>
+                <p>
+                  MediaRecorder: <span className="font-medium text-foreground">{typeof (window as any).MediaRecorder !== "undefined" ? "OK" : "N/A"}</span>
+                </p>
+                <p>
+                  SecureContext: <span className="font-medium text-foreground">{(window as any).isSecureContext ? "OK" : "N/A"}</span>
+                </p>
+              </div>
+
+              <Button
+                onClick={handleRequestMicrophone}
+                disabled={micTesting}
+                className="w-full sm:w-auto"
+              >
+                {micTesting ? (
+                  <>
+                    <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                    Testando... / Testing...
+                  </>
+                ) : (
+                  <>
+                    <Mic className="mr-2 h-4 w-4" />
+                    Pedir permissão do microfone / Request mic permission
+                  </>
+                )}
+              </Button>
+
+              {micResult && (
+                <div className="rounded-lg border bg-muted/40 p-3 text-sm">
+                  {micResult}
+                </div>
+              )}
             </CardContent>
           </Card>
 

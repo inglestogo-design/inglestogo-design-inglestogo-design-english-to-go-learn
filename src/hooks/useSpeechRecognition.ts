@@ -1,8 +1,11 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { createWavRecorder, type WavRecorderController } from "@/utils/wavRecorder";
 
 type RecognitionMode = "native" | "server";
+
+type ServerRecorderKind = "media" | "wav";
 
 const pickAudioMimeType = () => {
   if (typeof MediaRecorder === "undefined") return undefined;
@@ -24,10 +27,30 @@ const pickAudioMimeType = () => {
 
 const fileExtFromMime = (mime?: string) => {
   if (!mime) return "dat";
+  if (mime.includes("wav")) return "wav";
   if (mime.includes("mp4")) return "mp4";
   if (mime.includes("webm")) return "webm";
   if (mime.includes("ogg")) return "ogg";
   return "dat";
+};
+
+const micErrorMessage = (err: unknown) => {
+  const e = err as any;
+  const name = e?.name as string | undefined;
+
+  if (name === "NotAllowedError" || name === "SecurityError") {
+    return "Permissão negada para o microfone. / Microphone permission denied.";
+  }
+
+  if (name === "NotFoundError") {
+    return "Nenhum microfone encontrado. / No microphone found.";
+  }
+
+  if (name === "NotReadableError") {
+    return "Microfone ocupado por outro app. / Microphone is already in use.";
+  }
+
+  return "Não foi possível acessar o microfone. / Could not access microphone.";
 };
 
 export const useSpeechRecognition = () => {
@@ -39,6 +62,8 @@ export const useSpeechRecognition = () => {
 
   const streamRef = useRef<MediaStream | null>(null);
   const recorderRef = useRef<MediaRecorder | null>(null);
+  const wavRecorderRef = useRef<WavRecorderController | null>(null);
+  const serverKindRef = useRef<ServerRecorderKind | null>(null);
   const chunksRef = useRef<Blob[]>([]);
 
   useEffect(() => {
@@ -47,7 +72,9 @@ export const useSpeechRecognition = () => {
       ("webkitSpeechRecognition" in window || "SpeechRecognition" in window);
 
     if (hasNative) {
-      const SR = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
+      const SR =
+        (window as any).webkitSpeechRecognition ||
+        (window as any).SpeechRecognition;
       const recognitionInstance = new SR();
 
       recognitionInstance.continuous = false;
@@ -81,10 +108,45 @@ export const useSpeechRecognition = () => {
       return;
     }
 
-    // Fallback for iPad/iOS Safari: server STT using real mic recording.
+    // Fallback: server STT using real mic recording.
     setRecognition(null);
     setMode("server");
   }, [toast]);
+
+  const transcribeBlob = useCallback(
+    async (blob: Blob) => {
+      const mime = blob.type || undefined;
+
+      const fd = new FormData();
+      fd.append("audio", blob, `speech.${fileExtFromMime(mime)}`);
+
+      const { data, error } = await supabase.functions.invoke(
+        "elevenlabs-transcribe",
+        {
+          body: fd as any,
+        }
+      );
+
+      if (error) throw error;
+      setTranscript(data?.text ?? "");
+    },
+    []
+  );
+
+  const cleanupServer = useCallback(() => {
+    try {
+      streamRef.current?.getTracks().forEach((t) => t.stop());
+    } catch {
+      // ignore
+    }
+
+    streamRef.current = null;
+    recorderRef.current = null;
+    wavRecorderRef.current = null;
+    chunksRef.current = [];
+    serverKindRef.current = null;
+    setIsRecording(false);
+  }, []);
 
   const startRecording = useCallback(async () => {
     setTranscript("");
@@ -94,14 +156,25 @@ export const useSpeechRecognition = () => {
       if (!recognition) {
         toast({
           title: "Não suportado / Not supported",
-          description: "Seu navegador não suporta reconhecimento de voz. / Your browser does not support speech recognition.",
+          description:
+            "Seu navegador não suporta reconhecimento de voz. / Your browser does not support speech recognition.",
           variant: "destructive",
         });
         return;
       }
 
       setIsRecording(true);
-      recognition.start();
+      try {
+        recognition.start();
+      } catch (err) {
+        console.error("recognition.start() failed:", err);
+        toast({
+          title: "Erro / Error",
+          description: "Não foi possível iniciar a gravação. / Could not start recording.",
+          variant: "destructive",
+        });
+        setIsRecording(false);
+      }
       return;
     }
 
@@ -110,16 +183,8 @@ export const useSpeechRecognition = () => {
       if (!navigator.mediaDevices?.getUserMedia) {
         toast({
           title: "Não suportado / Not supported",
-          description: "Seu navegador não suporta microfone. / Your browser does not support microphone.",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      if (typeof MediaRecorder === "undefined") {
-        toast({
-          title: "Não suportado / Not supported",
-          description: "Seu iPad não suporta gravação de áudio neste modo. / Audio recording is not supported on this iPad.",
+          description:
+            "Seu navegador não suporta microfone. / Your browser does not support microphone.",
           variant: "destructive",
         });
         return;
@@ -136,75 +201,100 @@ export const useSpeechRecognition = () => {
       streamRef.current = stream;
       chunksRef.current = [];
 
-      const mimeType = pickAudioMimeType();
-      const recorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
-      recorderRef.current = recorder;
+      // Prefer MediaRecorder when available; otherwise record WAV via WebAudio.
+      if (typeof MediaRecorder !== "undefined") {
+        const mimeType = pickAudioMimeType();
+        const recorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
+        recorderRef.current = recorder;
+        serverKindRef.current = "media";
 
-      recorder.ondataavailable = (e) => {
-        if (e.data?.size) chunksRef.current.push(e.data);
-      };
+        recorder.ondataavailable = (e) => {
+          if (e.data?.size) chunksRef.current.push(e.data);
+        };
 
-      recorder.onstop = async () => {
-        try {
-          const finalMime = recorder.mimeType || mimeType;
-          const blob = new Blob(chunksRef.current, { type: finalMime || undefined });
+        recorder.onerror = (e) => {
+          console.error("MediaRecorder error:", e);
+        };
 
-          const fd = new FormData();
-          fd.append("audio", blob, `speech.${fileExtFromMime(finalMime)}`);
+        recorder.onstop = async () => {
+          try {
+            const finalMime = recorder.mimeType || mimeType;
+            const blob = new Blob(chunksRef.current, { type: finalMime || undefined });
+            await transcribeBlob(blob);
+          } catch (err) {
+            console.error("STT fallback error:", err);
+            toast({
+              title: "Erro / Error",
+              description:
+                "Não foi possível transcrever sua fala. / Could not transcribe your speech.",
+              variant: "destructive",
+            });
+          } finally {
+            cleanupServer();
+          }
+        };
 
-          const { data, error } = await supabase.functions.invoke("elevenlabs-transcribe", {
-            body: fd as any,
-          });
+        // timeslice helps on some Safari builds to emit data more reliably
+        recorder.start(250);
+        setIsRecording(true);
+        return;
+      }
 
-          if (error) throw error;
-          setTranscript(data?.text ?? "");
-        } catch (err) {
-          console.error("STT fallback error:", err);
-          toast({
-            title: "Erro / Error",
-            description: "Não foi possível transcrever sua fala no iPad. / Could not transcribe on iPad.",
-            variant: "destructive",
-          });
-        } finally {
-          streamRef.current?.getTracks().forEach((t) => t.stop());
-          streamRef.current = null;
-          recorderRef.current = null;
-          chunksRef.current = [];
-          setIsRecording(false);
-        }
-      };
-
-      recorder.start();
+      // WAV fallback (iOS/WKWebView older builds)
+      wavRecorderRef.current = createWavRecorder(stream);
+      serverKindRef.current = "wav";
       setIsRecording(true);
     } catch (error) {
       console.error("Error starting recording:", error);
       toast({
         title: "Erro / Error",
-        description: "Não foi possível acessar o microfone. / Could not access microphone.",
+        description: micErrorMessage(error),
         variant: "destructive",
       });
-      setIsRecording(false);
+      cleanupServer();
     }
-  }, [mode, recognition, toast]);
+  }, [mode, recognition, toast, transcribeBlob, cleanupServer]);
 
-  const stopRecording = useCallback(() => {
+  const stopRecording = useCallback(async () => {
     if (mode === "native") {
       if (recognition && isRecording) recognition.stop();
       return;
     }
 
-    if (recorderRef.current && isRecording) {
+    if (!isRecording) return;
+
+    // MediaRecorder path
+    if (serverKindRef.current === "media" && recorderRef.current) {
       try {
         recorderRef.current.stop();
       } catch (e) {
         console.error("Error stopping recorder:", e);
-        setIsRecording(false);
+        cleanupServer();
+      }
+      return;
+    }
+
+    // WAV path
+    if (serverKindRef.current === "wav" && wavRecorderRef.current) {
+      try {
+        const blob = await wavRecorderRef.current.stop();
+        await transcribeBlob(blob);
+      } catch (err) {
+        console.error("WAV STT fallback error:", err);
+        toast({
+          title: "Erro / Error",
+          description:
+            "Não foi possível transcrever sua fala. / Could not transcribe your speech.",
+          variant: "destructive",
+        });
+      } finally {
+        cleanupServer();
       }
     }
-  }, [mode, recognition, isRecording]);
+  }, [mode, recognition, isRecording, cleanupServer, toast, transcribeBlob]);
 
   const isSupported =
-    mode === "native" ? !!recognition : !!navigator.mediaDevices?.getUserMedia && typeof MediaRecorder !== "undefined";
+    mode === "native" ? !!recognition : !!navigator.mediaDevices?.getUserMedia;
 
   return {
     isRecording,
@@ -212,6 +302,7 @@ export const useSpeechRecognition = () => {
     startRecording,
     stopRecording,
     isSupported,
+    mode,
   };
 };
 
